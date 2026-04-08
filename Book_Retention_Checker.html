@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Retention Checker — Income Tax & GST</title>
+  <style>
+    :root {
+      --bg: #eef7ff;
+      --card: #ffffff;
+      --text: #12304a;
+      --muted: #5d748a;
+      --line: #d7e8f7;
+      --accent: #1d74d6;
+      --accent-dark: #1259a8;
+      --header-bg: linear-gradient(135deg, #dff1ff 0%, #bfe3ff 100%);
+      --good-bg: #e8f7ff;
+      --good-text: #0b5ea8;
+      --warn-bg: #eef6ff;
+      --warn-text: #245f9c;
+      --bad-bg: #f1f7fd;
+      --bad-text: #54708b;
+      --shadow: 0 10px 30px rgba(17, 84, 146, 0.10);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(180deg, #dff1ff 0%, var(--bg) 220px);
+      color: var(--text);
+    }
+
+    .site-header, .site-footer {
+      background: var(--header-bg);
+      border-bottom: 1px solid rgba(29, 116, 214, 0.16);
+    }
+
+    .site-footer {
+      border-top: 1px solid rgba(29, 116, 214, 0.16);
+      border-bottom: none;
+      margin-top: 24px;
+    }
+
+    .bar {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 16px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: var(--accent-dark);
+    }
+
+    .contact {
+      color: var(--accent-dark);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+
+    .hero {
+      background: var(--card);
+      border: 1px solid rgba(29, 116, 214, 0.16);
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 32px;
+      line-height: 1.1;
+      color: var(--accent-dark);
+    }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 900px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .card h2, .card h3 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      color: var(--accent-dark);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      align-items: end;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input, select, button {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid #bdd9f1;
+      padding: 12px 14px;
+      font-size: 15px;
+      background: white;
+      color: var(--text);
+    }
+
+    button {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(29, 116, 214, 0.18);
+    }
+
+    button:hover { filter: brightness(0.98); }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .chip.good { background: #e7f5ff; color: #1259a8; }
+    .chip.warn { background: #edf6ff; color: #2b6fad; }
+    .chip.bad { background: #f4f9fe; color: #4c6d8d; }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      background: linear-gradient(180deg, #fbfdff 0%, #f2f9ff 100%);
+    }
+
+    .metric .k {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .metric .v {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--accent-dark);
+    }
+
+    .metric .s {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 12px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--accent-dark);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: #eef7ff;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      max-height: 520px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .yes { background: #e7f5ff; color: #1259a8; }
+    .no { background: #f1f7fd; color: #5b748c; }
+    .safe { background: #dff1ff; color: #0f5ea9; }
+
+    .law {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      background: linear-gradient(180deg, #fbfdff 0%, #f3f9ff 100%);
+    }
+
+    .law .title {
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: var(--accent-dark);
+    }
+
+    .law .ref {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .law p, .notes li {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .notes {
+      padding-left: 18px;
+      margin: 10px 0 0;
+      color: var(--muted);
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #eaf6ff;
+      color: #225f98;
+      font-size: 13px;
+      line-height: 1.7;
+      border: 1px solid #cde6f9;
+    }
+
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: 1fr; }
+      .controls, .summary { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+      .brand { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="bar">
+      <div class="brand">S H A K T I &amp; Co.</div>
+      <div class="contact">Contact: 9404407377</div>
+    </div>
+  </header>
+  <div class="wrap">
+    <section class="hero">
+      <div style="margin-bottom:10px;padding:10px 14px;border-radius:10px;background:#eaf6ff;border:1px solid #cde6f9;color:#0f5ea9;font-size:13px;font-weight:700;">
+        This utility is for reference purpose only and not a legal opinion. Consult your financial advisor before taking any action.
+      </div>
+      <h1>Book Retention Checker</h1>
+      <p class="sub">
+        Check which financial years' books can be discarded as on a selected date under Income Tax and GST.
+        The tool shows the separate cut-off under each law and also the later common cut-off for a safer discard decision.
+      </p>
+      <div class="chips">
+        <span class="chip good">Income Tax: rule-based retention shown</span>
+        <span class="chip warn">GST: section 36 read with annual return due date logic</span>
+        <span class="chip bad">Litigation / reassessment / investigation cases need separate review</span>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Calculator</h2>
+        <div class="controls">
+          <div>
+            <label for="asOf">As on date</label>
+            <input id="asOf" type="date" />
+          </div>
+          <div>
+            <label for="fromFy">Start financial year</label>
+            <select id="fromFy"></select>
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <button id="refreshBtn">Refresh result</button>
+          </div>
+        </div>
+
+        <div class="summary">
+          <div class="metric">
+            <div class="k">Income Tax</div>
+            <div class="v" id="incomeSafeTill">—</div>
+            <div class="s">Books up to and including this FY are discardable on the selected date, subject to exceptions.</div>
+          </div>
+          <div class="metric">
+            <div class="k">GST</div>
+            <div class="v" id="gstSafeTill">—</div>
+            <div class="s">Based on 72 months from annual return due date, subject to proceedings / investigation.</div>
+          </div>
+          <div class="metric">
+            <div class="k">Common safe cut-off</div>
+            <div class="v" id="commonSafeTill">—</div>
+            <div class="s">Safer discard view where both laws are satisfied for the FY.</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Financial year</th>
+                <th>Income Tax discard date</th>
+                <th>GST discard date<br><span style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:none;letter-spacing:normal;">(72 months from actual GSTR-9 due date)</span></th>
+                <th>Income Tax status</th>
+                <th>GST status</th>
+                <th>Common safe status</th>
+              </tr>
+            </thead>
+            <tbody id="resultBody"></tbody>
+          </table>
+        </div>
+
+        <div class="footer-note">
+          <strong>Note:</strong> This utility is for reference purpose only and not a legal opinion. Please consult your financial advisor before taking any action.
+          <br/><br/>
+          This tool is prepared only for general guidance. It should not be treated as legal, tax, financial, or professional advice.
+          If any appeal, reassessment, revision, search, investigation, prosecution, or similar proceeding is pending or possible,
+          records should be preserved after specific review.
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>Applied provisions</h2>
+
+        <div class="law">
+          <div class="title">Income Tax</div>
+          <div class="ref">Income-tax Act, 2025 — section 62; Income-tax Rules, 2026 — rule 46(9)</div>
+          <p>
+            Section 62 requires prescribed persons to keep books and other documents. Rule 46 lays down the maintenance rules,
+            and rule 46(9) requires them to be kept for seven tax years from the end of the relevant tax year.
+          </p>
+        </div>
+
+        <div class="law">
+          <div class="title">GST</div>
+          <div class="ref">CGST Act — section 36 read with section 44</div>
+          <p>
+            Section 36 requires retention of books and records until expiry of 72 months from the due date of furnishing the
+            annual return for the relevant year. If there is appeal, revision, other proceeding, or investigation, the later period applies.
+          </p>
+        </div>
+
+        <div class="law">
+          <div class="title">Logic used in this tool</div>
+          <div class="ref">Plain computation model</div>
+          <p>
+            Income Tax discard date = 31 March after seven completed tax years from the end of the FY.
+            GST discard date = 72 months from the actual due date of annual return (GSTR-9) for that FY.
+            For GST, the tool uses a year-wise due-date table for the years where Government extended the due date,
+            and uses 31 December following the end of the FY where no separate extension has been built in.
+            Common safe discard date = later of the two.
+          </p>
+        </div>
+
+        <h3 style="margin-top:18px;">Important notes</h3>
+        <ul class="notes">
+          <li>This tool is for general compliance guidance and not a substitute for case-specific legal review.</li>
+          <li>Exemptions from filing annual return do not automatically mean records may be destroyed early.</li>
+          <li>If assessment, appeal, revision, search, investigation, or prosecution is involved, keep records longer.</li>
+          <li>The safest practical approach is to discard only when the later of both laws permits it.</li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const asOfInput = document.getElementById('asOf');
+    const fromFySelect = document.getElementById('fromFy');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const resultBody = document.getElementById('resultBody');
+
+    const incomeSafeTillEl = document.getElementById('incomeSafeTill');
+    const gstSafeTillEl = document.getElementById('gstSafeTill');
+    const commonSafeTillEl = document.getElementById('commonSafeTill');
+
+    function pad(n) {
+      return String(n).padStart(2, '0');
+    }
+
+    function formatDate(d) {
+      return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()}`;
+    }
+
+    function fyLabel(startYear) {
+      return `FY ${startYear}-${String(startYear + 1).slice(-2)}`;
+    }
+
+    function parseLocalDate(value) {
+      if (!value) return null;
+      const parts = value.split('-').map(Number);
+      if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+      const [year, month, day] = parts;
+      return new Date(year, month - 1, day);
+    }
+
+    function startOfDay(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    function incomeTaxDiscardDate(startYear) {
+      const endYear = startYear + 1;
+      return new Date(endYear + 7, 2, 31); // 31 Mar after seven tax years from end of relevant FY
+    }
+
+    function gstAnnualReturnDueDate(startYear) {
+      const dueDateMap = {
+        2017: new Date(2020, 0, 31), // FY 2017-18
+        2018: new Date(2020, 5, 30), // FY 2018-19
+        2019: new Date(2021, 2, 31), // FY 2019-20
+        2020: new Date(2022, 1, 28), // FY 2020-21
+        2021: new Date(2022, 11, 31), // FY 2021-22
+        2022: new Date(2023, 11, 31), // FY 2022-23
+        2023: new Date(2024, 11, 31) // FY 2023-24
+      };
+
+      if (dueDateMap[startYear]) {
+        return dueDateMap[startYear];
+      }
+
+      const endYear = startYear + 1;
+      return new Date(endYear, 11, 31); // general rule: 31 Dec following end of FY
+    }
+
+    function gstAnnualReturnDueDate(startYear) {
+      const dueDates = {
+        2017: new Date(2020, 0, 31), // FY 2017-18
+        2018: new Date(2020, 11, 31), // FY 2018-19
+        2019: new Date(2021, 2, 31), // FY 2019-20
+        2020: new Date(2022, 1, 28) // FY 2020-21
+      };
+
+      if (dueDates[startYear]) {
+        return dueDates[startYear];
+      }
+
+      const endYear = startYear + 1;
+      return new Date(endYear, 11, 31); // default statutory due date: 31 Dec following FY end
+    }
+
+    function addMonths(date, months) {
+      const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const targetMonth = d.getMonth() + months;
+      const result = new Date(d.getFullYear(), targetMonth, d.getDate());
+      if (result.getDate() !== d.getDate()) {
+        return new Date(result.getFullYear(), result.getMonth() + 1, 0);
+      }
+      return result;
+    }
+
+    function gstDiscardDate(startYear) {
+      return addMonths(gstAnnualReturnDueDate(startYear), 72);
+    }
+
+    function isDiscardable(asOf, discardDate) {
+      return startOfDay(asOf).getTime() >= startOfDay(discardDate).getTime();
+    }
+
+    function getCurrentFyStartYear(date) {
+      const y = date.getFullYear();
+      return date.getMonth() >= 3 ? y : y - 1;
+    }
+
+    function populateFyOptions() {
+      const today = new Date();
+      const currentFyStart = getCurrentFyStartYear(today);
+      const first = 2005;
+      fromFySelect.innerHTML = '';
+      for (let y = currentFyStart; y >= first; y--) {
+        const opt = document.createElement('option');
+        opt.value = String(y);
+        opt.textContent = fyLabel(y);
+        if (y === currentFyStart - 12) opt.selected = true;
+        fromFySelect.appendChild(opt);
+      }
+    }
+
+    function statusPill(canDiscard, yesText = 'Can discard', noText = 'Retain') {
+      return `<span class="pill ${canDiscard ? 'yes' : 'no'}">${canDiscard ? yesText : noText}</span>`;
+    }
+
+    function render() {
+      const asOf = parseLocalDate(asOfInput.value);
+      if (!asOf) {
+        resultBody.innerHTML = '<tr><td colspan="6">Please select a valid date.</td></tr>';
+        incomeSafeTillEl.textContent = '—';
+        gstSafeTillEl.textContent = '—';
+        commonSafeTillEl.textContent = '—';
+        return;
+      }
+
+      const fromFy = Number(fromFySelect.value);
+      const currentFyStart = getCurrentFyStartYear(asOf);
+
+      let incomeSafeTill = null;
+      let gstSafeTill = null;
+      let commonSafeTill = null;
+
+      resultBody.innerHTML = '';
+
+      for (let y = currentFyStart; y >= fromFy; y--) {
+        const iDate = incomeTaxDiscardDate(y);
+        const gDate = gstDiscardDate(y);
+        const incomeOk = isDiscardable(asOf, iDate);
+        const gstOk = isDiscardable(asOf, gDate);
+        const commonOk = incomeOk && gstOk;
+
+        if (incomeOk && (incomeSafeTill === null || y > incomeSafeTill)) incomeSafeTill = y;
+        if (gstOk && (gstSafeTill === null || y > gstSafeTill)) gstSafeTill = y;
+        if (commonOk && (commonSafeTill === null || y > commonSafeTill)) commonSafeTill = y;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${fyLabel(y)}</strong></td>
+          <td>${formatDate(iDate)}</td>
+          <td>${formatDate(gDate)}</td>
+          <td>${statusPill(incomeOk)}</td>
+          <td>${statusPill(gstOk)}</td>
+          <td>${statusPill(commonOk, 'Common safe', 'Not yet')}</td>
+        `;
+        resultBody.appendChild(tr);
+      }
+
+      incomeSafeTillEl.textContent = incomeSafeTill !== null ? fyLabel(incomeSafeTill) : 'None';
+      gstSafeTillEl.textContent = gstSafeTill !== null ? fyLabel(gstSafeTill) : 'None';
+      commonSafeTillEl.textContent = commonSafeTill !== null ? fyLabel(commonSafeTill) : 'None';
+    }
+
+    function setDefaultDate() {
+      const today = new Date();
+      asOfInput.value = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
+    }
+
+    populateFyOptions();
+    setDefaultDate();
+    render();
+
+    refreshBtn.addEventListener('click', function () {
+      render();
+    });
+    asOfInput.addEventListener('input', render);
+    asOfInput.addEventListener('change', render);
+    fromFySelect.addEventListener('change', render);
+  </script>
+  <footer class="site-footer">
+    <div class="bar">
+      <div class="brand" style="font-size:20px;">S H A K T I &amp; Co.</div>
+      <div class="contact">Contact: 9404407377</div>
+    </div>
+  </footer>
+</body>
+</html>

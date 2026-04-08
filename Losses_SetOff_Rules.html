@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Set-off of Losses Tool</title>
+<style>
+:root{
+  --bg:#f5f8fc;
+  --card:#ffffff;
+  --text:#18324a;
+  --muted:#5f7286;
+  --line:#d7e3f0;
+  --accent:#2b67a8;
+  --accent-dark:#1f4f8f;
+  --accent-soft:#edf4fd;
+  --soft:#f3f8fe;
+  --green:#0f9d58;
+  --red:#b42318;
+  --amber:#b26a00;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
+.wrap{max-width:1320px;margin:0 auto;padding:24px}
+.hero{background:linear-gradient(135deg,var(--accent-dark),var(--accent));color:#fff;border-radius:18px;padding:24px;margin-bottom:20px;box-shadow:0 10px 28px rgba(25,62,108,.16)}
+.hero h1{margin:0 0 8px;font-size:30px}.hero p{margin:0}.firm{margin-top:10px;font-size:14px;font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 4px 14px rgba(18,38,63,.05)}
+h2,h3,h4{margin-top:0}.subtle{color:var(--muted);font-size:13px}
+.pill{display:inline-block;padding:5px 10px;border-radius:999px;background:#eef5ff;border:1px solid #c9daf3;font-size:12px;font-weight:700;color:#1e4f8a}
+.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0}
+label{display:block;font-weight:700;font-size:13px;margin-bottom:6px}
+input[type="number"],input[type="text"],select{width:100%;padding:10px 12px;border:1px solid #c8d4e3;border-radius:10px;background:#fff;font-size:14px}
+.input-grid,.heads{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.head-box{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fbfdff}
+.head-box h4{margin:0 0 10px;font-size:15px}
+.small-note,.footer,.note{font-size:12px;color:var(--muted)}
+.note{border-left:4px solid #c3d5ea;padding-left:10px;margin-top:10px}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+button{border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer;background:var(--accent);color:#fff}
+button.secondary{background:#e8f0fa;color:#1c436d}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab-btn{background:var(--accent-soft);color:#1d3f68;border:1px solid #cfe0f2}
+.tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.grid{display:grid;grid-template-columns:1.2fr .9fr;gap:18px;align-items:start}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:12px;background:linear-gradient(180deg,#fff,#f8fbff)}
+.kpi .label{font-size:12px;color:var(--muted)}.kpi .value{font-size:22px;font-weight:800;margin-top:4px}
+.flow{background:var(--soft);border:1px dashed #b8cae0;border-radius:12px;padding:12px;font-size:13px;color:#19324d;white-space:pre-wrap}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}th{background:#f2f7fd}
+.amt{text-align:right;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:700}
+.yes{background:#e9f8ef;color:var(--green);border:1px solid #b7e4c5}.no{background:#fff0f0;color:var(--red);border:1px solid #f2c1c1}.limit{background:#fff7e8;color:var(--amber);border:1px solid #efd7a0}
+.bars{display:grid;gap:10px}.bar-row{display:grid;grid-template-columns:220px 1fr 90px;gap:10px;align-items:center}
+.track{background:#ecf2f8;border-radius:999px;overflow:hidden;height:16px;border:1px solid #d6e0ea}.fill{height:100%;background:linear-gradient(90deg,#2b67a8,#5da0e8)}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;color:var(--muted)}
+.mapping{font-size:12px;background:#fcfdff;border:1px solid var(--line);border-radius:12px;padding:10px}
+.footer-note{margin-top:20px;text-align:center;font-size:12px;color:#555}
+@media print{
+  .tab-btn,.btns,.print-bar,.controls{break-inside:avoid}
+  body{background:#fff}
+  .wrap{max-width:none;padding:10px}
+}
+@media (max-width:980px){.grid,.controls,.input-grid,.heads,.kpis,.legend{grid-template-columns:1fr}.bar-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>Set-off of Losses Tool</h1>
+    <p>Calculator plus rules matrix for current-year set-off and carried-forward set-off under the Income-tax Act, 1961 and the Income-tax Act, 2025.</p>
+    <div class="firm">S H A K T I &amp; Co. | Contact No. 9404407377</div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+      <div>
+        <h2 style="margin-bottom:6px">Interactive Tool</h2>
+        <div class="subtle">Default view shows set-off rules for quick reference. Calculation tab is available next.</div>
+      </div>
+      <span class="pill" id="regimeTag">Regime: Income-tax Act, 2025</span>
+    </div>
+
+    <div class="print-bar" style="display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:12px;margin-bottom:4px">
+      <button class="secondary" onclick="window.print()">Print / PDF Export</button>
+    </div>
+
+    <div class="controls">
+      <div>
+        <label for="regime">Applicable law</label>
+        <select id="regime">
+          <option value="2025" selected>Income-tax Act, 2025</option>
+          <option value="1961">Income-tax Act, 1961</option>
+        </select>
+      </div>
+      <div>
+        <label for="returnFiled">Loss return filed within due date?</label>
+        <select id="returnFiled">
+          <option value="yes" selected>Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+      <div>
+        <label for="showSections">Display section references</label>
+        <select id="showSections">
+          <option value="yes" selected>Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="openTab('matrixTab', this)">Set-off Rules Tab</button>
+      <button class="tab-btn" onclick="openTab('calcTab', this)">Calculation Tab</button>
+    </div>
+
+    <div id="matrixTab" class="tab-panel active">
+      <div class="card" style="padding:14px;margin-bottom:14px">
+        <h3>What can be set off against what?</h3>
+        <div class="subtle">This tab separately shows current-year set-off and subsequent-year set-off of carried-forward losses.</div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Current Year Loss Set-off Matrix</h3>
+          <table id="currentMatrixTable"></table>
+        </div>
+        <div class="card">
+          <h3>Carried Forward Loss Set-off Matrix</h3>
+          <table id="bfMatrixTable"></table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <h3>Carry Forward Periods</h3>
+        <table id="periodTable"></table>
+      </div>
+    </div>
+
+    <div id="calcTab" class="tab-panel">
+      <div class="grid">
+        <div>
+          <div class="heads">
+            <div class="head-box">
+              <h4>Current Year – Normal Heads</h4>
+              <div class="input-grid">
+                <div><label for="salary">Salary</label><input type="number" id="salary" value="0" step="0.01"></div>
+                <div><label for="houseProperty">House Property</label><input type="number" id="houseProperty" value="-350000" step="0.01"></div>
+                <div><label for="business">Business / Profession (non-speculation)</label><input type="number" id="business" value="-600000" step="0.01"></div>
+                <div><label for="otherSources">Other Sources</label><input type="number" id="otherSources" value="250000" step="0.01"></div>
+              </div>
+            </div>
+            <div class="head-box">
+              <h4>Current Year – Capital / Restricted Heads</h4>
+              <div class="input-grid">
+                <div><label for="stcg">Short-term Capital Gain / Loss</label><input type="number" id="stcg" value="-150000" step="0.01"></div>
+                <div><label for="ltcg">Long-term Capital Gain / Loss</label><input type="number" id="ltcg" value="400000" step="0.01"></div>
+                <div><label for="speculation">Speculation Business</label><input type="number" id="speculation" value="-80000" step="0.01"></div>
+                <div><label for="specifiedBusiness">Specified Business</label><input type="number" id="specifiedBusiness" value="-120000" step="0.01"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="heads" style="margin-top:12px">
+            <div class="head-box">
+              <h4>Brought Forward Losses / Allowances</h4>
+              <div class="input-grid">
+                <div><label for="bfHouse">BF House Property Loss</label><input type="number" id="bfHouse" value="0" step="0.01"></div>
+                <div><label for="bfBusiness">BF Business Loss</label><input type="number" id="bfBusiness" value="0" step="0.01"></div>
+                <div><label for="bfStcl">BF Short-term Capital Loss</label><input type="number" id="bfStcl" value="0" step="0.01"></div>
+                <div><label for="bfLtcl">BF Long-term Capital Loss</label><input type="number" id="bfLtcl" value="0" step="0.01"></div>
+                <div><label for="bfSpeculation">BF Speculation Loss</label><input type="number" id="bfSpeculation" value="0" step="0.01"></div>
+                <div><label for="bfSpecifiedBusiness">BF Specified Business Loss</label><input type="number" id="bfSpecifiedBusiness" value="0" step="0.01"></div>
+                <div><label for="bfRaceHorse">BF Race Horse Loss</label><input type="number" id="bfRaceHorse" value="0" step="0.01"></div>
+                <div><label for="unabsDep">Unabsorbed Depreciation</label><input type="number" id="unabsDep" value="0" step="0.01"></div>
+              </div>
+              <div class="small-note">Enter brought-forward figures as positive values.</div>
+            </div>
+            <div class="head-box">
+              <h4>Other Inputs</h4>
+              <div class="input-grid">
+                <div><label for="raceHorse">Race Horse Activity Gain / Loss</label><input type="number" id="raceHorse" value="0" step="0.01"></div>
+                <div><label for="notes">Quick scenario note</label><input type="text" id="notes" placeholder="Optional description"></div>
+              </div>
+              <div class="note">This calculator works mainly at head level and is meant for practical review and illustration.</div>
+            </div>
+          </div>
+
+          <div class="btns">
+            <button onclick="calculate()">Calculate</button>
+            <button class="secondary" onclick="loadExample()">Load Example</button>
+            <button class="secondary" onclick="resetAll()">Reset</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="padding:14px;margin-bottom:14px">
+            <h3>Summary</h3>
+            <div class="kpis">
+              <div class="kpi"><div class="label">Current year loss utilised</div><div class="value" id="kpiUsed">₹0</div></div>
+              <div class="kpi"><div class="label">Brought forward utilised</div><div class="value" id="kpiBFUsed">₹0</div></div>
+              <div class="kpi"><div class="label">Losses / allowances carried forward</div><div class="value" id="kpiCF">₹0</div></div>
+            </div>
+            <div class="flow" id="flowText" style="margin-top:12px">Enter figures and click Calculate.</div>
+          </div>
+
+          <div class="card" style="padding:14px;margin-bottom:14px">
+            <h3>Carry Forward Years Chart</h3>
+            <div class="bars" id="yearBars"></div>
+            <div class="legend" id="legendBox" style="margin-top:10px"></div>
+          </div>
+
+          <div class="card" style="padding:14px">
+            <h3>Section Mapping</h3>
+            <div class="mapping" id="mappingBox"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <h3>Detailed Working</h3>
+        <div id="workingTables"></div>
+        <div class="footer" style="margin-top:12px">General position reflected here: intra-head set-off first, then inter-head set-off subject to restrictions, then carry forward subject to head-wise limits and due-date condition for loss return.</div>
+      </div>
+    </div>
+
+    <div class="footer-note">The Utility is for education purpose only, Consult your financial advisor before taking any action</div>
+    <div class="footer-note" style="margin-top:6px">Use your browser’s Print dialog and choose <strong>Save as PDF</strong> to export this utility as a PDF.</div>
+  </div>
+</div>
+
+<script>
+const sectionMap={
+  "1961":{intraHead:"Section 70",interHead:"Section 71",houseCarry:"Section 71B",businessCarry:"Section 72",speculation:"Section 73",specifiedBusiness:"Section 73A",capitalCarry:"Section 74",raceHorse:"Section 74A",dueDate:"Section 80 read with section 139(3)",undisclosed:"Section 79A",depreciation:"Section 32(2)"},
+  "2025":{intraHead:"Section 108",interHead:"Section 109",houseCarry:"Section 110",businessCarry:"Section 112",speculation:"Section 113",specifiedBusiness:"Section 114",capitalCarry:"Section 111",raceHorse:"Section 115",dueDate:"Section 121 read with section 263",undisclosed:"Section 120",depreciation:"Section 33(11)"}
+};
+function getNum(id){const n=parseFloat(document.getElementById(id).value);return isNaN(n)?0:n}
+function pos(n){return Math.max(0,n)}
+function lossAmount(n){return n<0?Math.abs(n):0}
+function money(n){const sign=n<0?"-":"";return sign+"₹"+Math.abs(n).toLocaleString("en-IN",{maximumFractionDigits:2})}
+function badge(type,text){return `<span class="badge ${type}">${text}</span>`}
+function yes(text="Yes"){return badge("yes",text)}
+function no(text="No"){return badge("no",text)}
+function limit(text="Limited"){return badge("limit",text)}
+
+function openTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function loadExample(){
+  document.getElementById('salary').value=900000;
+  document.getElementById('houseProperty').value=-350000;
+  document.getElementById('business').value=-600000;
+  document.getElementById('otherSources').value=250000;
+  document.getElementById('stcg').value=-150000;
+  document.getElementById('ltcg').value=400000;
+  document.getElementById('speculation').value=-80000;
+  document.getElementById('specifiedBusiness').value=-120000;
+  document.getElementById('bfHouse').value=100000;
+  document.getElementById('bfBusiness').value=50000;
+  document.getElementById('bfLtcl').value=50000;
+  document.getElementById('unabsDep').value=20000;
+  calculate();
+}
+
+function resetAll(){
+  document.querySelectorAll('input[type="number"]').forEach(el=>el.value=0);
+  document.getElementById('houseProperty').value=-350000;
+  document.getElementById('business').value=-600000;
+  document.getElementById('otherSources').value=250000;
+  document.getElementById('ltcg').value=400000;
+  document.getElementById('stcg').value=-150000;
+  document.getElementById('speculation').value=-80000;
+  document.getElementById('specifiedBusiness').value=-120000;
+  document.getElementById('notes').value='';
+  calculate();
+}
+
+function calculate(){
+  const regime=document.getElementById('regime').value;
+  const filed=document.getElementById('returnFiled').value==='yes';
+  document.getElementById('regimeTag').textContent='Regime: '+(regime==='2025'?'Income-tax Act, 2025':'Income-tax Act, 1961');
+  const sec=sectionMap[regime];
+
+  let salary=getNum('salary'),hp=getNum('houseProperty'),biz=getNum('business'),other=getNum('otherSources'),stcg=getNum('stcg'),ltcg=getNum('ltcg'),spec=getNum('speculation'),specBiz=getNum('specifiedBusiness'),race=getNum('raceHorse');
+  const bf={house:pos(getNum('bfHouse')),business:pos(getNum('bfBusiness')),stcl:pos(getNum('bfStcl')),ltcl:pos(getNum('bfLtcl')),spec:pos(getNum('bfSpeculation')),specBiz:pos(getNum('bfSpecifiedBusiness')),race:pos(getNum('bfRaceHorse')),dep:pos(getNum('unabsDep'))};
+  let steps=[],currentUsed=0,bfUsed=0;
+
+  if(stcg<0&&ltcg>0){const use=Math.min(Math.abs(stcg),ltcg);stcg+=use;ltcg-=use;currentUsed+=use;steps.push(`Current year short-term capital loss set off against long-term capital gain = ${money(use)}.`)}
+  if(ltcg<0&&stcg>0){steps.push('Long-term capital loss cannot be adjusted against short-term capital gain.')}
+
+  if(hp<0){
+    let cap=Math.min(Math.abs(hp),200000);
+    let pool=[{name:'Salary',ref:()=>salary,set:v=>salary=v},{name:'Other Sources',ref:()=>other,set:v=>other=v},{name:'Business',ref:()=>biz,set:v=>biz=v},{name:'Long-term Capital Gain',ref:()=>ltcg,set:v=>ltcg=v},{name:'Short-term Capital Gain',ref:()=>stcg,set:v=>stcg=v}];
+    for(const item of pool){if(cap<=0)break;const income=pos(item.ref());if(income>0){const use=Math.min(cap,income);item.set(item.ref()-use);hp+=use;cap-=use;currentUsed+=use;steps.push(`House property loss adjusted against ${item.name} = ${money(use)}.`)}}
+  }
+
+  if(biz<0){
+    let rem=Math.abs(biz);
+    let pool=[{name:'Other Sources',ref:()=>other,set:v=>other=v},{name:'Long-term Capital Gain',ref:()=>ltcg,set:v=>ltcg=v},{name:'Short-term Capital Gain',ref:()=>stcg,set:v=>stcg=v}];
+    for(const item of pool){if(rem<=0)break;const income=pos(item.ref());if(income>0){const use=Math.min(rem,income);item.set(item.ref()-use);biz+=use;rem-=use;currentUsed+=use;steps.push(`Business loss adjusted against ${item.name} = ${money(use)}.`)}}
+    if(salary>0&&biz<0)steps.push('Business loss cannot be adjusted against Salary.');
+  }
+
+  if(other<0){
+    let rem=Math.abs(other);
+    let pool=[{name:'Salary',ref:()=>salary,set:v=>salary=v},{name:'Business',ref:()=>biz,set:v=>biz=v},{name:'House Property',ref:()=>hp,set:v=>hp=v}];
+    for(const item of pool){if(rem<=0)break;const income=pos(item.ref());if(income>0){const use=Math.min(rem,income);item.set(item.ref()-use);other+=use;rem-=use;currentUsed+=use;steps.push(`Other Sources loss adjusted against ${item.name} = ${money(use)}.`)}}
+  }
+
+  if(spec<0)steps.push('Speculation loss can be set off only against speculation profit.');
+  if(specBiz<0)steps.push('Specified business loss can be set off only against specified business profit.');
+  if(race<0)steps.push('Race horse loss can be set off only against income from that activity.');
+
+  if(bf.house>0&&hp>0){const use=Math.min(bf.house,hp);bf.house-=use;hp-=use;bfUsed+=use;steps.push(`BF house property loss used = ${money(use)}.`)}
+  if(bf.business>0&&biz>0){const use=Math.min(bf.business,biz);bf.business-=use;biz-=use;bfUsed+=use;steps.push(`BF business loss used = ${money(use)}.`)}
+  if(bf.stcl>0){if(stcg>0){const use=Math.min(bf.stcl,stcg);bf.stcl-=use;stcg-=use;bfUsed+=use;steps.push(`BF STCL used against STCG = ${money(use)}.`)}if(bf.stcl>0&&ltcg>0){const use=Math.min(bf.stcl,ltcg);bf.stcl-=use;ltcg-=use;bfUsed+=use;steps.push(`BF STCL used against LTCG = ${money(use)}.`)}}
+  if(bf.ltcl>0&&ltcg>0){const use=Math.min(bf.ltcl,ltcg);bf.ltcl-=use;ltcg-=use;bfUsed+=use;steps.push(`BF LTCL used against LTCG = ${money(use)}.`)}
+  if(bf.spec>0&&spec>0){const use=Math.min(bf.spec,spec);bf.spec-=use;spec-=use;bfUsed+=use;steps.push(`BF speculation loss used = ${money(use)}.`)}
+  if(bf.specBiz>0&&specBiz>0){const use=Math.min(bf.specBiz,specBiz);bf.specBiz-=use;specBiz-=use;bfUsed+=use;steps.push(`BF specified business loss used = ${money(use)}.`)}
+  if(bf.race>0&&race>0){const use=Math.min(bf.race,race);bf.race-=use;race-=use;bfUsed+=use;steps.push(`BF race horse loss used = ${money(use)}.`)}
+
+  if(bf.dep>0){
+    const pool=[{name:'Business income',ref:()=>biz,set:v=>biz=v},{name:'House property income',ref:()=>hp,set:v=>hp=v},{name:'Other Sources income',ref:()=>other,set:v=>other=v},{name:'Short-term capital gain',ref:()=>stcg,set:v=>stcg=v},{name:'Long-term capital gain',ref:()=>ltcg,set:v=>ltcg=v},{name:'Speculation profit',ref:()=>spec,set:v=>spec=v},{name:'Specified business profit',ref:()=>specBiz,set:v=>specBiz=v},{name:'Specified activity profit',ref:()=>race,set:v=>race=v}];
+    for(const item of pool){if(bf.dep<=0)break;const income=pos(item.ref());if(income>0){const use=Math.min(bf.dep,income);bf.dep-=use;item.set(item.ref()-use);bfUsed+=use;steps.push(`Unabsorbed depreciation adjusted against ${item.name} = ${money(use)}.`)}}
+  }
+
+  const carry={house:lossAmount(hp)+bf.house,business:lossAmount(biz)+(filed?bf.business:0),stcl:lossAmount(stcg)+(filed?bf.stcl:0),ltcl:lossAmount(ltcg)+(filed?bf.ltcl:0),spec:lossAmount(spec)+(filed?bf.spec:0),specBiz:lossAmount(specBiz)+(filed?bf.specBiz:0),race:lossAmount(race)+(filed?bf.race:0),dep:bf.dep};
+  if(!filed){if(lossAmount(biz)>0)carry.business=0;if(lossAmount(stcg)>0)carry.stcl=0;if(lossAmount(ltcg)>0)carry.ltcl=0;if(lossAmount(spec)>0)carry.spec=0;if(lossAmount(specBiz)>0)carry.specBiz=0;if(lossAmount(race)>0)carry.race=0;steps.push('Loss return not filed within due date: carry forward is generally denied for business loss, capital loss, speculation loss, specified business loss and race horse loss. House property loss and unabsorbed depreciation generally continue to be eligible.')}
+
+  const totalCarry=Object.values(carry).reduce((a,b)=>a+b,0);
+  document.getElementById('kpiUsed').textContent=money(currentUsed);
+  document.getElementById('kpiBFUsed').textContent=money(bfUsed);
+  document.getElementById('kpiCF').textContent=money(totalCarry);
+  document.getElementById('flowText').textContent='1. Current year set-off completed using general statutory order.\n\n2. Restricted losses remain ring-fenced where cross-set-off is not allowed.\n\n3. Brought-forward losses were used after current-year set-off.\n\n4. Balance represents carry forward.\n\nKey actions:\n- '+(steps.length?steps.join('\n- '):'No set-off entries.');
+
+  renderBars(carry); renderMapping(sec); renderWorking({salary,hp,biz,other,stcg,ltcg,spec,specBiz,race,carry}); renderMatrices(sec,filed); renderPeriods(sec,filed);
+}
+
+function renderBars(carry){
+  const cfg=[{label:'House property loss',amount:carry.house,years:'8 years'},{label:'Business loss',amount:carry.business,years:'8 years'},{label:'Short-term capital loss',amount:carry.stcl,years:'8 years'},{label:'Long-term capital loss',amount:carry.ltcl,years:'8 years'},{label:'Speculation loss',amount:carry.spec,years:'4 years'},{label:'Specified business loss',amount:carry.specBiz,years:'Indefinite'},{label:'Race horse loss',amount:carry.race,years:'4 years'},{label:'Unabsorbed depreciation',amount:carry.dep,years:'Indefinite'}];
+  const maxAmt=Math.max(1,...cfg.map(x=>x.amount));
+  document.getElementById('yearBars').innerHTML=cfg.map(item=>`<div class="bar-row"><div><strong>${item.label}</strong><div class="subtle">${item.years}</div></div><div class="track"><div class="fill" style="width:${(item.amount/maxAmt)*100}%"></div></div><div class="amt">${money(item.amount)}</div></div>`).join('');
+  document.getElementById('legendBox').innerHTML='<div><strong>8 years:</strong> House property, business, STCL and LTCL.</div><div><strong>4 years:</strong> Speculation loss and race horse loss.</div><div><strong>Indefinite:</strong> Specified business loss and unabsorbed depreciation.</div><div><strong>Special cap:</strong> Current-year house property inter-head set-off limited to ₹2,00,000.</div>';
+}
+
+function renderMapping(sec){
+  const show=document.getElementById('showSections').value==='yes';
+  document.getElementById('mappingBox').innerHTML=show?`<table><tr><th>Rule area</th><th>Selected regime section</th></tr><tr><td>Intra-head set-off</td><td>${sec.intraHead}</td></tr><tr><td>Inter-head set-off</td><td>${sec.interHead}</td></tr><tr><td>Carry forward – house property</td><td>${sec.houseCarry}</td></tr><tr><td>Carry forward – business loss</td><td>${sec.businessCarry}</td></tr><tr><td>Carry forward – speculation loss</td><td>${sec.speculation}</td></tr><tr><td>Carry forward – specified business loss</td><td>${sec.specifiedBusiness}</td></tr><tr><td>Carry forward – capital loss</td><td>${sec.capitalCarry}</td></tr><tr><td>Carry forward – race horse loss</td><td>${sec.raceHorse}</td></tr><tr><td>Due-date condition</td><td>${sec.dueDate}</td></tr><tr><td>Unabsorbed depreciation</td><td>${sec.depreciation}</td></tr></table>`:'Section references hidden.';
+}
+
+function renderWorking(data){
+  document.getElementById('workingTables').innerHTML=`<table><tr><th>Bucket</th><th>Net amount after set-off</th><th>Carry forward result</th><th>Carry-forward years</th></tr><tr><td>Salary</td><td class="amt">${money(data.salary)}</td><td>-</td><td>-</td></tr><tr><td>House property</td><td class="amt">${money(data.hp)}</td><td class="amt">${money(data.carry.house)}</td><td>8 years</td></tr><tr><td>Business / profession</td><td class="amt">${money(data.biz)}</td><td class="amt">${money(data.carry.business)}</td><td>8 years</td></tr><tr><td>Short-term capital loss / gain</td><td class="amt">${money(data.stcg)}</td><td class="amt">${money(data.carry.stcl)}</td><td>8 years</td></tr><tr><td>Long-term capital loss / gain</td><td class="amt">${money(data.ltcg)}</td><td class="amt">${money(data.carry.ltcl)}</td><td>8 years</td></tr><tr><td>Speculation business</td><td class="amt">${money(data.spec)}</td><td class="amt">${money(data.carry.spec)}</td><td>4 years</td></tr><tr><td>Specified business</td><td class="amt">${money(data.specBiz)}</td><td class="amt">${money(data.carry.specBiz)}</td><td>Indefinite</td></tr><tr><td>Race horse activity</td><td class="amt">${money(data.race)}</td><td class="amt">${money(data.carry.race)}</td><td>4 years</td></tr><tr><td>Unabsorbed depreciation</td><td class="amt">${money(data.carry.dep)}</td><td class="amt">${money(data.carry.dep)}</td><td>Indefinite</td></tr></table>`;
+}
+
+function renderMatrices(sec,filed){
+  const currentRows=[["House Property Loss","Salary, House Property, Business, Capital Gains, Other Sources",limit("Up to ₹2,00,000 inter-head overall"),sec.interHead],["Business Loss (non-speculation)","House Property, Capital Gains, Other Sources",no("Not against Salary"),sec.interHead],["Short-term Capital Loss","Short-term Capital Gain and Long-term Capital Gain",yes(),sec.intraHead+' / '+sec.interHead],["Long-term Capital Loss","Long-term Capital Gain only",no("Not against STCG"),sec.intraHead],["Speculation Loss","Speculation Profit only",no("Restricted"),sec.speculation],["Specified Business Loss","Specified Business Profit only",no("Restricted"),sec.specifiedBusiness],["Race Horse Loss","Income from same activity only",no("Restricted"),sec.raceHorse],["Other Sources Loss","Generally against other heads",limit("Subject to source-based exceptions"),sec.interHead]];
+  const bfRows=[["BF House Property Loss","House Property Income only",no("Not against other heads"),sec.houseCarry],["BF Business Loss","Business Income only",no("Not against Salary/other heads"),sec.businessCarry],["BF Short-term Capital Loss","STCG and LTCG",yes(),sec.capitalCarry],["BF Long-term Capital Loss","LTCG only",no("Not against STCG"),sec.capitalCarry],["BF Speculation Loss","Speculation Profit only",no("Restricted"),sec.speculation],["BF Specified Business Loss","Specified Business Profit only",no("Restricted"),sec.specifiedBusiness],["BF Race Horse Loss","Income from same activity only",no("Restricted"),sec.raceHorse],["Unabsorbed Depreciation","Generally any head except Salary",yes("Broadly yes"),sec.depreciation]];
+  document.getElementById('currentMatrixTable').innerHTML=`<tr><th>Current Year Loss</th><th>Can be set off against</th><th>Status</th><th>Section</th></tr>${currentRows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}`;
+  document.getElementById('bfMatrixTable').innerHTML=`<tr><th>Carried Forward Loss / Allowance</th><th>Can be set off against next year income</th><th>Status</th><th>Section</th></tr>${bfRows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}`;
+}
+
+function renderPeriods(sec,filed){
+  const due=filed?yes('Due-date condition satisfied'):no('Due-date issue may block carry forward of specified losses');
+  const rows=[["House Property Loss","8 years","House Property income only in later years",sec.houseCarry],["Business Loss","8 years","Business income only",sec.businessCarry],["Short-term Capital Loss","8 years","STCG / LTCG",sec.capitalCarry],["Long-term Capital Loss","8 years","LTCG only",sec.capitalCarry],["Speculation Loss","4 years","Speculation profit only",sec.speculation],["Specified Business Loss","Indefinite","Specified business profit only",sec.specifiedBusiness],["Race Horse Loss","4 years","Income from same activity only",sec.raceHorse],["Unabsorbed Depreciation","Indefinite","Generally any head except Salary",sec.depreciation]];
+  document.getElementById('periodTable').innerHTML=`<tr><th>Loss / Allowance</th><th>Carry-forward period</th><th>Set-off in subsequent year</th><th>Section</th></tr>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}<tr><td><strong>Due-date condition</strong></td><td colspan="3">${due} &nbsp; Carry-forward of several losses is generally subject to filing the return within time.</td></tr>`;
+}
+
+document.getElementById('regime').addEventListener('change',calculate);
+document.getElementById('returnFiled').addEventListener('change',calculate);
+document.getElementById('showSections').addEventListener('change',calculate);
+calculate();
+</script>
+</body>
+</html>

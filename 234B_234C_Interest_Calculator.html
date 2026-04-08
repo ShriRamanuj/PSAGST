@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interest Calculator — Section 234B &amp; 234C | Income Tax Act FY 2025–26</title>
+<style>
+:root {
+  --navy:#0f2d55;--navy-mid:#1a4a8a;--navy-light:#2563ba;
+  --accent:#d4a017;--accent-light:#f0c040;
+  --bg:#f4f6f9;--surface:#ffffff;--surface2:#eef1f7;
+  --border:#d0d8e8;--text:#1a2540;--text2:#4a5a7a;--text3:#7a8aaa;
+  --red:#b91c1c;--green:#166534;--green-bg:#f0fdf4;
+  --radius:10px;--radius-lg:14px;
+  --shadow:0 2px 12px rgba(15,45,85,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI','Trebuchet MS',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+
+header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 60%,var(--navy-light) 100%);position:relative;overflow:hidden}
+header::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.04)}
+header::after{content:'';position:absolute;bottom:-40px;left:20%;width:160px;height:160px;border-radius:50%;background:rgba(212,160,23,.10)}
+.hdr{max-width:1100px;margin:0 auto;padding:26px 32px 22px;position:relative;z-index:1}
+.hdr-badge{display:inline-block;background:rgba(212,160,23,.22);color:var(--accent-light);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 12px;border-radius:20px;border:1px solid rgba(212,160,23,.3);margin-bottom:10px}
+header h1{color:#fff;font-size:26px;font-weight:700;letter-spacing:-.3px;margin-bottom:4px}
+header h1 span{color:var(--accent-light)}
+header p{color:rgba(255,255,255,.65);font-size:13px}
+.hdr-meta{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap}
+.hchip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 14px;font-size:12px;color:rgba(255,255,255,.80)}
+.hchip .dot{width:7px;height:7px;border-radius:50%;background:var(--accent-light)}
+
+.main{max-width:1100px;margin:0 auto;padding:26px 32px 60px}
+
+.tabs{display:flex;gap:4px;margin-bottom:22px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:5px;width:fit-content;box-shadow:var(--shadow)}
+.tab-btn{padding:9px 22px;border:none;background:transparent;border-radius:calc(var(--radius-lg) - 3px);font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .2s}
+.tab-btn:hover{background:var(--surface2);color:var(--navy)}
+.tab-btn.active{background:var(--navy);color:#fff;box-shadow:0 2px 8px rgba(15,45,85,.25)}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card-title{font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--navy-light);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;font-weight:600;color:var(--text2)}
+.field input{height:38px;padding:0 12px;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:14px;font-family:inherit;transition:border-color .15s,box-shadow .15s;width:100%}
+.field input:focus{outline:none;border-color:var(--navy-light);box-shadow:0 0 0 3px rgba(37,99,186,.13)}
+
+.inst-hdr{display:grid;grid-template-columns:200px 1fr 1fr;gap:10px;margin-bottom:6px}
+.inst-hdr span{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;padding-left:2px}
+.inst-row{display:grid;grid-template-columns:200px 1fr 1fr;gap:10px;align-items:end;margin-bottom:10px}
+.inst-name{font-size:13px;font-weight:600;color:var(--text);padding-bottom:4px}
+.inst-sub{font-size:11px;color:var(--text3)}
+.due-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.due-cell{background:linear-gradient(135deg,#eef3fc,#f0f4fb);border:1px solid #c7d9f5;border-radius:10px;padding:12px 14px;position:relative;overflow:hidden}
+.due-cell::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--navy-light)}
+.due-cell .dc-inst{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:3px}
+.due-cell .dc-date{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.due-cell .dc-pct{font-size:11px;color:var(--text2);margin-bottom:6px}
+.due-cell .dc-amt{font-size:15px;font-weight:700;color:var(--navy-light);border-top:1px dashed #c7d9f5;padding-top:6px;margin-top:2px}
+.due-cell .dc-amt.na{font-size:11px;color:var(--text3);font-weight:400;font-style:italic}
+@media(max-width:700px){.due-bar{grid-template-columns:1fr 1fr}}
+.divider{height:1px;background:var(--border);margin:12px 0}
+
+.btn-row{display:flex;gap:10px;margin-top:4px}
+.btn{height:40px;padding:0 24px;border-radius:var(--radius);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .18s;border:1.5px solid transparent}
+.btn-primary{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);color:#fff;border-color:var(--navy);box-shadow:0 2px 8px rgba(15,45,85,.22)}
+.btn-primary:hover{background:linear-gradient(135deg,#0d2649 0%,#1a4a8a 100%);box-shadow:0 4px 14px rgba(15,45,85,.30);transform:translateY(-1px)}
+.btn-secondary{background:var(--surface);color:var(--text2);border-color:var(--border)}
+.btn-secondary:hover{background:var(--surface2);color:var(--navy)}
+.btn-accent{background:linear-gradient(135deg,#b45309,var(--accent));color:#fff;border-color:var(--accent);box-shadow:0 2px 8px rgba(180,83,9,.22)}
+.btn-accent:hover{box-shadow:0 4px 14px rgba(180,83,9,.30);transform:translateY(-1px)}
+
+.sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.mcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.mcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--navy-light)}
+.mcard.danger::before{background:var(--red)}
+.mcard.ok::before{background:#16a34a}
+.mcard .ml{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+.mcard .mv{font-size:24px;font-weight:700;color:var(--navy);letter-spacing:-.5px}
+.mcard.danger .mv{color:var(--red)}
+.mcard.ok .mv{color:#16a34a}
+.mcard .mn{font-size:11px;color:var(--text3);margin-top:4px}
+
+.rblock{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden}
+.rbhdr{background:linear-gradient(90deg,#eef3fc,#f8faff);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:10px}
+.rbhdr h3{font-size:13px;font-weight:700;color:var(--navy)}
+.stag{background:var(--navy);color:#fff;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px}
+.stag.ok{background:#15803d}
+.stag.warn{background:#b45309}
+
+.rtable{width:100%;border-collapse:collapse;font-size:13px}
+.rtable th{background:#f8faff;padding:9px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)}
+.rtable th.r,.rtable td.r{text-align:right}
+.rtable td{padding:9px 14px;border-bottom:1px solid #f0f4fb;color:var(--text);vertical-align:top}
+.rtable tr:last-child td{border-bottom:none;background:#f8faff;font-weight:700}
+.rtable .red{color:var(--red);font-weight:700}
+.rtable .grn{color:#16a34a;font-weight:600}
+.rtable .muted{color:var(--text3)}
+.rtable .strike{text-decoration:line-through;color:var(--text3);font-weight:400;margin-right:4px}
+
+.fnote{padding:10px 16px;background:#f8faff;border-top:1px solid var(--border);font-size:11px;color:var(--text3);line-height:1.7}
+.fnote b{color:var(--text2)}
+.info-bar{padding:10px 20px;background:#f0f6ff;border-bottom:1px solid #c7d9f5;font-size:12px;color:var(--text2);line-height:1.6}
+.info-bar b{color:var(--navy)}
+.na-banner{padding:12px 16px;background:var(--green-bg);border:1px solid #bbf7d0;border-radius:var(--radius);display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--green);margin:14px 20px}
+
+.plan-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:16px;box-shadow:var(--shadow)}
+.plan-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.plan-desc{font-size:12px;color:var(--text3);margin-bottom:16px;line-height:1.6}
+.pres{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-top:14px}
+
+@media print{
+  header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .tabs,.btn-row{display:none!important}
+  #tab-plan,#tab-guide{display:none!important}
+}
+@media(max-width:700px){
+  .main{padding:14px 12px 40px}
+  .hdr{padding:16px 14px}
+  .g3,.sum-grid{grid-template-columns:1fr}
+  .inst-row,.inst-hdr{grid-template-columns:1fr}
+  .inst-hdr{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <div class="hdr-badge">Income Tax Act · India</div>
+    <h1>Interest Calculator — <span>Sec. 234B &amp; 234C</span></h1>
+    <p>Advance Tax Interest &nbsp;|&nbsp; FY 2025–26 &nbsp;(AY 2026–27)</p>
+    <div class="hdr-meta">
+      <div class="hchip"><span class="dot"></span>234C — Quarterly shortfall (independent per quarter)</div>
+      <div class="hchip"><span class="dot"></span>234B — Default in advance tax (90% rule)</div>
+      <div class="hchip"><span class="dot"></span>Fully offline · No internet required</div>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('calc')">&#9654; Calculate Interest</button>
+    <button class="tab-btn" onclick="switchTab('plan')">&#128197; Payment Planner</button>
+    <button class="tab-btn" onclick="switchTab('guide')">&#9432; Law &amp; Rules</button>
+  </div>
+
+  <!-- ═══════ CALCULATOR ═══════ -->
+  <div id="tab-calc">
+
+    <div class="card">
+      <div class="card-title">Step 1 — Tax Liability &amp; TDS</div>
+      <div class="g3">
+        <div class="field">
+          <label>Total Income Tax Liability (₹) <span style="color:var(--red)">*</span></label>
+          <input type="number" id="totalTax" placeholder="e.g. 1000000" min="0" oninput="clearRes();updateDueBar()">
+        </div>
+        <div class="field">
+          <label>TDS / TCS Deducted during year (₹)</label>
+          <input type="number" id="tdsAmt" value="0" min="0" oninput="clearRes();updateDueBar()">
+        </div>
+        <div class="field">
+          <label>Self-Assessment Tax Paid (₹)</label>
+          <input type="number" id="saAmt" value="0" min="0" oninput="clearRes()">
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px 14px;background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;font-size:12px;color:#78350f;line-height:1.6">
+        <b>Advance Tax Obligation = Total Tax − TDS.</b>
+        TDS is a <b>separate credit</b> and is NOT an advance tax installment.
+        Quarterly shortfall for 234C is tested on <b>(Total Tax − TDS) × cumulative %</b>.
+        The 90% waiver applies only to Q4 (234C) and to 234B — not to Q1, Q2, Q3.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Step 2 — Advance Tax Installments</div>
+      <div class="due-bar" id="duebar">
+        <div class="due-cell"><div class="dc-inst">1st Installment</div><div class="dc-date">15 Jun 2025</div><div class="dc-pct">Cumulative ≥ 15% of (Tax−TDS)</div><div class="dc-amt na" id="damt1">Enter tax &amp; TDS above</div></div>
+        <div class="due-cell"><div class="dc-inst">2nd Installment</div><div class="dc-date">15 Sep 2025</div><div class="dc-pct">Cumulative ≥ 45% of (Tax−TDS)</div><div class="dc-amt na" id="damt2">Enter tax &amp; TDS above</div></div>
+        <div class="due-cell"><div class="dc-inst">3rd Installment</div><div class="dc-date">15 Dec 2025</div><div class="dc-pct">Cumulative ≥ 75% of (Tax−TDS)</div><div class="dc-amt na" id="damt3">Enter tax &amp; TDS above</div></div>
+        <div class="due-cell"><div class="dc-inst">4th Installment</div><div class="dc-date">15 Mar 2026</div><div class="dc-pct">Cumulative ≥ 100% of (Tax−TDS)</div><div class="dc-amt na" id="damt4">Enter tax &amp; TDS above</div></div>
+      </div>
+      <div class="inst-hdr">
+        <span>Installment</span><span>Amount Paid (₹)</span><span>Date of Payment</span>
+      </div>
+      <div class="inst-row">
+        <div><div class="inst-name">1st Installment</div><div class="inst-sub">Due: 15 Jun 2025 · Min 15%</div></div>
+        <div class="field"><label>Amount (₹)</label><input type="number" id="i1a" value="0" min="0" oninput="clearRes()"></div>
+        <div class="field"><label>Date of Payment</label><input type="date" id="i1d" oninput="clearRes()"></div>
+      </div>
+      <div class="inst-row">
+        <div><div class="inst-name">2nd Installment</div><div class="inst-sub">Due: 15 Sep 2025 · Min 45%</div></div>
+        <div class="field"><label>Amount (₹)</label><input type="number" id="i2a" value="0" min="0" oninput="clearRes()"></div>
+        <div class="field"><label>Date of Payment</label><input type="date" id="i2d" oninput="clearRes()"></div>
+      </div>
+      <div class="inst-row">
+        <div><div class="inst-name">3rd Installment</div><div class="inst-sub">Due: 15 Dec 2025 · Min 75%</div></div>
+        <div class="field"><label>Amount (₹)</label><input type="number" id="i3a" value="0" min="0" oninput="clearRes()"></div>
+        <div class="field"><label>Date of Payment</label><input type="date" id="i3d" oninput="clearRes()"></div>
+      </div>
+      <div class="inst-row">
+        <div><div class="inst-name">4th Installment</div><div class="inst-sub">Due: 15 Mar 2026 · 100%</div></div>
+        <div class="field"><label>Amount (₹)</label><input type="number" id="i4a" value="0" min="0" oninput="clearRes()"></div>
+        <div class="field"><label>Date of Payment</label><input type="date" id="i4d" oninput="clearRes()"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="inst-row">
+        <div><div class="inst-name">Lump Sum / Other</div><div class="inst-sub">Any other payment</div></div>
+        <div class="field"><label>Amount (₹)</label><input type="number" id="lpa" value="0" min="0" oninput="clearRes()"></div>
+        <div class="field"><label>Date of Payment</label><input type="date" id="lpd" oninput="clearRes()"></div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="calculate()">&#9654;&nbsp; Calculate Interest</button>
+      <button class="btn btn-secondary" onclick="resetAll()">&#8635;&nbsp; Reset</button>
+      <button class="btn btn-secondary" onclick="window.print()">&#128438;&nbsp; Print / PDF</button>
+    </div>
+
+    <div id="results" style="display:none;margin-top:22px"></div>
+
+  </div>
+
+  <!-- ═══════ PLANNER ═══════ -->
+  <div id="tab-plan" style="display:none">
+    <div class="plan-card">
+      <div class="plan-title">&#128197; What If I Pay on a Future Date?</div>
+      <div class="plan-desc">Enter unpaid balance and proposed payment date to see 234B interest on that date. Use this to pick the best date to minimise liability.</div>
+      <div class="g3">
+        <div class="field"><label>Unpaid Balance (Assessed Tax − Advance Tax) (₹)</label><input type="number" id="planAmt" placeholder="e.g. 200000" min="0"></div>
+        <div class="field"><label>Proposed Payment Date</label><input type="date" id="planDate"></div>
+        <div class="field" style="justify-content:flex-end"><button class="btn btn-accent" onclick="planCalc()" style="width:100%">Check Interest</button></div>
+      </div>
+      <div id="planResult"></div>
+    </div>
+    <div class="plan-card">
+      <div class="plan-title">&#128200; Month-wise 234B Interest Table</div>
+      <div class="plan-desc">Shows 234B interest for every month from April 2026 to March 2027 on a given unpaid balance.</div>
+      <div class="field" style="max-width:320px;margin-bottom:14px">
+        <label>Unpaid Balance (₹)</label>
+        <input type="number" id="tblBal" placeholder="Enter balance" min="0" oninput="buildTable()">
+      </div>
+      <div id="monthTable" style="overflow-x:auto"></div>
+    </div>
+  </div>
+
+  <!-- ═══════ GUIDE ═══════ -->
+  <div id="tab-guide" style="display:none">
+    <div class="card">
+      <div class="card-title">Section 234C — Correct Legal Position</div>
+      <table class="rtable">
+        <thead>
+          <tr><th>Installment</th><th>Due Date</th><th>Required Cumulative %<br><small>of (Total Tax − TDS)</small></th><th>234C Applies?</th><th>Rate</th><th>Period</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1st</td><td>15 Jun 2025</td><td>15%</td><td>Yes — if advance tax paid by 15 Jun &lt; 15% of (Tax−TDS)</td><td>1%/month</td><td>3 months</td></tr>
+          <tr><td>2nd</td><td>15 Sep 2025</td><td>45%</td><td>Yes — if cumulative advance tax paid by 15 Sep &lt; 45%</td><td>1%/month</td><td>3 months</td></tr>
+          <tr><td>3rd</td><td>15 Dec 2025</td><td>75%</td><td>Yes — if cumulative advance tax paid by 15 Dec &lt; 75%</td><td>1%/month</td><td>3 months</td></tr>
+          <tr><td>4th</td><td>15 Mar 2026</td><td>100%</td><td>Waived if (Advance Tax + TDS) ≥ 90% of Total Tax</td><td>1%/month</td><td>1 month</td></tr>
+        </tbody>
+      </table>
+      <div class="fnote">
+        <b>Critical Rule — Quarterly independence:</b> Each quarter's shortfall is assessed independently on the date it falls due. Excess paid in Q3 or Q4 does NOT cancel interest already accrued in Q1 or Q2.<br>
+        <b>TDS is NOT advance tax:</b> TDS does not count as a quarterly installment. It is a separate year-end credit. Quarterly obligation = (Total Tax − TDS) × %.<br>
+        <b>90% waiver — Q4 ONLY:</b> If aggregate (Advance Tax + TDS) ≥ 90% of Total Tax, Q4 234C is waived. This rule does NOT apply to Q1/Q2/Q3.<br>
+        <b>Exception:</b> Capital gains / casual income first earned after due date — proportionate 234C may be waived for that component.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Section 234B — Advance Tax Default</div>
+      <table class="rtable">
+        <thead><tr><th>Condition</th><th>Rate</th><th>Period</th><th>Base Amount</th></tr></thead>
+        <tbody>
+          <tr><td>Advance tax paid &lt; 90% of assessed tax<br><small>Assessed tax = Total Tax − TDS</small></td><td>1%/month or part</td><td>1 Apr 2026 → date of SA payment</td><td>Assessed Tax − Total Advance Tax Paid</td></tr>
+          <tr><td colspan="4"><b>Not applicable:</b> Assessed tax &lt; ₹10,000 &nbsp;|&nbsp; Advance tax ≥ 90% of assessed tax</td></tr>
+        </tbody>
+      </table>
+      <div class="fnote">Part of a month = full month. Interest runs till the date the self-assessment tax is actually paid.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Worked Example — verifying correct calculation</div>
+      <div style="font-size:13px;line-height:1.9;color:var(--text2)">
+        <b>Given:</b> Total Tax = ₹10,00,000 &nbsp;|&nbsp; TDS = ₹2,00,000 &nbsp;|&nbsp; Net Obligation = ₹8,00,000<br>
+        <b>Q1 (15 Jun):</b> Required = 15% × ₹8,00,000 = ₹1,20,000. Paid = ₹2,00,000. Shortfall = ₹0. <span style="color:#16a34a">No 234C.</span><br>
+        <b>Q2 (15 Sep):</b> Required = 45% × ₹8,00,000 = ₹3,60,000. Paid = ₹2,00,000. Shortfall = ₹1,60,000. 234C = ₹1,60,000 × 1% × 3 = <b style="color:var(--red)">₹4,800</b>.<br>
+        <b>Q3 (15 Dec):</b> Required = 75% × ₹8,00,000 = ₹6,00,000. Paid = ₹6,50,000. Shortfall = ₹0. <span style="color:#16a34a">No 234C.</span><br>
+        <b>Q4 (15 Mar):</b> Required = ₹8,00,000. Paid adv. = ₹8,00,000. Shortfall = ₹0. <span style="color:#16a34a">No 234C.</span><br>
+        <b>Total 234C = ₹4,800.</b> The Q2 shortfall is charged even though Q3 &amp; Q4 were fully paid on time.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+function $v(id){ return parseFloat(document.getElementById(id).value)||0; }
+function $d(id){ var v=document.getElementById(id).value; return v?new Date(v+'T00:00:00'):null; }
+function inr(n){ return '₹'+Math.round(n).toLocaleString('en-IN'); }
+function clearRes(){ document.getElementById('results').style.display='none'; }
+
+/* Live-update the installment due-amount cards in Step 2 */
+function updateDueBar(){
+  var totalTax=$v('totalTax');
+  var tds=$v('tdsAmt');
+  var netObl=Math.max(0, totalTax-tds);
+  var pcts=[0.15,0.45,0.75,1.00];
+  var labels=['15% of (Tax−TDS) = ','45% of (Tax−TDS) = ','75% of (Tax−TDS) = ','100% of (Tax−TDS) = '];
+  for(var i=1;i<=4;i++){
+    var el=document.getElementById('damt'+i);
+    if(totalTax>0){
+      var amt=Math.round(netObl*pcts[i-1]);
+      el.className='dc-amt';
+      el.innerHTML='<span style="font-size:10px;font-weight:600;color:var(--text2)">Min. cumulative to pay:</span><br>'+inr(amt);
+    } else {
+      el.className='dc-amt na';
+      el.innerHTML='Enter tax &amp; TDS above';
+    }
+  }
+}
+
+function switchTab(t){
+  ['calc','plan','guide'].forEach(function(id){
+    document.getElementById('tab-'+id).style.display=(t===id?'block':'none');
+  });
+  document.querySelectorAll('.tab-btn').forEach(function(b,i){
+    b.classList.toggle('active',['calc','plan','guide'][i]===t);
+  });
+}
+
+function resetAll(){
+  ['tdsAmt','saAmt','i1a','i2a','i3a','i4a','lpa'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='0';
+  });
+  document.getElementById('totalTax').value='';
+  ['i1d','i2d','i3d','i4d','lpd'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  clearRes();
+  updateDueBar();
+}
+
+/* Count months from 'from' to 'to' (part month = full month) */
+function mCount(from,to){
+  if(!from||!to||to<=from) return 0;
+  var m=0, c=new Date(from);
+  while(c<to){ c.setMonth(c.getMonth()+1); m++; }
+  return m;
+}
+
+/*
+ * Advance tax paid on or before cutoff date — TDS is NOT included.
+ * Only counts payments where actual payment date <= cutoff.
+ */
+function advByDate(cutoff, allPayments){
+  var t=0;
+  allPayments.forEach(function(p){ if(p.d && p.d<=cutoff) t+=p.a; });
+  return t;
+}
+
+function calculate(){
+  var totalTax=$v('totalTax');
+  if(!totalTax||totalTax<=0){ alert('Please enter Total Income Tax Liability.'); return; }
+
+  var tds=$v('tdsAmt');
+
+  /*
+   * NET ADVANCE TAX OBLIGATION = Total Tax − TDS
+   * TDS is NOT an advance tax installment — it is a separate year-end credit.
+   */
+  var netObl      = Math.max(0, totalTax - tds);
+  var assessedTax = netObl;   /* for 234B: Assessed tax = Total Tax − TDS */
+
+  /* Quarter due dates */
+  var DUE=[
+    new Date('2025-06-15T00:00:00'),   /* Q1 */
+    new Date('2025-09-15T00:00:00'),   /* Q2 */
+    new Date('2025-12-15T00:00:00'),   /* Q3 */
+    new Date('2026-03-15T00:00:00')    /* Q4 */
+  ];
+  var mar31 = new Date('2026-03-31T00:00:00');  /* last day of FY — advance tax cutoff */
+
+  var CPCT=[0.15,0.45,0.75,1.00];
+  var IMTH=[3,3,3,1];
+  var LBL=['1st Installment (Due: 15 Jun 2025)','2nd Installment (Due: 15 Sep 2025)','3rd Installment (Due: 15 Dec 2025)','4th Installment (Due: 15 Mar 2026)'];
+  var INSTNAMES=['1st installment','2nd installment','3rd installment','4th installment'];
+
+  /* Collect all named installments with their actual payment dates */
+  var inst=[
+    {a:$v('i1a'), d:$d('i1d'), name:INSTNAMES[0], due:DUE[0]},
+    {a:$v('i2a'), d:$d('i2d'), name:INSTNAMES[1], due:DUE[1]},
+    {a:$v('i3a'), d:$d('i3d'), name:INSTNAMES[2], due:DUE[2]},
+    {a:$v('i4a'), d:$d('i4d'), name:INSTNAMES[3], due:DUE[3]}
+  ];
+  var lump={a:$v('lpa'), d:$d('lpd'), name:'Lump sum'};
+
+  /*
+   * Build flat list of ALL payments for use in advByDate().
+   * Each entry has: actual payment date (d) and amount (a).
+   * A payment is advance tax only if paid on or before 31 Mar 2026.
+   * Payments after 31 Mar 2026 are self-assessment tax — excluded from advance tax.
+   */
+  var allPayments=[];
+  inst.forEach(function(i){ if(i.a>0 && i.d) allPayments.push({a:i.a, d:i.d}); });
+  if(lump.a>0 && lump.d) allPayments.push({a:lump.a, d:lump.d});
+
+  /*
+   * Total advance tax = sum of all payments made on or before 31 Mar 2026.
+   * Payments after 31 Mar are SA tax, not advance tax — do NOT count for 234B base.
+   */
+  var totalAdv = advByDate(mar31, allPayments);
+
+  /*
+   * Build late-payment warning notes per named installment.
+   * If a payment's actual date > its due date → it's late for that quarter.
+   * Show the user which quarter it was actually credited to.
+   */
+  var lateNotes=[];
+  inst.forEach(function(i){
+    if(i.a>0 && i.d && i.d>i.due){
+      /* find which quarter it actually gets credited to */
+      var creditedQ='';
+      if(i.d<=DUE[1]) creditedQ='Q2 (15 Sep 2025)';
+      else if(i.d<=DUE[2]) creditedQ='Q3 (15 Dec 2025)';
+      else if(i.d<=DUE[3]) creditedQ='Q4 (15 Mar 2026)';
+      else if(i.d<=mar31)  creditedQ='after Q4 — counts for 234B only, not 234C';
+      else                  creditedQ='after 31 Mar 2026 — this is Self-Assessment Tax, not advance tax';
+      lateNotes.push('<b>'+i.name+'</b> ('+inr(i.a)+'): paid on '
+        +i.d.toLocaleDateString('en-IN')+', which is after its due date '
+        +i.due.toLocaleDateString('en-IN')
+        +'. <b>Not counted for its own quarter.</b> Credited to: '+creditedQ+'.');
+    }
+  });
+  /* Lump sum note */
+  if(lump.a>0 && lump.d){
+    var ln='';
+    if(lump.d<=DUE[0])      ln='Counted in Q1 (on/before 15 Jun 2025)';
+    else if(lump.d<=DUE[1]) ln='Counted in Q2 (on/before 15 Sep 2025)';
+    else if(lump.d<=DUE[2]) ln='Counted in Q3 (on/before 15 Dec 2025)';
+    else if(lump.d<=DUE[3]) ln='Counted in Q4 (on/before 15 Mar 2026)';
+    else if(lump.d<=mar31)  ln='Paid after 15 Mar but before/on 31 Mar 2026 — counts as advance tax for 234B; NOT counted for any 234C quarter';
+    else                    ln='Paid after 31 Mar 2026 — this is Self-Assessment Tax, excluded from advance tax';
+    lateNotes.push('<b>Lump sum</b> ('+inr(lump.a)+'): paid '+lump.d.toLocaleDateString('en-IN')+'. '+ln+'.');
+  }
+
+  /*
+   * ═══════════════════════════════════════════════════════
+   * SECTION 234C — QUARTERLY SHORTFALL
+   * ═══════════════════════════════════════════════════════
+   * For each quarter q (0..3):
+   *   Required = netObl × CPCT[q]
+   *   Paid     = advByDate(DUE[q]) — sum of all payments where actual date ≤ DUE[q]
+   *              (TDS NOT included; late payments automatically fall into later quarter)
+   *   Shortfall= max(0, Required − Paid)
+   *   Interest = Shortfall × 1% × IMTH[q]
+   *
+   * Q1/Q2/Q3: charged independently — NO 90% waiver possible
+   * Q4 ONLY: waived if (totalAdv + tds) ≥ 90% of totalTax
+   *          Note: totalAdv here = payments on or before 31 Mar 2026
+   * ═══════════════════════════════════════════════════════
+   */
+  var rows234C=[], total234C=0;
+
+  for(var q=0;q<4;q++){
+    var req      = netObl * CPCT[q];
+    var advPaid  = advByDate(DUE[q], allPayments);  /* actual date-based — late = missed */
+    var shortfall= Math.max(0, req - advPaid);
+    var waived=false, wNote='';
+
+    if(q===3){
+      /*
+       * Q4: 90% aggregate waiver
+       * Aggregate = advance tax paid on or before 31 Mar 2026 + TDS
+       * If aggregate ≥ 90% of total tax → Q4 234C waived
+       */
+      var agg234C = totalAdv + tds;
+      if(agg234C >= totalTax * 0.90){
+        waived=true;
+        wNote='Waived — Advance Tax+TDS ('+inr(agg234C)+') ≥ 90% of Total Tax ('+inr(totalTax*0.90)+')';
+      }
+    }
+
+    var intC=(!waived && shortfall>0) ? Math.round(shortfall*0.01*IMTH[q]) : 0;
+    rows234C.push({
+      label:LBL[q], req:req, advPaid:advPaid,
+      shortfall:shortfall, months:IMTH[q],
+      interest:intC, waived:waived, wNote:wNote
+    });
+    total234C+=intC;
+  }
+
+  /*
+   * ═══════════════════════════════════════════════════════
+   * SECTION 234B
+   * Advance tax = payments on or before 31 Mar 2026 (totalAdv)
+   * Applies if totalAdv < 90% of assessedTax AND assessedTax ≥ ₹10,000
+   * Base    = assessedTax − totalAdv
+   * Period  = 1 Apr 2026 → today (part month = full month)
+   * ═══════════════════════════════════════════════════════
+   */
+  var total234B=0, applies234B=false, reason234B='', mths234B=0;
+  var bal234B   = assessedTax - totalAdv;
+  var apr2026   = new Date('2026-04-01T00:00:00');
+  var today     = new Date(); today.setHours(0,0,0,0);
+
+  if(assessedTax<10000){
+    reason234B='Assessed tax ('+inr(assessedTax)+') is below ₹10,000. Section 234B does not apply.';
+  } else if(totalAdv >= assessedTax*0.90){
+    reason234B='Advance tax paid by 31 Mar 2026 ('+inr(totalAdv)+') ≥ 90% of assessed tax ('+inr(assessedTax)+'). Section 234B does not apply.';
+  } else {
+    applies234B=true;
+    mths234B=mCount(apr2026,today); if(mths234B<1) mths234B=1;
+    total234B=Math.max(0,Math.round(bal234B*0.01*mths234B));
+  }
+
+  var grand  = total234B+total234C;
+  var balDue = Math.max(0, totalTax - tds - totalAdv);
+
+  /* ════ RENDER ════ */
+  var h='';
+
+  /* Top summary cards */
+  h+='<div class="sum-grid">';
+  h+='<div class="mcard '+(total234C>0?'danger':'ok')+'"><div class="ml">Section 234C</div><div class="mv">'+inr(total234C)+'</div><div class="mn">Quarterly installment shortfall</div></div>';
+  h+='<div class="mcard '+(total234B>0?'danger':'ok')+'"><div class="ml">Section 234B</div><div class="mv">'+inr(total234B)+'</div><div class="mn">Advance tax default</div></div>';
+  h+='<div class="mcard '+(grand>0?'danger':'ok')+'"><div class="ml">Total Interest Payable</div><div class="mv">'+inr(grand)+'</div><div class="mn">234B + 234C</div></div>';
+  h+='</div>';
+
+  /* Late payment / credit notes — shown only when relevant */
+  if(lateNotes.length>0){
+    h+='<div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:var(--radius-lg);padding:14px 20px;margin-bottom:14px;font-size:12px;line-height:1.8;color:#78350f">';
+    h+='<div style="font-weight:700;font-size:12px;margin-bottom:6px;color:#92400e">&#9888; Payment Crediting Notes</div>';
+    lateNotes.forEach(function(n){ h+='<div style="margin-bottom:4px">&#8594; '+n+'</div>'; });
+    h+='</div>';
+  }
+
+  /* ── 234C detail ── */
+  h+='<div class="rblock">';
+  h+='<div class="rbhdr"><span class="stag '+(total234C>0?'warn':'ok')+'">Sec. 234C</span><h3>Quarterly Installment Shortfall — Interest Calculation</h3></div>';
+  h+='<div class="info-bar">';
+  h+='<b>Net Advance Tax Obligation</b> = Total Tax ('+inr(totalTax)+') − TDS ('+inr(tds)+') = <b>'+inr(netObl)+'</b>. ';
+  h+='TDS of '+inr(tds)+' is a <b>separate credit</b> — not counted as advance tax installment. ';
+  h+='Each quarter is tested independently. Q1/Q2/Q3 shortfalls cannot be cancelled by later payments.';
+  h+='</div>';
+
+  h+='<table class="rtable"><thead><tr>';
+  h+='<th>Quarter</th>';
+  h+='<th class="r">Required Cumulative<br>Advance Tax (₹)</th>';
+  h+='<th class="r">Advance Tax Paid<br>by Due Date (₹)<br><small style="font-weight:400">(TDS not included)</small></th>';
+  h+='<th class="r">Shortfall (₹)</th>';
+  h+='<th class="r">Months</th>';
+  h+='<th class="r">234C Interest (₹)</th>';
+  h+='</tr></thead><tbody>';
+
+  rows234C.forEach(function(r){
+    var intCell='';
+    if(r.waived && r.shortfall>0){
+      var wAmt=Math.round(r.shortfall*0.01*r.months);
+      intCell='<span class="strike">'+wAmt.toLocaleString('en-IN')+'</span><span class="grn">0</span>';
+    } else {
+      intCell='<span class="'+(r.interest>0?'red':'')+'">'+r.interest.toLocaleString('en-IN')+'</span>';
+    }
+
+    var labelCell=r.label;
+    if(r.waived){
+      labelCell+=('<br><small style="color:#15803d;font-weight:600;font-size:11px">&#10003; '+r.wNote+'</small>');
+    }
+
+    h+='<tr>';
+    h+='<td>'+labelCell+'</td>';
+    h+='<td class="r">'+Math.round(r.req).toLocaleString('en-IN')+'</td>';
+    h+='<td class="r">'+Math.round(r.advPaid).toLocaleString('en-IN')+'</td>';
+    h+='<td class="r '+(r.shortfall>0?'red':'grn')+'">'+Math.round(r.shortfall).toLocaleString('en-IN')+'</td>';
+    h+='<td class="r muted">'+r.months+'</td>';
+    h+='<td class="r">'+intCell+'</td>';
+    h+='</tr>';
+  });
+
+  h+='<tr><td colspan="5" style="text-align:right">Total Section 234C Interest</td>';
+  h+='<td class="r '+(total234C>0?'red':'grn')+'">'+inr(total234C)+'</td></tr>';
+  h+='</tbody></table>';
+  h+='<div class="fnote">';
+  h+='<b>Formula:</b> Shortfall × 1% × 3 months (Q1/Q2/Q3) &nbsp;|&nbsp; Shortfall × 1% × 1 month (Q4 if not waived).<br>';
+  h+='<b>Late payments:</b> A payment made after a quarter\'s due date is NOT credited to that quarter. It is automatically credited to the next quarter in which it falls (based on actual payment date).<br>';
+  h+='<b>Q4 only:</b> Waived if (Total Advance Tax paid by 31 Mar 2026 + TDS) ≥ 90% of Total Tax Liability.<br>';
+  h+='<b>Payments after 31 Mar 2026</b> are Self-Assessment Tax — excluded from advance tax and from 234C entirely.';
+  h+='</div></div>';
+
+  /* ── 234B detail ── */
+  h+='<div class="rblock">';
+  h+='<div class="rbhdr"><span class="stag '+(applies234B?'warn':'ok')+'">Sec. 234B</span><h3>Default in Advance Tax Payment</h3></div>';
+  if(!applies234B){
+    h+='<div class="na-banner">&#10003;&nbsp;<span>'+reason234B+'</span></div>';
+  } else {
+    h+='<table class="rtable"><tbody>';
+    h+='<tr><td>Total Income Tax Liability</td><td class="r">'+inr(totalTax)+'</td></tr>';
+    h+='<tr><td>Less: TDS / TCS Deducted</td><td class="r muted">('+inr(tds)+')</td></tr>';
+    h+='<tr><td><b>Assessed Tax (Total Tax − TDS)</b></td><td class="r"><b>'+inr(assessedTax)+'</b></td></tr>';
+    h+='<tr><td>Less: Total Advance Tax Paid (all installments)</td><td class="r muted">('+inr(totalAdv)+')</td></tr>';
+    h+='<tr><td>Balance subject to Sec. 234B</td><td class="r"><b>'+inr(bal234B)+'</b></td></tr>';
+    h+='<tr><td>Period: 1 Apr 2026 → '+today.toLocaleDateString('en-IN')+'</td><td class="r">'+mths234B+' month(s)</td></tr>';
+    h+='<tr><td><b>Section 234B Interest @ 1% per month</b></td><td class="r red">'+inr(total234B)+'</td></tr>';
+    h+='</tbody></table>';
+  }
+  h+='<div class="fnote">Applies when advance tax paid (by 31 Mar 2026) &lt; 90% of assessed tax and assessed tax ≥ ₹10,000. Payments after 31 Mar 2026 are Self-Assessment Tax and do not reduce the 234B base. Interest from 1 Apr 2026 to date of self-assessment payment. Part month = full month.</div>';
+  h+='</div>';
+
+  /* ── Final summary ── */
+  h+='<div class="rblock">';
+  h+='<div class="rbhdr"><h3>&#128203; Final Tax Payable — Summary</h3></div>';
+  h+='<table class="rtable"><tbody>';
+  h+='<tr><td>Total Income Tax Liability</td><td class="r">'+inr(totalTax)+'</td></tr>';
+  h+='<tr><td>Less: TDS / TCS</td><td class="r muted">('+inr(tds)+')</td></tr>';
+  h+='<tr><td>Less: Total Advance Tax Paid</td><td class="r muted">('+inr(totalAdv)+')</td></tr>';
+  h+='<tr><td>Balance Tax (Self-Assessment)</td><td class="r"><b>'+inr(balDue)+'</b></td></tr>';
+  h+='<tr><td>Add: Section 234C Interest</td><td class="r '+(total234C>0?'red':'')+'">'+inr(total234C)+'</td></tr>';
+  h+='<tr><td>Add: Section 234B Interest (as of today)</td><td class="r '+(total234B>0?'red':'')+'">'+inr(total234B)+'</td></tr>';
+  h+='<tr><td><b>Total Amount Payable Now</b></td><td class="r '+(balDue+grand>0?'red':'grn')+'">'+inr(balDue+grand)+'</td></tr>';
+  h+='</tbody></table></div>';
+
+  document.getElementById('results').innerHTML=h;
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+
+  /* sync planner balance */
+  document.getElementById('tblBal').value=Math.max(0,Math.round(bal234B));
+  buildTable();
+}
+
+/* ── PLANNER ── */
+function planCalc(){
+  var amt=$v('planAmt'), pd=$d('planDate');
+  var apr2026=new Date('2026-04-01T00:00:00');
+  var res=document.getElementById('planResult');
+  if(!amt||!pd){ res.innerHTML='<div class="pres" style="color:var(--red)">Please enter both balance and date.</div>'; return; }
+  if(pd<=apr2026){ res.innerHTML='<div class="pres" style="color:var(--red)">Date must be after 31 March 2026.</div>'; return; }
+  var m=mCount(apr2026,pd); if(m<1)m=1;
+  var interest=Math.round(amt*0.01*m);
+  res.innerHTML='<div class="pres"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">'
+    +'<div><div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Months (Apr 2026)</div><div style="font-size:22px;font-weight:700;color:var(--navy)">'+m+'</div></div>'
+    +'<div><div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">234B Interest</div><div style="font-size:22px;font-weight:700;color:var(--red)">'+inr(interest)+'</div></div>'
+    +'<div><div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Total Outflow</div><div style="font-size:22px;font-weight:700;color:var(--navy)">'+inr(amt+interest)+'</div></div>'
+    +'</div><div style="margin-top:10px;font-size:12px;color:var(--text3)">Formula: '+inr(amt)+' × 1% × '+m+' months = '+inr(interest)+'</div></div>';
+}
+
+function buildTable(){
+  var bal=$v('tblBal');
+  var el=document.getElementById('monthTable');
+  if(!bal||bal<=0){ el.innerHTML=''; return; }
+  var MN=['April 2026','May 2026','June 2026','July 2026','August 2026','September 2026','October 2026','November 2026','December 2026','January 2027','February 2027','March 2027'];
+  var pm=Math.round(bal*0.01);
+  var h='<table class="rtable"><thead><tr><th>Payment Month</th><th class="r">Months</th><th class="r">234B Interest (₹)</th><th class="r">Total Outflow (₹)</th><th class="r">Interest %</th></tr></thead><tbody>';
+  MN.forEach(function(m,i){
+    var mn=i+1, it=Math.round(bal*0.01*mn), pt=((it/bal)*100).toFixed(1);
+    h+='<tr'+(mn===1?' style="background:#f0fdf4"':'')+'>';
+    h+='<td>'+m+(mn===1?' <span style="font-size:10px;background:#16a34a;color:#fff;padding:1px 7px;border-radius:10px;margin-left:4px">Earliest</span>':'')+'</td>';
+    h+='<td class="r">'+mn+'</td>';
+    h+='<td class="r '+(it>0?'red':'')+'">'+it.toLocaleString('en-IN')+'</td>';
+    h+='<td class="r" style="font-weight:600">'+Math.round(bal+it).toLocaleString('en-IN')+'</td>';
+    h+='<td class="r muted">'+pt+'%</td>';
+    h+='</tr>';
+  });
+  h+='</tbody></table><div class="fnote" style="margin-top:6px">Each month of delay adds '+inr(pm)+' in additional 234B interest.</div>';
+  el.innerHTML=h;
+}
+</script>
+</body>
+</html>
