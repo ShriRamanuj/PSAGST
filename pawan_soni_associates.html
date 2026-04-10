@@ -247,6 +247,7 @@
   /* ── CLIENT RESOURCES ──────────────────────────── */
   .resources-section { background: var(--cream); }
   .resources-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 50px; }
+  .resources-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; margin-top: 50px; }
   .resource-group { }
   .resource-group-title {
     display: flex; align-items: center; gap: 12px;
@@ -262,6 +263,44 @@
   }
   .rg-gst { background: #fff3e0; }
   .rg-it { background: #e8f5e9; }
+  .rg-others { background: #ede7f6; }
+
+  /* ── OTHERS / CALENDAR CARDS ───────────────────── */
+  .calendar-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 4px; }
+  .cal-card {
+    border-radius: 14px; padding: 22px 20px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    display: flex; flex-direction: column; gap: 10px;
+    transition: all 0.25s;
+  }
+  .cal-card:hover {
+    border-color: #7c3aed;
+    box-shadow: 0 6px 24px rgba(124,58,237,0.10);
+    transform: translateY(-3px);
+  }
+  .cal-card-header { display: flex; align-items: center; gap: 10px; }
+  .cal-icon-wrap {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: #ede7f6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .cal-card h5 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; font-weight: 700; color: var(--navy);
+    line-height: 1.3;
+  }
+  .cal-card p { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+  .cal-add-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: linear-gradient(135deg, #7c3aed, #9d5ff5);
+    color: #fff; border-radius: 6px;
+    padding: 9px 16px; font-size: 12.5px; font-weight: 600;
+    text-decoration: none; letter-spacing: 0.3px;
+    transition: all 0.25s; align-self: flex-start;
+  }
+  .cal-add-btn:hover { background: linear-gradient(135deg, #6d28d9, #8b4ff3); box-shadow: 0 4px 16px rgba(124,58,237,0.3); }
 
   .resource-link {
     display: flex; align-items: center; gap: 12px;
@@ -460,10 +499,10 @@
       <ul class="contact-list">
         <li><span class="icon">🏢</span> <strong style="color:var(--gold-light);font-size:11px;letter-spacing:1px;">OFFICE</strong></li>
         <li><span class="icon">📞</span> 0230-2422383 &nbsp;|&nbsp; 82753 05501</li>
-        <li><span class="icon">📧</span> <a href="mailto:pawansonisinfo@gmail.com">pawansonisinfo@gmail.com</a></li>
+        <li><span class="icon">📧</span> <a href="/cdn-cgi/l/email-protection#7707160016190418191e041e19111837101a161e1b5914181a"><span class="__cf_email__" data-cfemail="dfafbea8beb1acb0b1b6acb6b1b9b09fb8b2beb6b3f1bcb0b2">[email&#160;protected]</span></a></li>
         <li><span class="icon">👤</span> <strong style="color:var(--gold-light);font-size:11px;letter-spacing:1px;">CA PAWANKUMAR SONI</strong></li>
         <li><span class="icon">📞</span> 77749 15001 &nbsp;|&nbsp; 98509 77528</li>
-        <li><span class="icon">📧</span> <a href="mailto:capawansonis@gmail.com">capawansonis@gmail.com</a> &nbsp;|&nbsp; <a href="mailto:pawansonis@icai.org">pawansonis@icai.org</a></li>
+        <li><span class="icon">📧</span> <a href="/cdn-cgi/l/email-protection#7b181a0b1a0c1a1508141512083b1c161a121755181416"><span class="__cf_email__" data-cfemail="385b5948594f59564b5756514b785f55595154165b5755">[email&#160;protected]</span></a> &nbsp;|&nbsp; <a href="/cdn-cgi/l/email-protection#8fffeef8eee1fce0e1e6fccfe6eceee6a1e0fde8"><span class="__cf_email__" data-cfemail="2757465046495448494e54674e44464e09485540">[email&#160;protected]</span></a></li>
         <li><span class="icon">🌐</span> <a href="https://shriramanuj.github.io/PSAGST/pawan_soni_associates.html#" target="_blank">shriramanuj.github.io/PSAGST</a></li>
         <li><span class="icon">📍</span> Ichalkaranji, Maharashtra 416115</li>
       </ul>
@@ -680,6 +719,46 @@
         </a>
       </div>
     </div>
+
+    <!-- OTHERS -->
+    <div style="margin-top:40px;">
+      <div class="resource-group">
+        <div class="resource-group-title">
+          <div class="rg-icon rg-others">🗓️</div>
+          Others — Calendars &amp; Utilities
+        </div>
+        <div class="calendar-cards">
+
+          <!-- Calendar 1: Client Compliance -->
+          <div class="cal-card">
+            <div class="cal-card-header">
+              <div class="cal-icon-wrap">📅</div>
+              <h5>Pawan Soni &amp; Assoc<br>Client Compliance Calendar</h5>
+            </div>
+            <p>Stay on top of all GST and Income Tax compliance deadlines. Subscribe to this Google Calendar to receive timely reminders for due dates relevant to your business.</p>
+            <a href="https://calendar.google.com/calendar/u/0?cid=ZTk0YTIzYjRlMzQxMGFhNjc4ZjMzNmM4MzY0NzA4MTc1ZDBkNTIyNWFlMzIxNGUxMWQzOWU3MTQzYmVkNjI1MkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t"
+               target="_blank" class="cal-add-btn">
+              ➕ Add to Google Calendar
+            </a>
+          </div>
+
+          <!-- Calendar 2: Nakshatra & Tithi -->
+          <div class="cal-card">
+            <div class="cal-card-header">
+              <div class="cal-icon-wrap">🕉️</div>
+              <h5>Daily Nakshatra Calendar<br>+ Daily Thithi</h5>
+            </div>
+            <p>A spiritual calendar showing daily Nakshatra and Thithi for religious observances, festivals, and auspicious timings. Ideal for Vaishnav followers and devotees.</p>
+            <a href="https://calendar.google.com/calendar/u/0?cid=YTg4ODRlODE1MjYzMDIzNjdhMjFmNGM3OTA5NDY1ZWUxMWM3ZDljMWVjZDk0YzI5NTUyNDhjODgzMDZiZjkzNEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t"
+               target="_blank" class="cal-add-btn">
+              ➕ Add to Google Calendar
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -772,7 +851,7 @@
             <div class="ci-label">Office</div>
             <div class="ci-value">
               <a href="tel:02302422383">0230-2422383</a> &nbsp;|&nbsp; <a href="tel:8275305501">82753 05501</a><br>
-              <a href="mailto:pawansonisinfo@gmail.com">pawansonisinfo@gmail.com</a>
+              <a href="/cdn-cgi/l/email-protection#f4849583959a879b9a9d879d9a929bb49399959d98da979b99"><span class="__cf_email__" data-cfemail="afdfced8cec1dcc0c1c6dcc6c1c9c0efc8c2cec6c381ccc0c2">[email&#160;protected]</span></a>
             </div>
           </div>
         </div>
@@ -782,24 +861,4 @@
             <div class="ci-label">CA Pawankumar Soni</div>
             <div class="ci-value">
               <a href="tel:7774915001">77749 15001</a> &nbsp;|&nbsp; <a href="tel:9850977528">98509 77528</a><br>
-              <a href="mailto:capawansonis@gmail.com">capawansonis@gmail.com</a> &nbsp;|&nbsp; <a href="mailto:pawansonis@icai.org">pawansonis@icai.org</a>
-            </div>
-          </div>
-        </div>
-        <div class="ci-row">
-          <div class="ci-icon">👤</div>
-          <div>
-            <div class="ci-label">Dattatray Pujari</div>
-            <div class="ci-value"><a href="tel:9325377528">93253 77528</a></div>
-          </div>
-        </div>
-        <div class="ci-row">
-          <div class="ci-icon">🕐</div>
-          <div>
-            <div class="ci-label">Office Hours</div>
-            <div class="ci-value">Mon–Sat: 10:00 AM – 6:30 PM</div>
-          </div>
-        </div>
-        <div class="social-row">
-          <a href="https://maps.app.goo.gl/sYRs3QgvmyXkM1nW9" target="_blank" class="social-btn">🗺️ Google Maps</a>
-          <a href="/cdn
+              <a href="/cdn-cgi/l/email-protection#0a696b7a6b7d6b6479656463794a6d676b636624696567"><span class="__cf_email__" data-cfemail="294a4859485e48475a4647405a694e44484045074a4644">[email&#160;protected]</span></a> &nbsp;|&nbsp; <a href="/cdn-cgi/l/email-protection#daaabbadbbb4a9b5b4b3a99ab3b9bbb3f4b5a8bd"><spa
