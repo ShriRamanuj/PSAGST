@@ -23743,6 +23743,7 @@ async function exportToDocx() {
   const tbody = document.getElementById('table-body');
   const exportData = [];
   let slCounter = 1;
+  let exCounter = 1;
   Array.from(tbody.rows).forEach(tr => {
     if (tr.classList.contains('part-row')) {
       exportData.push({ isPartRow: true, label: tr.querySelector('td').textContent.trim() });
@@ -23751,9 +23752,8 @@ async function exportToDocx() {
     if (tr.classList.contains('data-row')) {
       const cb = tr.querySelector('.toggle-cb');
       if (!cb || !cb.checked) return;
-      exportData.push({ isPartRow: false, slNo: slCounter++,
+      exportData.push({ isPartRow: false, slNo: slCounter++, exhibit: String(exCounter++),
         content: tr.querySelector('.content-cell').textContent.trim(),
-        exhibit: tr.querySelector('.exhibit-input').value.trim(),
         page:    tr.querySelector('.page-input').value.trim() });
     }
     if (tr.classList.contains('blank-row')) {
@@ -23761,9 +23761,8 @@ async function exportToDocx() {
       if (!cb || !cb.checked) return;
       const content = (tr.querySelector('.blank-content')?.value || '').trim();
       if (!content) return;
-      exportData.push({ isPartRow: false, slNo: slCounter++, content,
-        exhibit: tr.querySelector('.exhibit-input').value.trim(),
-        page:    tr.querySelector('.page-input').value.trim() });
+      exportData.push({ isPartRow: false, slNo: slCounter++, exhibit: String(exCounter++), content,
+        page: tr.querySelector('.page-input').value.trim() });
     }
   });
 
