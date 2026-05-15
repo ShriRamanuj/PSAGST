@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShriRamanuj – All Website Links</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --accent: #f0a500;
+    --accent2: #e05c00;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --psagst: #1f6feb;
+    --prandhan: #3fb950;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 20px 60px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+    animation: fadeDown 0.7s ease both;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+  }
+
+  .section {
+    max-width: 860px;
+    margin: 0 auto 40px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.2s; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .badge-psagst {
+    background: rgba(31,111,235,0.15);
+    color: var(--psagst);
+    border: 1px solid rgba(31,111,235,0.3);
+  }
+
+  .badge-prandhan {
+    background: rgba(63,185,80,0.15);
+    color: var(--prandhan);
+    border: 1px solid rgba(63,185,80,0.3);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--text);
+  }
+
+  .link-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .link-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 18px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .link-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .psagst-item::before { background: var(--psagst); }
+  .prandhan-item::before { background: var(--prandhan); }
+
+  .link-item:hover {
+    border-color: var(--accent);
+    background: #1c2128;
+    transform: translateX(4px);
+  }
+
+  .link-item:hover::before { opacity: 1; }
+
+  .num {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--muted);
+    min-width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .link-text {
+    font-size: 0.9rem;
+    color: #a5c3ff;
+    word-break: break-all;
+    flex: 1;
+  }
+
+  .prandhan-item .link-text { color: #9be0a8; }
+
+  .arrow {
+    color: var(--muted);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    transition: color 0.2s, transform 0.2s;
+  }
+
+  .link-item:hover .arrow {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin-top: 48px;
+    opacity: 0.6;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ShriRamanuj Websites</h1>
+  <p>All GitHub Pages Links · PSAGST &amp; Prandhan Repositories</p>
+</header>
+
+<!-- PSAGST Section -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-badge badge-psagst">PSAGST</span>
+    <span class="section-title">Tax &amp; GST Tools</span>
+  </div>
+  <div class="link-list">
+    <a class="link-item psagst-item" href="https://ShriRamanuj.github.io/PSAGST/234B_234C_Interest_Calculator.html" target="_blank">
+      <span class="num">1</span>
+      <span class="link-text">https://ShriRamanuj.github.io/PSAGST/234B_234C_Interest_Calculator.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item psagst-item" href="https://ShriRamanuj.github.io/PSAGST/Book_Retention_Checker.html" target="_blank">
+      <span class="num">2</span>
+      <span class="link-text">https://ShriRamanuj.github.io/PSAGST/Book_Retention_Checker.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item psagst-item" href="https://ShriRamanuj.github.io/PSAGST/FAA_Index.html" target="_blank">
+      <span class="num">3</span>
+      <span class="link-text">https://ShriRamanuj.github.io/PSAGST/FAA_Index.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item psagst-item" href="https://ShriRamanuj.github.io/PSAGST/GST_Knowledge_Base_4907.html" target="_blank">
+      <span class="num">4</span>
+      <span class="link-text">https://ShriRamanuj.github.io/PSAGST/GST_Knowledge_Base_4907.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item psagst-item" href="https://ShriRamanuj.github.io/PSAGST/Losses_SetOff_Rules.html" target="_blank">
+      <span class="num">5</span>
+      <span class="link-text">https://ShriRamanuj.github.io/PSAGST/Losses_SetOff_Rules.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item psagst-item" href="https://ShriRamanuj.github.io/PSAGST/Medical_Policy_Files.html" target="_blank">
+      <span class="num">6</span>
+      <span class="link-text">https://ShriRamanuj.github.io/PSAGST/Medical_Policy_Files.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item psagst-item" href="https://ShriRamanuj.github.io/PSAGST/SHAKTI_TDS_Chart_FY2026-27.html" target="_blank">
+      <span class="num">7</span>
+      <span class="link-text">https://ShriRamanuj.github.io/PSAGST/SHAKTI_TDS_Chart_FY2026-27.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item psagst-item" href="https://ShriRamanuj.github.io/PSAGST/abdvd_sdfsd_jatin_gst_ref_v4.html" target="_blank">
+      <span class="num">8</span>
+      <span class="link-text">https://ShriRamanuj.github.io/PSAGST/abdvd_sdfsd_jatin_gst_ref_v4.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item psagst-item" href="https://ShriRamanuj.github.io/PSAGST/asil_sosow_allied_laws_ref_v2.html" target="_blank">
+      <span class="num">9</span>
+      <span class="link-text">https://ShriRamanuj.github.io/PSAGST/asil_sosow_allied_laws_ref_v2.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item psagst-item" href="https://ShriRamanuj.github.io/PSAGST/axdyd_sdgis_cgst_igst_utgst_ref.html" target="_blank">
+      <span class="num">10</span>
+      <span class="link-text">https://ShriRamanuj.github.io/PSAGST/axdyd_sdgis_cgst_igst_utgst_ref.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item psagst-item" href="https://ShriRamanuj.github.io/PSAGST/gstat_proc_rules_2025.html" target="_blank">
+      <span class="num">11</span>
+      <span class="link-text">https://ShriRamanuj.github.io/PSAGST/gstat_proc_rules_2025.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item psagst-item" href="https://ShriRamanuj.github.io/PSAGST/okji_ushes_inspection_search.html" target="_blank">
+      <span class="num">12</span>
+      <span class="link-text">https://ShriRamanuj.github.io/PSAGST/okji_ushes_inspection_search.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item psagst-item" href="https://ShriRamanuj.github.io/PSAGST/pawan_soni_associates.html" target="_blank">
+      <span class="num">13</span>
+      <span class="link-text">https://ShriRamanuj.github.io/PSAGST/pawan_soni_associates.html</span>
+      <span class="arrow">↗</span>
+    </a>
+  </div>
+</div>
+
+<!-- Prandhan Section -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-badge badge-prandhan">Prandhan</span>
+    <span class="section-title">Bhajan, Insurance &amp; More</span>
+  </div>
+  <div class="link-list">
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/Care_senior_sonis.html" target="_blank">
+      <span class="num">14</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/Care_senior_sonis.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/Girdhar_Gopal_Soni_Insurance.html" target="_blank">
+      <span class="num">15</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/Girdhar_Gopal_Soni_Insurance.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/IPA%20PLAN.html" target="_blank">
+      <span class="num">16</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/IPA PLAN.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/IPA.html" target="_blank">
+      <span class="num">17</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/IPA.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/Shree_Vaishnav_Bhajan_Mala.html" target="_blank">
+      <span class="num">18</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/Shree_Vaishnav_Bhajan_Mala.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/Shree_Vaishnav_Prandhan.html" target="_blank">
+      <span class="num">19</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/Shree_Vaishnav_Prandhan.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/care_comparison_heart_senior_shine.html" target="_blank">
+      <span class="num">20</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/care_comparison_heart_senior_shine.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/care_heart_sonis.html" target="_blank">
+      <span class="num">21</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/care_heart_sonis.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/care_supreme_shine.html" target="_blank">
+      <span class="num">22</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/care_supreme_shine.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/care_supreme_sonis.html" target="_blank">
+      <span class="num">23</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/care_supreme_sonis.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/chandavali.html" target="_blank">
+      <span class="num">24</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/chandavali.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/chandavali_1_800.html" target="_blank">
+      <span class="num">25</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/chandavali_1_800.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/digital_discipline.html" target="_blank">
+      <span class="num">26</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/digital_discipline.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/faq.html" target="_blank">
+      <span class="num">27</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/faq.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/girdhar_gopal_plan_comparison.html" target="_blank">
+      <span class="num">28</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/girdhar_gopal_plan_comparison.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/index.html" target="_blank">
+      <span class="num">29</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/index.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/optima_secure_plus_sonis.html" target="_blank">
+      <span class="num">30</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/optima_secure_plus_sonis.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/optima_secure_sonis.html" target="_blank">
+      <span class="num">31</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/optima_secure_sonis.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/pawan_soni_associates.html" target="_blank">
+      <span class="num">32</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/pawan_soni_associates.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/ramanuj_swamiji.html" target="_blank">
+      <span class="num">33</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/ramanuj_swamiji.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/salary_calculator_psa_v6.html" target="_blank">
+      <span class="num">34</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/salary_calculator_psa_v6.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/shrinidhiji_notes_hindi.html" target="_blank">
+      <span class="num">35</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/shrinidhiji_notes_hindi.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/soni_insurance_portal.html" target="_blank">
+      <span class="num">36</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/soni_insurance_portal.html</span>
+      <span class="arrow">↗</span>
+    </a>
+    <a class="link-item prandhan-item" href="https://ShriRamanuj.github.io/Prandhan/vbg_seva.html" target="_blank">
+      <span class="num">37</span>
+      <span class="link-text">https://ShriRamanuj.github.io/Prandhan/vbg_seva.html</span>
+      <span class="arrow">↗</span>
+    </a>
+  </div>
+</div>
+
+<footer>ShriRamanuj · 37 Links · PSAGST (13) + Prandhan (24)</footer>
+
+</body>
+</html>
