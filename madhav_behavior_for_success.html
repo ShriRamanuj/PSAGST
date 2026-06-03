@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overcoming Behavioral Challenges for Success | Daily Revision Notes — Madhav</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia', serif; background: #f0ece2; padding: 20px 12px; }
+
+  .page-header {
+    text-align: center; background: #1a3a5c; color: #fff;
+    padding: 18px 20px; border-radius: 10px; margin-bottom: 28px;
+  }
+  .page-header h1 { font-size: 20px; letter-spacing: 1px; text-transform: uppercase; }
+  .page-header p  { font-size: 11px; margin-top: 5px; opacity: .85; font-style: italic; }
+  .page-header .meta { font-size: 10px; margin-top: 4px; opacity: .75; }
+
+  .sc {
+    background: #fff; border: 2px solid #1a3a5c; border-radius: 10px;
+    padding: 16px 14px; max-width: 1100px; margin: 0 auto 26px auto;
+    page-break-inside: avoid; break-inside: avoid;
+  }
+  .sc-header { border-bottom: 1px solid #d0d8e4; padding-bottom: 8px; margin-bottom: 6px; }
+  .sc-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .sc-title-text {
+    flex: 1; text-align: center; font-weight: bold; color: #1a3a5c;
+    font-size: 13px; text-transform: uppercase; letter-spacing: .5px;
+  }
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #1a3a5c; color: #fff; text-decoration: none;
+    font-size: 10px; font-weight: bold; padding: 4px 10px;
+    border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+  }
+  .back-btn:hover { background: #2e6da4; }
+  .sc-page { font-size:10px; font-style:italic; color:#777; text-align:center; margin-bottom:14px; }
+
+  .tree  { display: flex; flex-direction: column; align-items: center; page-break-inside: avoid; break-inside: avoid; }
+  .vl    { width: 2px; background: #1a3a5c; margin: 0 auto; }
+  .vl-r  { width: 2px; background: #c0392b; margin: 0 auto; }
+  .vl-g  { width: 2px; background: #27ae60; margin: 0 auto; }
+  .vl-o  { width: 2px; background: #e67e22; margin: 0 auto; }
+  .vl-p  { width: 2px; background: #8e44ad; margin: 0 auto; }
+  .vl-y  { width: 2px; background: #f39c12; margin: 0 auto; }
+  .vl-b  { width: 2px; background: #2e6da4; margin: 0 auto; }
+  .hl    { height: 2px; background: #1a3a5c; }
+  .hl-r  { height: 2px; background: #c0392b; }
+  .hl-g  { height: 2px; background: #27ae60; }
+  .hl-b  { height: 2px; background: #2e6da4; }
+  .hl-y  { height: 2px; background: #f39c12; }
+  .hl-p  { height: 2px; background: #8e44ad; }
+
+  .n     { border-radius: 7px; padding: 7px 10px; text-align: center; font-size: 11.5px; line-height: 1.4; box-shadow: 0 2px 5px rgba(0,0,0,.1); }
+  .root  { background: #1a3a5c; color: #fff; font-size: 14px; font-weight: bold; padding: 11px 26px; }
+  .l1    { background: #2e6da4; color: #fff; font-weight: bold; font-size: 11.5px; }
+  .red   { background: #fdecea; border: 1.5px solid #c0392b; color: #7b241c; }
+  .grn   { background: #eafaf1; border: 1.5px solid #27ae60; color: #1e8449; }
+  .ylw   { background: #fef9e7; border: 1.5px solid #f39c12; color: #7d6608; }
+  .org   { background: #fef0e6; border: 1.5px solid #e67e22; color: #784212; }
+  .pur   { background: #f5eef8; border: 1.5px solid #8e44ad; color: #6c3483; }
+  .blu   { background: #e8f4fd; border: 1.5px solid #2e6da4; color: #1a3a5c; }
+
+  .tag   { display: inline-block; border-radius: 3px; padding: 1px 5px; font-size: 9px; font-weight: bold; color: #fff; margin-bottom: 3px; }
+  .t-r   { background: #c0392b; }
+  .t-g   { background: #27ae60; }
+  .t-y   { background: #e67e22; }
+  .t-p   { background: #8e44ad; }
+  .t-b   { background: #2e6da4; }
+
+  .brow  { display: flex; justify-content: space-around; width: 100%; page-break-inside: avoid; break-inside: avoid; align-items: flex-start; gap:8px; }
+  .br    { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 100px; page-break-inside: avoid; break-inside: avoid; }
+  .mn    { border-radius: 5px; padding: 5px 7px; font-size: 10px; text-align: center; line-height: 1.3; }
+
+  .pe    { background: #fffde7; border: 1.5px dashed #f9a825; border-radius: 6px; padding: 4px 8px; font-size: 10px; color: #5d4037; font-style: italic; margin-top: 2px; text-align: center; max-width: 220px; }
+  .eg    { background: #e8f5e9; border: 1.5px dashed #43a047; border-radius: 6px; padding: 4px 8px; font-size: 10px; color: #1b5e20; margin-top: 2px; text-align: center; max-width: 240px; }
+
+  .toc { background:#e8f4fd; border:1.5px solid #2e6da4; border-radius:8px; padding:14px 18px; max-width:1100px; margin:0 auto 26px auto; }
+  .toc-title { font-weight:bold; color:#1a3a5c; font-size:13px; margin-bottom:10px; }
+  .toc-grid { display:flex; flex-wrap:wrap; gap:6px; }
+  .toc-item { background:#fff; border:1px solid #2e6da4; border-radius:5px; padding:4px 10px; font-size:11px; }
+  .toc-item a { color:#2e6da4; text-decoration:none; }
+  .toc-item-arsenal { background:#4a0e0e; border:1px solid #f5c518; border-radius:5px; padding:4px 10px; font-size:11px; }
+  .toc-item-arsenal a { color:#f5c518 !important; text-decoration:none; }
+
+  /* ── DAILY REVISION ARSENAL (adapted from Hearing Arsenal) ── */
+  .arsenal {
+    background: #4a0e0e; border-radius: 10px;
+    padding: 20px 18px; max-width: 1100px; margin: 0 auto 26px auto;
+    page-break-before: always; break-before: page;
+    page-break-inside: avoid; break-inside: avoid;
+  }
+  .arsenal-header { border-bottom: 1.5px solid #f5c518; padding-bottom: 10px; margin-bottom: 16px; }
+  .arsenal-title-row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .arsenal-title { flex:1; text-align:center; color:#f5c518; font-size:15px; font-weight:bold; text-transform:uppercase; letter-spacing:1.5px; }
+  .arsenal-back-btn {
+    display:inline-flex; align-items:center; gap:4px;
+    background:#f5c518; color:#4a0e0e; text-decoration:none;
+    font-size:10px; font-weight:bold; padding:4px 10px;
+    border-radius:20px; white-space:nowrap; flex-shrink:0;
+  }
+  .arsenal-purpose { font-size:11px; color:#e8c87a; font-style:italic; text-align:center; margin-top:8px; }
+  .arsenal-card {
+    background:#fff; border-left:4px solid #f5c518; border-radius:6px;
+    padding:12px 14px; margin-bottom:14px;
+    page-break-inside:avoid; break-inside:avoid;
+  }
+  .ac-name  { font-size:12.5px; font-weight:bold; color:#4a0e0e; text-decoration:underline; margin-bottom:2px; }
+  .ac-court { font-size:10px; color:#666; margin-bottom:8px; font-style:italic; }
+  .ac-label { font-size:9.5px; font-weight:bold; color:#2e6da4; text-transform:uppercase; letter-spacing:.5px; margin-bottom:3px; }
+  .ac-ratio { font-size:12px; font-style:italic; color:#1a1a1a; font-family:'Georgia',serif; line-height:1.6; padding-left:10px; border-left:2px solid #f5c518; margin-bottom:8px; }
+  .ac-when  { display:inline-block; background:#f5c518; color:#4a0e0e; font-size:10px; font-weight:bold; padding:3px 10px; border-radius:4px; }
+
+  .footer { text-align: center; font-size: 10px; color: #888; margin-top: 28px; font-style: italic; }
+
+  .legend { display:flex; flex-wrap:wrap; gap:8px; max-width:1100px; margin:0 auto 20px auto; font-size:10px; }
+  .leg-item { display:flex; align-items:center; gap:5px; }
+  .leg-swatch { width:14px; height:14px; border-radius:3px; border:1px solid #aaa; }
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<div class="page-header">
+  <h1>🌱 Overcoming Behavioral Challenges for Success</h1>
+  <p>Daily Revision Notes for Madhav — A 21-Day Mind-Reset Map</p>
+  <div class="meta">Source: Conversation with Papa | 31 May 2026 · 16:43 | Total Duration: 59 min</div>
+</div>
+
+<!-- ══ LEGEND ══ -->
+<div class="legend">
+  <div class="leg-item"><div class="leg-swatch" style="background:#eafaf1;border-color:#27ae60;"></div> ✓ Right path / What to do</div>
+  <div class="leg-item"><div class="leg-swatch" style="background:#fdecea;border-color:#c0392b;"></div> ✗ Trap / What to avoid</div>
+  <div class="leg-item"><div class="leg-swatch" style="background:#fef9e7;border-color:#f39c12;"></div> Condition / Trigger</div>
+  <div class="leg-item"><div class="leg-swatch" style="background:#f5eef8;border-color:#8e44ad;"></div> Tool / Practice</div>
+  <div class="leg-item"><div class="leg-swatch" style="background:#e8f4fd;border-color:#2e6da4;"></div> Concept / Reference</div>
+  <div class="leg-item"><div class="leg-swatch" style="background:#fffde7;border-color:#f9a825;"></div> 📝 Plain English</div>
+  <div class="leg-item"><div class="leg-swatch" style="background:#e8f5e9;border-color:#43a047;"></div> 💡 Example / Story</div>
+</div>
+
+<!-- ══ TOC ══ -->
+<div class="toc" id="toc">
+  <div class="toc-title">📋 Daily Revision Index — Read 1 Section Per Day for 21 Days</div>
+  <div class="toc-grid">
+    <div class="toc-item"><a href="#s1">1. The 4 Foundation Pillars</a></div>
+    <div class="toc-item"><a href="#s2">2. How We Speak Matters</a></div>
+    <div class="toc-item"><a href="#s3">3. The Behavioral Disease (Root Cause)</a></div>
+    <div class="toc-item"><a href="#s4">4. Why People Demean You</a></div>
+    <div class="toc-item"><a href="#s5">5. The Acceptance Principle</a></div>
+    <div class="toc-item"><a href="#s6">6. Patience &amp; Divine Plan (Ramayana)</a></div>
+    <div class="toc-item"><a href="#s7">7. Practical Daily Tools</a></div>
+    <div class="toc-item"><a href="#s8">8. Trigger Map &amp; Self-Solution</a></div>
+    <div class="toc-item"><a href="#s9">9. Final Outcome — Happiness + Success</a></div>
+    <div class="toc-item toc-item-arsenal"><a href="#arsenal">🔥 Daily Revision Arsenal</a></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════ SECTION 1 — 4 FOUNDATION PILLARS ══════════════════════ -->
+<div class="sc" id="s1">
+  <div class="sc-header"><div class="sc-title">
+    <span class="sc-title-text">1 — The 4 Foundation Pillars of Behavior</span>
+    <a class="back-btn" href="#toc">&#8679; Index</a>
+  </div></div>
+  <div class="sc-page">🕐 00:00 – 00:42 | The opening framework Papa gave</div>
+
+  <div class="tree">
+    <div class="n root" style="max-width:480px;">🏛️ Build These 4 Pillars FIRST<br><small>If these are right, the smaller points solve themselves</small></div>
+    <div class="vl" style="height:14px;"></div>
+    <div style="width:90%;"><div class="hl"></div></div>
+
+    <div class="brow">
+      <!-- Pillar 1 -->
+      <div class="br">
+        <div class="vl-b" style="height:10px;"></div>
+        <div class="n l1" style="width:95%;">1️⃣ OBSERVATION</div>
+        <div class="vl-b" style="height:6px;"></div>
+        <div class="n blu mn" style="width:95%;">Observe behaviour of the person in front of you</div>
+        <div class="pe" style="max-width:200px;">📝 Before speaking, watch. Their mood, body language, energy — read it first.</div>
+        <div class="eg" style="max-width:200px;">💡 Piyush bhaiya was leaving for a meeting — observe before reacting "OK OK OK".</div>
+      </div>
+
+      <!-- Pillar 2 -->
+      <div class="br">
+        <div class="vl-b" style="height:10px;"></div>
+        <div class="n l1" style="width:95%;">2️⃣ INTERESTING QUESTIONS</div>
+        <div class="vl-b" style="height:6px;"></div>
+        <div class="n blu mn" style="width:95%;">Think: WHAT to ask + WHEN to raise it</div>
+        <div class="pe" style="max-width:200px;">📝 A good question opens a door. A wrong-timed question slams it shut.</div>
+      </div>
+
+      <!-- Pillar 3 -->
+      <div class="br">
+        <div class="vl-b" style="height:10px;"></div>
+        <div class="n l1" style="width:95%;">3️⃣ COMMUNICATION SKILL</div>
+        <div class="vl-b" style="height:6px;"></div>
+        <div class="n blu mn" style="width:95%;">Comma, full stop, voice modulation — all must come naturally</div>
+        <div class="pe" style="max-width:200px;">📝 Not just what you say — but HOW the silence between words sounds.</div>
+        <div class="eg" style="max-width:200px;">💡 "Bhaiya" vs "Bhaiya ji" — one extra syllable changes the entire respect dynamic.</div>
+      </div>
+
+      <!-- Pillar 4 -->
+      <div class="br">
+        <div class="vl-b" style="height:10px;"></div>
+        <div class="n l1" style="width:95%;">4️⃣ CREATE IMAGE IN OTHER'S MIND</div>
+        <div class="vl-b" style="height:6px;"></div>
+        <div class="n blu mn" style="width:95%;">Output of 1+2+3 = creativity to plant the right impression</div>
+        <div class="pe" style="max-width:220px;">📝 Before walking into any room, decide: "What image do I want them to carry of me after I leave?"</div>
+      </div>
+    </div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n red" style="max-width:480px;">
+      <span class="tag t-r">CAUTION</span><br>
+      This should NOT happen "ऐसे ही" (casually/randomly).<br>
+      <strong>Decide</strong> before going — what will I talk, how will I behave?
+    </div>
+    <div class="pe" style="max-width:480px;">📝 9999 out of 10000 people behave randomly. The 1 who plans = the one who stands out. Don't depend on circumstances — depend on your preparation.</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════ SECTION 2 — HOW WE SPEAK MATTERS ══════════════════════ -->
+<div class="sc" id="s2">
+  <div class="sc-header"><div class="sc-title">
+    <span class="sc-title-text">2 — How We Speak Matters (Think Twice Before Speaking)</span>
+    <a class="back-btn" href="#toc">&#8679; Index</a>
+  </div></div>
+  <div class="sc-page">🕐 04:14 – 06:30 | Words leave permanent marks</div>
+
+  <div class="tree">
+    <div class="n root" style="max-width:480px;">🗣️ Words > Slaps<br><small>A slap is forgotten; harsh words are remembered for life</small></div>
+    <div class="pe" style="max-width:480px;">📝 Papa's powerful insight: "जो मैंने तुझे मारा वो याद नहीं — पर जो कठिन शब्द बोले वो सब याद होगा।" Physical pain fades. Verbal wounds become permanent files in someone's mind.</div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n l1" style="max-width:440px;">⚖️ The "Twice Think" Rule — Before Every Sentence</div>
+    <div class="vl" style="height:10px;"></div>
+    <div class="n ylw" style="max-width:480px;">
+      <span class="tag t-y">ASK YOURSELF</span><br>
+      "मेरे ये कहने से अगले को कोई तकलीफ होगी क्या?"<br>
+      <em>(Will my words cause pain to the listener?)</em>
+    </div>
+
+    <div class="vl-y" style="height:14px;"></div>
+    <div style="width:75%;"><div class="hl-y"></div></div>
+
+    <div class="brow">
+      <div class="br">
+        <div class="vl-y" style="height:10px;"></div>
+        <div class="n ylw mn" style="width:95%;"><span class="tag t-y">IF</span> relationship is <strong>strong</strong></div>
+        <div class="vl-g" style="height:8px;"></div>
+        <div class="n grn mn" style="width:95%;">Normal speech is fine — small mistakes get absorbed</div>
+      </div>
+      <div class="br">
+        <div class="vl-y" style="height:10px;"></div>
+        <div class="n ylw mn" style="width:95%;"><span class="tag t-y">IF</span> relationship is <strong>fragile / strained</strong></div>
+        <div class="vl-r" style="height:8px;"></div>
+        <div class="n red mn" style="width:95%;">Speak <strong>EVEN MORE carefully</strong> — diplomatically, like politicians do</div>
+        <div class="pe" style="max-width:200px;">📝 Diplomacy = saying difficult things without breaking the bridge.</div>
+      </div>
+    </div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n pur" style="max-width:520px;">
+      <span class="tag t-p">FATHER'S OWN PRACTICE</span><br>
+      Many CA friends, but no one extremely close. Why? Because Papa <strong>speaks well with everyone but stays selective</strong>. Inside-cooking-khichdi types — he stays surface-pleasant. Doesn't get close.
+    </div>
+    <div class="eg" style="max-width:520px;">💡 At BITS/office — be warm with everyone, close with the few who match your caliber and values. The rest = polite distance.</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════ SECTION 3 — THE BEHAVIORAL DISEASE ══════════════════════ -->
+<div class="sc" id="s3">
+  <div class="sc-header"><div class="sc-title">
+    <span class="sc-title-text">3 — The Behavioral Disease (Root Cause Identified)</span>
+    <a class="back-btn" href="#toc">&#8679; Index</a>
+  </div></div>
+  <div class="sc-page">🕐 13:20 – 16:30 &amp; 25:30 – 30:50 | The CORE diagnosis Papa gave</div>
+
+  <div class="tree">
+    <div class="n root" style="max-width:520px; background:#7b241c;">🦠 BEHAVIORAL DISEASE<br><small>Two Symptoms — One Root | Pre-existed since 11th standard</small></div>
+    <div class="pe" style="max-width:520px;">📝 Papa identified this after collecting 3-4 years of symptoms. This is the master problem — every other small issue is a side-effect of this one.</div>
+    <div class="vl" style="height:14px;"></div>
+
+    <!-- Two symptoms -->
+    <div class="n l1" style="max-width:420px;">Two Points Dragging You Down (Co-Related)</div>
+    <div class="vl" style="height:10px;"></div>
+    <div style="width:75%;"><div class="hl-b"></div></div>
+
+    <div class="brow">
+      <!-- Symptom 1: Comparing -->
+      <div class="br">
+        <div class="vl-r" style="height:10px;"></div>
+        <div class="n red" style="width:95%;"><span class="tag t-r">SYMPTOM 1 — PRIMARY</span><br>📊 COMPARING WITH OTHERS</div>
+        <div class="vl-r" style="height:8px;"></div>
+        <div class="n red mn" style="width:95%;">Compared with WHOM?<br>(i) Relatives<br>(ii) Classmates / Batchmates (Nikunj, Viraj)<br>(iii) Friends</div>
+        <div class="vl-r" style="height:8px;"></div>
+        <div class="n red mn" style="width:95%;">"वो तो ये कर रहा है, मैं कुछ भी नहीं कर रहा"<br>(He's doing this, I'm doing nothing)</div>
+        <div class="pe" style="max-width:220px;">📝 Normal — everyone compares a bit. Disease — when it impacts your RESULTS (JEE marks, exam performance, mood).</div>
+        <div class="eg" style="max-width:220px;">💡 JEE attempt — "4-5 easy questions thay, maine hi galti ki" → mind wasn't stable BECAUSE comparison kept running in background.</div>
+      </div>
+
+      <!-- Symptom 2: Side-effect -->
+      <div class="br">
+        <div class="vl-r" style="height:10px;"></div>
+        <div class="n red" style="width:95%;"><span class="tag t-r">SYMPTOM 2 — SIDE EFFECT</span><br>📉 UNDERESTIMATING OWN CALIBRE</div>
+        <div class="vl-r" style="height:8px;"></div>
+        <div class="n red mn" style="width:95%;">"Mind को signal क्या जा रहा है?<br>'मुझे नहीं मिले, मुझे नहीं मिले'"</div>
+        <div class="pe" style="max-width:220px;">📝 Every time you say "I didn't get marks / I didn't make it", your subconscious mind takes it as instruction and underperforms next time too.</div>
+        <div class="vl-r" style="height:8px;"></div>
+        <div class="n red mn" style="width:95%;">Result → Mind not stable → Mistakes in exams → Mediocre output despite real talent</div>
+        <div class="eg" style="max-width:220px;">💡 The Ankita-in-office example: multi-talented girl, but at the BOTTOM of her life because of THIS exact disease. Even now — sad at every wedding, says "मेरा talent waste हो गया".</div>
+      </div>
+    </div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n ylw" style="max-width:540px;">
+      <span class="tag t-y">⚠️ DANGER OF NOT FIXING</span><br>
+      Day by day, this behaviour becomes <strong>pakka (cemented)</strong>. It will go with you into marriage, job, every relationship. The person remains <em>"दुखी से रहेगी, lifelong"</em> even if outwardly successful.
+    </div>
+
+    <div class="vl" style="height:14px;"></div>
+    <!-- Cure -->
+    <div class="n grn" style="max-width:520px;">
+      <span class="tag t-g">✓ THE CURE — COMPARE ONLY WITH YOURSELF</span><br>
+      "I am fighting against myself. The only one who can stop me is myself."<br><br>
+      Compare with <strong>your own last year</strong> — last year's marks, last year's effort, last year's questions answered. Improve over THAT.
+    </div>
+    <div class="pe" style="max-width:520px;">📝 This is the Atomic Habits principle — be 1% better than yesterday's you. In 1 year = 37x better. Compounding works in self-improvement just like in money.</div>
+    <div class="eg" style="max-width:520px;">💡 Papa's CA exam trick — wrote on his board: <strong>"My competitor is the PAPER, not my friends."</strong> Started thinking what questions paper will ask → topped because mind was focused on paper, not on friends' coaching reviews.</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════ SECTION 4 — WHY PEOPLE DEMEAN YOU ══════════════════════ -->
+<div class="sc" id="s4">
+  <div class="sc-header"><div class="sc-title">
+    <span class="sc-title-text">4 — Why People Demean You (No Knowledge Required)</span>
+    <a class="back-btn" href="#toc">&#8679; Index</a>
+  </div></div>
+  <div class="sc-page">🕐 26:20 – 32:00 | Understanding the people who pull you down</div>
+
+  <div class="tree">
+    <div class="n root" style="max-width:500px;">🎭 The Universal Truth About Critics<br><small>Anyone — relative, classmate, neighbour — can demean you</small></div>
+    <div class="vl" style="height:14px;"></div>
+
+    <div class="n l1" style="max-width:480px;">Three Things That Need ZERO Knowledge</div>
+    <div class="vl" style="height:10px;"></div>
+    <div style="width:75%;"><div class="hl-b"></div></div>
+
+    <div class="brow">
+      <div class="br">
+        <div class="vl-r" style="height:8px;"></div>
+        <div class="n red mn" style="width:95%;"><span class="tag t-r">1</span><br>Pointing fingers at others</div>
+      </div>
+      <div class="br">
+        <div class="vl-r" style="height:8px;"></div>
+        <div class="n red mn" style="width:95%;"><span class="tag t-r">2</span><br>Comparing you with others</div>
+      </div>
+      <div class="br">
+        <div class="vl-r" style="height:8px;"></div>
+        <div class="n red mn" style="width:95%;"><span class="tag t-r">3</span><br>Showing ego in front of you</div>
+      </div>
+    </div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n red" style="max-width:520px;">
+      <span class="tag t-r">HARD TRUTH</span><br>
+      <em>"दूसरों से ego करने के लिए knowledge की गरज नहीं है।"</em><br>
+      Anyone — A-grade or D-grade — can demean. It costs them nothing.
+    </div>
+    <div class="pe" style="max-width:520px;">📝 So when uncle/aunty/cousin makes a comment — remember: their ability to comment doesn't mean their judgment is correct. A toddler can throw a stone at a Ferrari — the stone falling doesn't make the Ferrari bad.</div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n l1" style="max-width:480px;">Why They Do It — The Grade System</div>
+    <div class="vl" style="height:10px;"></div>
+    <div class="n blu" style="max-width:480px;">
+      A-Grade (top) ⟶ B ⟶ C ⟶ D (bottom)<br><br>
+      You are at A. They are at C or D.<br>
+      <strong>They want to pull you down to THEIR grade</strong> — because pulling down is easier than climbing up.
+    </div>
+    <div class="pe" style="max-width:480px;">📝 This is human psychology — crab mentality. When one crab tries to climb out of the bucket, others pull it back. Not because they hate the climber, but because seeing the climber rise makes them feel small.</div>
+
+    <div class="vl" style="height:14px;"></div>
+    <!-- Story: Two ships analogy -->
+    <div class="n pur" style="max-width:540px;">
+      <span class="tag t-p">📖 THE TWO SHIPS STORY (Papa's analogy)</span><br>
+      Two ships passing each other. Between them, an iron grid.<br>
+      Ship A: One bird flies into the grid, hits, gets a small bump → <strong>stops, learns, returns</strong>. Walks away alive.<br>
+      Ship B: Another bird flies, hits, bleeds → <strong>but flies again, hits again, bleeds more</strong> → keeps hitting until its head is covered in blood.
+    </div>
+    <div class="pe" style="max-width:540px;">📝 Provokers are the iron grid. If you keep banging your head against them (responding to every taunt), only YOU get hurt. If you stop after one hit (one observation), you walk away whole.</div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n grn" style="max-width:520px;">
+      <span class="tag t-g">✓ THE STRATEGY</span><br>
+      When you walk into a family function and find C/D-grade people gossiping —<br>
+      <strong>Skip them. Go directly to the elder/aunty/uncle of your own caliber.</strong><br>
+      They will notice: "Yeh bachpan se mature hai, hum से बात कर रहा है."
+    </div>
+    <div class="eg" style="max-width:520px;">💡 Papa's own practice — at family functions, he goes straight to talk with Krishn Gopal or Ashish bhaiya (his caliber). Doesn't waste time with gossipers. Result: industry-level discussions, real value, no draining.</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════ SECTION 5 — ACCEPTANCE PRINCIPLE ══════════════════════ -->
+<div class="sc" id="s5">
+  <div class="sc-header"><div class="sc-title">
+    <span class="sc-title-text">5 — The Acceptance Principle (The Master Switch)</span>
+    <a class="back-btn" href="#toc">&#8679; Index</a>
+  </div></div>
+  <div class="sc-page">🕐 10:37 – 12:30 &amp; 55:40 – 58:25 | The mental switch that unlocks solutions</div>
+
+  <div class="tree">
+    <div class="n root" style="max-width:480px;">🔓 ACCEPT vs JUSTIFY<br><small>The choice that decides whether you grow or stagnate</small></div>
+    <div class="vl" style="height:14px;"></div>
+
+    <div class="n l1" style="max-width:460px;">The Katori (Bowl) Analogy</div>
+    <div class="vl" style="height:10px;"></div>
+    <div class="n blu" style="max-width:480px;">
+      A katori facing UP → fills with knowledge from outside.<br>
+      A katori facing DOWN → nothing enters, even if it rains wisdom.<br><br>
+      <strong>"Justifying yourself" = katori facing down.</strong>
+    </div>
+    <div class="pe" style="max-width:480px;">📝 The mind that says "yes but it wasn't my fault" stays empty. The mind that says "okay, where did I go wrong?" gets answers.</div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div style="width:75%;"><div class="hl"></div></div>
+    <div class="brow">
+      <!-- Wrong path -->
+      <div class="br">
+        <div class="vl-r" style="height:10px;"></div>
+        <div class="n red" style="width:95%;"><span class="tag t-r">✗ WRONG PATH</span><br>JUSTIFY YOURSELF</div>
+        <div class="vl-r" style="height:8px;"></div>
+        <div class="n red mn" style="width:95%;">"उनकी भी तो गलती है"<br>(They are also wrong)</div>
+        <div class="vl-r" style="height:8px;"></div>
+        <div class="n red mn" style="width:95%;">"Justify किसी ने नहीं मिलता solution, सिर्फ reasons"</div>
+        <div class="pe" style="max-width:200px;">📝 Excuses give reasons. Reasons don't pay your bills or fix your problems.</div>
+      </div>
+
+      <!-- Right path -->
+      <div class="br">
+        <div class="vl-g" style="height:10px;"></div>
+        <div class="n grn" style="width:95%;"><span class="tag t-g">✓ RIGHT PATH</span><br>ACCEPT YOUR GAP</div>
+        <div class="vl-g" style="height:8px;"></div>
+        <div class="n grn mn" style="width:95%;">"मेरी क्या कमी है, मैं उसमें focus करता हूँ"</div>
+        <div class="vl-g" style="height:8px;"></div>
+        <div class="n grn mn" style="width:95%;">Ask <strong>"HOW to do it?"</strong> (question mark)<br>NOT "WHY did this happen?" (full stop)</div>
+        <div class="pe" style="max-width:200px;">📝 Question mark = mind keeps searching for the answer = solution appears. Full stop = mind closes the case = no solution.</div>
+      </div>
+    </div>
+
+    <div class="vl" style="height:14px;"></div>
+    <!-- Sorry meaning -->
+    <div class="n grn" style="max-width:520px;">
+      <span class="tag t-g">🔑 WHAT "SORRY" REALLY MEANS</span><br>
+      Sorry ≠ guilt or weakness.<br>
+      Sorry = "I have <strong>already changed</strong> my behaviour in the next second. I have already proven my quality."<br>
+      After saying sorry, climbing up is no big deal — but you still have to <strong>score the runs</strong>.
+    </div>
+    <div class="pe" style="max-width:520px;">📝 The acceptance is the easy part. The work after acceptance — that's where the runs get scored. Match ko jeetna toh padega hi.</div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n pur" style="max-width:500px;">
+      <span class="tag t-p">PAPA'S OWN EXAMPLES OF ACCEPTANCE</span><br>
+      "I accept my English is weak."<br>
+      "I accept I started ticket-booking work."<br>
+      "I accept I didn't move to Pune/Bombay for practice — that was my mistake."<br>
+      "I accept I left Bombay."<br>
+      <strong>"Now what can I do TODAY?"</strong> — that's the only useful question.
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════ SECTION 6 — PATIENCE & DIVINE PLAN ══════════════════════ -->
+<div class="sc" id="s6">
+  <div class="sc-header"><div class="sc-title">
+    <span class="sc-title-text">6 — Patience &amp; the Divine Plan (Ramayana Lesson)</span>
+    <a class="back-btn" href="#toc">&#8679; Index</a>
+  </div></div>
+  <div class="sc-page">🕐 18:30 – 22:15 &amp; 24:15 – 25:35 | Effort is yours, result is God's</div>
+
+  <div class="tree">
+    <div class="n root" style="max-width:480px;">🏹 The Bharat-Ram Story<br><small>Why God refuses some of our most reasonable prayers</small></div>
+    <div class="vl" style="height:14px;"></div>
+
+    <div class="n blu" style="max-width:520px;">
+      <span class="tag t-b">📖 THE STORY</span><br>
+      Lakshman saw Bharat coming with an army → assumed Bharat had come to kill them in the forest.<br>
+      Ram corrected him: <em>"Without listening to him, how can you decide?"</em><br>
+      Bharat actually came to PLEAD with Ram to return to Ayodhya.<br>
+      Ram had every reason to accept — but <strong>God refused</strong>. Why? Because His <strong>sankalp</strong> (resolve) was to defeat Ravan.
+    </div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n ylw" style="max-width:480px;">
+      <span class="tag t-y">⚠️ TWO LESSONS</span>
+    </div>
+    <div class="vl-y" style="height:10px;"></div>
+    <div style="width:80%;"><div class="hl-y"></div></div>
+
+    <div class="brow">
+      <div class="br">
+        <div class="vl-y" style="height:8px;"></div>
+        <div class="n ylw" style="width:95%;"><strong>Lesson 1</strong><br>Never pre-judge anyone before hearing them out</div>
+        <div class="pe" style="max-width:200px;">📝 Don't carry pre-thoughts into conversations. Listen completely, THEN decide.</div>
+      </div>
+      <div class="br">
+        <div class="vl-y" style="height:8px;"></div>
+        <div class="n ylw" style="width:95%;"><strong>Lesson 2</strong><br>God's plan may not match your plan — and that's okay</div>
+      </div>
+    </div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n l1" style="max-width:520px;">The Effort / Result Split (Bhagavad Gita Principle)</div>
+    <div class="vl" style="height:10px;"></div>
+    <div style="width:75%;"><div class="hl-b"></div></div>
+
+    <div class="brow">
+      <div class="br">
+        <div class="vl-g" style="height:8px;"></div>
+        <div class="n grn" style="width:95%;"><span class="tag t-g">YOURS</span><br>EFFORT — 100%<br>• Study fully<br>• Interview prep<br>• Communication<br>• Good behaviour</div>
+      </div>
+      <div class="br">
+        <div class="vl-p" style="height:8px;"></div>
+        <div class="n pur" style="width:95%;"><span class="tag t-p">GOD'S</span><br>RESULT — His Decision<br>• Package size<br>• Timing<br>• Which company<br>• Which city</div>
+      </div>
+    </div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n grn" style="max-width:540px;">
+      <span class="tag t-g">✓ THE BANK CAMPUS SCENARIO</span><br>
+      3 years from now, in BITS campus placement — maybe you get ₹30L while others get ₹50L–60L.<br><br>
+      <strong>Don't break.</strong> Think: <em>"My effort was 100%. God's plan may be that I directly jump to ₹1 Cr next year instead of slow progression. PATIENCE."</em>
+    </div>
+    <div class="pe" style="max-width:540px;">📝 Most people lose patience exactly 1 step before the breakthrough. The 50L package + immediate joiner stress might be exactly what God is saving you from.</div>
+    <div class="eg" style="max-width:540px;">💡 Modern parallel: Jeff Bezos turned down a stable Wall Street ₹ in 1994 to start Amazon from a garage. Anyone comparing him to his Wall Street peers in 1995 would have called him a "loser". Patience + sankalp.</div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n root" style="max-width:480px; background:#7b241c; font-size:13px;">
+      "PATIENCE IS THE KEY"<br>
+      <small>Even if you have all the skills — without patience, you lose the game</small>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════ SECTION 7 — PRACTICAL DAILY TOOLS ══════════════════════ -->
+<div class="sc" id="s7">
+  <div class="sc-header"><div class="sc-title">
+    <span class="sc-title-text">7 — Practical Daily Tools (5 Habits to Build NOW)</span>
+    <a class="back-btn" href="#toc">&#8679; Index</a>
+  </div></div>
+  <div class="sc-page">🕐 32:30 – 45:30 | Concrete daily actions — start today</div>
+
+  <div class="tree">
+    <div class="n root" style="max-width:480px;">🛠️ 5 Tools for Daily Practice<br><small>21 days of doing these = habit cemented for life</small></div>
+    <div class="vl" style="height:14px;"></div>
+    <div style="width:90%;"><div class="hl"></div></div>
+
+    <div class="brow">
+      <!-- Tool 1 -->
+      <div class="br">
+        <div class="vl-p" style="height:10px;"></div>
+        <div class="n pur" style="width:95%;"><span class="tag t-p">TOOL 1</span><br>📔 DAILY DIARY</div>
+        <div class="vl-p" style="height:6px;"></div>
+        <div class="n pur mn" style="width:95%;">Write every night: what you did, what you learned, what mistake you spotted</div>
+        <div class="pe" style="max-width:200px;">📝 Writing forces clarity. The act of writing makes the brain process the day.</div>
+        <div class="eg" style="max-width:200px;">💡 Marcus Aurelius (Roman Emperor) wrote his daily reflections — they survived as "Meditations" — best-selling stoic book even today.</div>
+      </div>
+
+      <!-- Tool 2 -->
+      <div class="br">
+        <div class="vl-p" style="height:10px;"></div>
+        <div class="n pur" style="width:95%;"><span class="tag t-p">TOOL 2</span><br>📧 EMAIL / CC EVERY TASK</div>
+        <div class="vl-p" style="height:6px;"></div>
+        <div class="n pur mn" style="width:95%;">At office — CC manager on every task: "Today completed X, pending Y"</div>
+        <div class="pe" style="max-width:200px;">📝 You are creating a paper trail of your own contribution. Management may not ask — but they will notice.</div>
+        <div class="eg" style="max-width:200px;">💡 After 20 days: Manager asks about a task → you have an exact email log. Result = <strong>Pre-Placement Offer</strong> almost guaranteed.</div>
+      </div>
+
+      <!-- Tool 3 -->
+      <div class="br">
+        <div class="vl-p" style="height:10px;"></div>
+        <div class="n pur" style="width:95%;"><span class="tag t-p">TOOL 3</span><br>🤝 RESPONSIBILITY-TAKING</div>
+        <div class="vl-p" style="height:6px;"></div>
+        <div class="n pur mn" style="width:95%;">"Sir, tell me — I'll do it." Volunteer for the kitchen, the chore, the unfamiliar task</div>
+        <div class="eg" style="max-width:200px;">💡 At Piyush bhaiya's home — offer to help bhabhi cut vegetables: "Bhabhi, mujhe seekhna hai, batao." Result → "Yeh learning wala banda hai."</div>
+      </div>
+
+      <!-- Tool 4 -->
+      <div class="br">
+        <div class="vl-p" style="height:10px;"></div>
+        <div class="n pur" style="width:95%;"><span class="tag t-p">TOOL 4</span><br>🙏 HUMBLE BEHAVIOR</div>
+        <div class="vl-p" style="height:6px;"></div>
+        <div class="n pur mn" style="width:95%;">Whatever they say, accept humbly. Don't complain — about food, room, anything</div>
+        <div class="pe" style="max-width:200px;">📝 Complaining is the fastest way to lose respect. Adjustment is the fastest way to win it.</div>
+      </div>
+
+      <!-- Tool 5 -->
+      <div class="br">
+        <div class="vl-p" style="height:10px;"></div>
+        <div class="n pur" style="width:95%;"><span class="tag t-p">TOOL 5</span><br>🎤 COMMUNICATION COURSE</div>
+        <div class="vl-p" style="height:6px;"></div>
+        <div class="n pur mn" style="width:95%;">Online/offline course — voice modulation + communication skills</div>
+        <div class="pe" style="max-width:200px;">📝 Young age (20) = whatever you learn STICKS permanently. After 30, much harder to change.</div>
+        <div class="eg" style="max-width:200px;">💡 Suggest: Toastmasters (online/offline), Crucial Conversations book, or any voice-foundation course in Goa near campus.</div>
+      </div>
+    </div>
+
+    <div class="vl" style="height:16px;"></div>
+    <!-- Father's Bombay story -->
+    <div class="n org" style="max-width:600px;">
+      <span class="tag t-y">📖 PAPA'S BOMBAY DAYS — THE NO-COMPLAINT STORY</span><br>
+      Stayed at Om bhaiya's house — 2 rooms, hall, kitchen for FIVE people.<br>
+      Bhabhi sometimes served cold roti by mistake. Papa quietly ate it for 1 month.<br>
+      Eventually, Om bhaiya noticed: <em>"Pawan ko itni problem hai? Yeh complain hi nahi karta."</em><br>
+      That ONE MONTH of silent adjustment = lifetime of being seen as <strong>"good banda, mature, sweet"</strong>.
+    </div>
+    <div class="pe" style="max-width:600px;">📝 This is MATURITY. Anyone can complain. Only mature people endure and let actions speak. Result → Piyush bhaiya never asked for help — Papa was already helping.</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════ SECTION 8 — TRIGGER MAP ══════════════════════ -->
+<div class="sc" id="s8">
+  <div class="sc-header"><div class="sc-title">
+    <span class="sc-title-text">8 — Trigger Map &amp; Self-Solution (Your Personal Diagnostic)</span>
+    <a class="back-btn" href="#toc">&#8679; Index</a>
+  </div></div>
+  <div class="sc-page">🕐 49:30 – 54:40 | Madhav's own discovered solution</div>
+
+  <div class="tree">
+    <div class="n root" style="max-width:520px;">🎯 Your Trigger Identified<br><small>Papa caught it on a phone call from Ayodhya — your voice changed</small></div>
+    <div class="vl" style="height:14px;"></div>
+
+    <!-- Trigger Story -->
+    <div class="n blu" style="max-width:540px;">
+      <span class="tag t-b">📖 THE PHONE CALL DETECTION</span><br>
+      Papa was in Ayodhya. Called you. Asked: <em>"Madhav, are you okay?"</em><br>
+      Your voice told him something was off — even though words said "fine".<br>
+      He asked Mummy: <em>"Find Madhav's trigger point — what changed?"</em><br>
+      Found it: a casual remark about <strong>Nikunj reaching Khaan</strong>.
+    </div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n red" style="max-width:520px;">
+      <span class="tag t-r">⚠️ YOUR TRIGGER PATTERN</span><br>
+      Trigger = <strong>Comparison with peers who seem to be "ahead"</strong> (Nikunj got car, Nikunj came to Bombay, etc.)<br>
+      Effect = Underestimating own caliber → mind unstable → mistakes in tasks
+    </div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n l1" style="max-width:480px;">Your OWN Discovered Solution (Papa appreciated this)</div>
+    <div class="vl" style="height:10px;"></div>
+    <div class="n grn" style="max-width:520px;">
+      <span class="tag t-g">✓ PLACE CHANGE = MIND RESET</span><br>
+      "Papa, mai jab wahaan se yahaan aaya — mera mind relax ho gaya."<br><br>
+      <strong>Your trigger fix:</strong> When triggered, <strong>change the place</strong>. Move to a good atmosphere. Mind resets automatically.
+    </div>
+    <div class="pe" style="max-width:520px;">📝 This is YOUR superpower. You already know what works for you. Use it consciously: when comparison brain starts, walk out, change rooms, go for a walk, sit somewhere new.</div>
+
+    <div class="vl" style="height:14px;"></div>
+    <!-- Note your solutions -->
+    <div class="n pur" style="max-width:540px;">
+      <span class="tag t-p">📋 DAILY PRACTICE</span><br>
+      Every time you overcome a trigger, <strong>NOTE IT</strong>:<br>
+      • What was the situation?<br>
+      • What strip (idea) did you grab to recover?<br>
+      • How did your mind relax?<br><br>
+      Tell Papa — he'll record it. Could help others one day.
+    </div>
+    <div class="pe" style="max-width:540px;">📝 Building your own playbook of recovery moves = your personal mental gym. After 21 days, you'll have 21 proven moves.</div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n ylw" style="max-width:520px;">
+      <span class="tag t-y">🔄 WHEN COMPARISON RETURNS (and it will)</span><br>
+      Walk into room → see this revision notes → think:<br>
+      <em>"Are yaar! Yeh toh wahi situation aa gayi! NO — I will NOT compare. Madhav, I will not compare. Stop comparing. I'm fighting against myself."</em>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════ SECTION 9 — FINAL OUTCOME ══════════════════════ -->
+<div class="sc" id="s9">
+  <div class="sc-header"><div class="sc-title">
+    <span class="sc-title-text">9 — Final Outcome (The Two Words That Define Success)</span>
+    <a class="back-btn" href="#toc">&#8679; Index</a>
+  </div></div>
+  <div class="sc-page">🕐 56:14 – 58:30 | The endgame Papa wants for you</div>
+
+  <div class="tree">
+    <div class="n root" style="max-width:480px;">🏆 THE ULTIMATE GOAL</div>
+    <div class="vl" style="height:14px;"></div>
+
+    <div class="n l1" style="max-width:480px;">Papa asked: "Give me 2 words — outcome of today's meeting"</div>
+    <div class="vl" style="height:10px;"></div>
+    <div class="n ylw" style="max-width:420px;">
+      <span class="tag t-y">YOUR ANSWER</span><br>
+      <strong>"STOP COMPARING"</strong>
+    </div>
+    <div class="vl" style="height:10px;"></div>
+    <div class="n blu" style="max-width:480px;">
+      Papa's reply: "These are all just <strong>TOOLS</strong>. Let me tell you the actual outcome…"
+    </div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div style="width:60%;"><div class="hl-g"></div></div>
+    <div class="brow">
+      <div class="br">
+        <div class="vl-g" style="height:10px;"></div>
+        <div class="n grn" style="width:95%; font-size:16px; padding:14px;"><span class="tag t-g">OUTCOME 1</span><br>😊 <strong>HAPPINESS</strong></div>
+      </div>
+      <div class="br">
+        <div class="vl-g" style="height:10px;"></div>
+        <div class="n grn" style="width:95%; font-size:16px; padding:14px;"><span class="tag t-g">OUTCOME 2</span><br>🏅 <strong>SUCCESS</strong></div>
+      </div>
+    </div>
+
+    <div class="vl" style="height:16px;"></div>
+    <div class="n pur" style="max-width:540px;">
+      <span class="tag t-p">💎 THE MASTER FORMULA (from Aamir Khan / 3 Idiots)</span><br>
+      <strong>"Kaabiliyat bano, Laayak bano."</strong><br>
+      Become capable. Become worthy.<br><br>
+      Money, marks, package, respect — <strong>automatically aaenge.</strong>
+    </div>
+    <div class="pe" style="max-width:540px;">📝 The world chases results. The wise chase capability. Once you're capable, results chase you.</div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n org" style="max-width:540px;">
+      <span class="tag t-y">⏰ THE 21-DAY RULE</span><br>
+      This won't develop in 1 day. <strong>21 days of daily resetting</strong> is required for new behaviour to become habit.<br>
+      Read these notes daily. Note your daily wins. Track your daily trigger-recoveries.
+    </div>
+    <div class="pe" style="max-width:540px;">📝 Neuroscience confirms: habits form when neural pathways are repeated. 21 days is the typical minimum. After that, the new behaviour becomes the default.</div>
+
+    <div class="vl" style="height:14px;"></div>
+    <div class="n root" style="max-width:560px; background:#1e8449; font-size:13px;">
+      🌟 PAPA'S FINAL BLESSING<br><br>
+      <em>"Best of luck beta. Gopal mangal kare."</em>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════ DAILY REVISION ARSENAL ══════════════════════ -->
+<div class="arsenal" id="arsenal">
+  <div class="arsenal-header">
+    <div class="arsenal-title-row">
+      <span class="arsenal-title">🔥 Daily Revision Arsenal — Read Every Morning</span>
+      <a class="arsenal-back-btn" href="#toc">&#8679; Index</a>
+    </div>
+    <div class="arsenal-purpose">These are the power-quotes Papa gave you. Read them aloud every morning for 21 days. Say them with conviction — your subconscious is listening.</div>
+  </div>
+
+  <!-- Card 1 -->
+  <div class="arsenal-card">
+    <div class="ac-name">The Comparison Rule</div>
+    <div class="ac-court">Father's Wisdom | Section 3 | The Root Cause</div>
+    <div class="ac-label">Daily Mantra</div>
+    <div class="ac-ratio">
+      "मेरा competitor है paper sitting in front of me — NOT my friends, NOT my batchmates, NOT my cousins. I will compete only with myself — last year's Madhav. I will be 1% better today than I was yesterday."
+    </div>
+    <div><span class="ac-when">When to Use</span> — Every morning. Also any time you catch yourself thinking "Nikunj got X, I didn't get X." Stop. Recite this. Move on.</div>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="arsenal-card">
+    <div class="ac-name">The Self-Fighter Mantra</div>
+    <div class="ac-court">Father's Wisdom | Section 3 | Core Identity</div>
+    <div class="ac-label">Daily Mantra</div>
+    <div class="ac-ratio">
+      "I am fighting against MYSELF. The only person who can stop me is MYSELF. The only one I should compare with is MYSELF — last year. Stop comparing. I will not compare. Madhav, I will not compare."
+    </div>
+    <div><span class="ac-when">When to Use</span> — When comparison brain kicks in. Switch immediately to this self-fight frame.</div>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="arsenal-card">
+    <div class="ac-name">The Acceptance Switch</div>
+    <div class="ac-court">Father's Wisdom | Section 5 | The Master Switch</div>
+    <div class="ac-label">Daily Mantra</div>
+    <div class="ac-ratio">
+      "I will not justify. I will accept. 'How can I do better?' — that question gives me the solution. 'Why did this happen?' — that question gives me only excuses. I keep my katori facing UP."
+    </div>
+    <div><span class="ac-when">When to Use</span> — After every mistake, exam result below expectation, or interpersonal friction. Switch from "justify mode" to "accept and improve" mode within 60 seconds.</div>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="arsenal-card">
+    <div class="ac-name">The Effort-Result Split</div>
+    <div class="ac-court">Bhagavad Gita Principle / Ramayana / Section 6</div>
+    <div class="ac-label">Daily Mantra</div>
+    <div class="ac-ratio">
+      "Effort is mine — 100%. I will give my full effort to every task, every paper, every conversation, every relationship. Result is Gopal's plan. If today's package is 30L, tomorrow's may be 1Cr. PATIENCE is the key. Even with all skills — without patience, I lose."
+    </div>
+    <div><span class="ac-when">When to Use</span> — Placement season, exam results, comparing salary/package with friends, any moment of impatience.</div>
+  </div>
+
+  <!-- Card 5 -->
+  <div class="arsenal-card">
+    <div class="ac-name">The Words Are Permanent Rule</div>
+    <div class="ac-court">Father's Wisdom | Section 2 | Speaking Discipline</div>
+    <div class="ac-label">Daily Mantra</div>
+    <div class="ac-ratio">
+      "Before speaking — TWICE THINK. 'Will my words cause pain?' A slap is forgotten in a week. Harsh words are remembered for life. I will speak even more carefully when relationships are fragile."
+    </div>
+    <div><span class="ac-when">When to Use</span> — Before every WhatsApp message to Mummy, every call with relatives, every reply at office. Pause 2 seconds. Then speak.</div>
+  </div>
+
+  <!-- Card 6 -->
+  <div class="arsenal-card">
+    <div class="ac-name">The Crab Bucket Rule</div>
+    <div class="ac-court">Father's Wisdom | Section 4 | Defense Against Critics</div>
+    <div class="ac-label">Daily Mantra</div>
+    <div class="ac-ratio">
+      "Comparing me, demeaning me, showing ego against me — these need ZERO knowledge. Anyone can do them. So I will not weigh their comments by their right to make them. I will only weigh comments by the caliber of the speaker."
+    </div>
+    <div><span class="ac-when">When to Use</span> — When relatives, cousins, classmates make sarcastic comments. Don't react. Don't argue. Just remember: their power to criticize ≠ correctness of criticism.</div>
+  </div>
+
+  <!-- Card 7 -->
+  <div class="arsenal-card">
+    <div class="ac-name">The Two Ships Wisdom</div>
+    <div class="ac-court">Father's Analogy | Section 4 | Energy Conservation</div>
+    <div class="ac-label">Daily Mantra</div>
+    <div class="ac-ratio">
+      "If a person provokes me — I will bump once, observe, and walk away. I will not keep banging my head against the iron grid until I bleed. The provoker doesn't get hurt — only I do. One observation is enough. Move on."
+    </div>
+    <div><span class="ac-when">When to Use</span> — When someone keeps poking you (cousins, classmates, online trolls). Bird-of-Ship-A, not Ship-B.</div>
+  </div>
+
+  <!-- Card 8 -->
+  <div class="arsenal-card">
+    <div class="ac-name">The Place-Change Trigger Fix</div>
+    <div class="ac-court">Your Own Discovered Solution | Section 8</div>
+    <div class="ac-label">Daily Mantra</div>
+    <div class="ac-ratio">
+      "When I am triggered — I CHANGE THE PLACE. Walk out. Move room. Go for a walk. Visit Krishn Gopal-type people of my own caliber. Good atmosphere = mind reset. This is MY personal recovery move."
+    </div>
+    <div><span class="ac-when">When to Use</span> — The moment you feel the comparison-spiral starting. Don't argue with the thought. Just CHANGE PLACE. Mind will follow.</div>
+  </div>
+
+  <!-- Card 9 -->
+  <div class="arsenal-card">
+    <div class="ac-name">The Caabiliyat Formula</div>
+    <div class="ac-court">3 Idiots / Aamir Khan | Section 9 | The Master Law</div>
+    <div class="ac-label">Daily Mantra</div>
+    <div class="ac-ratio">
+      "Kaabiliyat bano, Laayak bano. Rupaye paise apne aap aayenge. Marks bhi apne aap aayenge. I will chase capability — not results. Behavior, Observation, Communication, Understanding teacher — these get me marks. These get me jobs. These get me respect."
+    </div>
+    <div><span class="ac-when">When to Use</span> — Whenever you feel "I need to score X marks / earn Y rupees." Flip the focus. Become capable. The rest follows.</div>
+  </div>
+
+  <!-- Card 10 -->
+  <div class="arsenal-card">
+    <div class="ac-name">The 21-Day Reset Pact</div>
+    <div class="ac-court">Habit Science + Father's Method | Section 9</div>
+    <div class="ac-label">Daily Mantra</div>
+    <div class="ac-ratio">
+      "21 days. I will read these notes every morning. I will write 1 line every night — what triggered me, how I recovered. After 21 days, the new behaviour is mine. After 90 days, it is invisible — because it is just who I am."
+    </div>
+    <div><span class="ac-when">When to Use</span> — Every single day. Especially on Day 7, Day 14, Day 21 — review your trigger log. See the pattern. See your growth.</div>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER ══ -->
+<div class="footer">
+  Prepared for Madhav Soni | BITS Pilani, Goa | Daily revision for 21 days<br>
+  Source: Conversation with Papa, 31 May 2026 | 59-minute audio transcription
+</div>
+
+</body>
+</html>
