@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSA Document Generator</title>
+<style>
+  :root{
+    --ink:#1a1a1a;--muted:#5b6066;--line:#d9dce1;--navy:#17365d;--navy2:#24507f;
+    --bg:#eef1f4;--panel:#fff;--field:#f7f9fb;--chip:#e9eef5;
+    --serif:"Bookman Old Style","Palatino Linotype",Georgia,serif;
+    --ui:"Segoe UI",system-ui,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:14px}
+  .topbar{background:var(--navy);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .topbar h1{font-size:16px;margin:0;font-weight:700;letter-spacing:.3px}
+  .topbar .tag{font-size:11.5px;opacity:.85}
+  .docpick{display:flex;gap:6px;flex-wrap:wrap;padding:10px 18px;background:#f5f7f9;border-bottom:1px solid var(--line)}
+  .docpick button{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:20px;padding:7px 13px;font-size:12.5px;font-weight:600;cursor:pointer}
+  .docpick button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+  .wrap{display:flex;gap:18px;max-width:1240px;margin:0 auto;padding:18px}
+  @media (max-width:900px){.wrap{flex-direction:column}}
+  .controls{flex:0 0 390px;align-self:flex-start}
+  @media (max-width:900px){.controls{flex:1 1 auto}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+  .card h2{font-size:12.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--navy);margin:0 0 10px}
+  label{display:block;font-size:12px;color:var(--muted);margin:9px 0 3px;font-weight:600}
+  label:first-child{margin-top:0}
+  input[type=text],textarea,select{width:100%;padding:8px 9px;border:1px solid var(--line);border-radius:6px;background:var(--field);font-size:13px;font-family:var(--ui)}
+  textarea{resize:vertical;min-height:46px;line-height:1.4}
+  input:focus,textarea:focus,select:focus{outline:2px solid var(--navy);outline-offset:-1px;background:#fff}
+  .row2{display:flex;gap:10px}.row2>div{flex:1;min-width:0}
+  .act,.opt{display:flex;gap:8px;align-items:flex-start;margin:7px 0;font-size:12.5px;font-weight:500}
+  .act input,.opt input{margin-top:2px;flex:0 0 auto}
+  .btns{display:flex;gap:8px;flex-wrap:wrap}
+  button.b{font-family:var(--ui);font-size:12.5px;font-weight:600;border-radius:6px;border:1px solid var(--navy);padding:9px 12px;cursor:pointer}
+  .primary{background:var(--navy);color:#fff}.ghost{background:#fff;color:var(--navy)}
+  .mini{font-size:11.5px;padding:6px 9px}
+  .saved{display:flex;gap:8px;align-items:center}
+  .note{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.45}
+  details summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:12.5px}
+
+  .docwrap{flex:1 1 auto;min-width:0}
+  .toolbar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .page{background:#fff;border:1px solid var(--line);border-radius:4px;box-shadow:0 1px 6px rgba(0,0,0,.08);
+    width:210mm;max-width:100%;margin:0 auto 14px;padding:20mm 18mm;font-family:var(--serif);color:#000;font-size:12pt;line-height:1.55}
+  @media (max-width:900px){.page{padding:14mm 11mm;font-size:11pt}}
+  .page h3.c{text-align:center;font-size:13pt;margin:0 0 16px;letter-spacing:.5px;text-decoration:underline}
+  .page p{margin:0 0 11px;text-align:justify}
+  .page ol.clauses{margin:0 0 11px;padding-left:22px}
+  .page ol.clauses li{margin-bottom:9px;text-align:justify}
+  .page b{font-weight:700}.page u{text-decoration:underline}
+  .sig{margin-top:24px;line-height:1.7;white-space:pre-line}
+  .page table.g{width:100%;border-collapse:collapse;margin:10px 0;font-size:11pt}
+  .page table.g th,.page table.g td{border:1px solid #000;padding:6px 8px;vertical-align:top;text-align:left}
+  .page table.g th{background:#eee;font-weight:700}
+  .page td.sr{width:30px;text-align:center}.page td.ck{width:70px;text-align:center;font-weight:700}
+  .pb{page-break-before:always}
+  .ph{color:#000}
+
+  @media print{
+    body{background:#fff}.topbar,.docpick,.controls,.toolbar{display:none!important}
+    .wrap{display:block;padding:0;max-width:none}.docwrap{width:auto}
+    .page{border:0;box-shadow:none;border-radius:0;margin:0 0 0 0;width:auto;padding:16mm 18mm}
+    @page{size:A4;margin:0}
+  }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>PSA Document Generator</h1>
+  <span class="tag">Pawan Soni &amp; Associates · standard forms, filled instantly</span>
+</div>
+<div class="docpick" id="docpick"></div>
+
+<div class="wrap">
+  <div class="controls">
+    <div class="card">
+      <h2>Saved clients</h2>
+      <div class="saved">
+        <select id="clientPick"><option value="">— pick a saved client —</option></select>
+        <button class="b ghost mini" id="delClient" type="button">Delete</button>
+      </div>
+      <div class="btns" style="margin-top:10px">
+        <button class="b primary mini" id="saveClient" type="button">Save client</button>
+        <button class="b ghost mini" id="clearForm" type="button">Clear</button>
+      </div>
+      <div class="note">Enter a client once → <b>Save client</b>. Next time just pick from the list; all documents reuse the same details.</div>
+    </div>
+
+    <div class="card">
+      <h2 id="fieldsTitle">Details</h2>
+      <div id="fields"></div>
+      <div id="extras"></div>
+    </div>
+
+    <details class="card">
+      <summary>Firm defaults (editable, saved on this PC)</summary>
+      <label>Practitioner name</label><input type="text" id="gpName">
+      <div class="row2">
+        <div><label>Membership No.</label><input type="text" id="gpMem"></div>
+        <div><label>Mobile</label><input type="text" id="gpMobile"></div>
+      </div>
+      <label>Practitioner address</label><input type="text" id="gpAddr">
+      <label>Email</label><input type="text" id="gpEmail">
+      <label>Firm name (certificates)</label><input type="text" id="gpFirm">
+      <label>Firm line (certificates)</label><input type="text" id="gpFirmLine">
+      <label>Bank (requirement sheets)</label><input type="text" id="gpBank">
+      <div class="row2">
+        <div><label>Account No.</label><input type="text" id="gpAcc"></div>
+        <div><label>IFSC</label><input type="text" id="gpIfsc"></div>
+      </div>
+      <div class="btns" style="margin-top:10px"><button class="b primary mini" id="saveFirm" type="button">Save defaults</button></div>
+    </details>
+
+    <div class="note">Signing dates are left blank by default — fill them by hand at signature.</div>
+  </div>
+
+  <div class="docwrap">
+    <div class="toolbar">
+      <button class="b primary" id="printBtn" type="button">🖨 Print / Save as PDF</button>
+      <button class="b primary" id="wordBtn" type="button">📄 Download Word</button>
+      <button class="b ghost" id="saveOneBtn" type="button">⬇ Save this form only</button>
+      <button class="b ghost" id="copyBtn" type="button">Copy text</button>
+    </div>
+    <div id="pages"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},
+        set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+var $=function(id){return document.getElementById(id);};
+function esc(s){return String(s==null?"":s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+
+/* ---------- Firm defaults ---------- */
+var FIRM_DEF={
+  name:'CA Pawankumar Ramavtar Soni',mem:'116591',
+  addr:'10/306/1, Sarvodaya Nagar, Ichalkaranji-416115',
+  email:'pawansonis@icai.org',mobile:'+91-77749 15001',
+  firm:'PAWAN SONI AND ASSOCIATES',firmLine:'Chartered Accountants, Ichalkaranji-416115',
+  bank:'HDFC Bank, Ichalkaranji-2 Branch (Current A/c)',acc:'50200094330950',ifsc:'HDFC0009431'
+};
+var FIRM_KEYS=['name','mem','addr','email','mobile','firm','firmLine','bank','acc','ifsc'];
+var FIRM=Object.assign({},FIRM_DEF,LS.get('psa_firm',{}));
+function gpId(k){return 'gp'+k.charAt(0).toUpperCase()+k.slice(1);}
+FIRM_KEYS.forEach(function(k){var e=$(gpId(k));if(e)e.value=FIRM[k];});
+$('saveFirm').onclick=function(){
+  FIRM_KEYS.forEach(function(k){var e=$(gpId(k));if(e)FIRM[k]=e.value.trim();});
+  LS.set('psa_firm',FIRM);render();flash($('saveFirm'),'Saved ✓');
+};
+
+/* ---------- Field catalog ---------- */
+var FCAT={
+  clientName:{l:'Client / Noticee / Appellant name',p:'SUNIL VIJAY BHOJKAR'},
+  father:{l:"S/o (father's name)",p:'Vijay Bhojkar'},
+  age:{l:'Age (years)',p:'32'},
+  capacity:{l:'Capacity',p:'Proprietor / Partner / Director'},
+  firm:{l:'Firm / Business (M/s …)',p:'Sunil Vijay Bhojkar'},
+  address:{l:'Client address',p:'At Post Talange, Tal. Hatkanangale, Dist. Kolhapur',t:1},
+  pan:{l:'PAN',p:'AJMPK8606M'},
+  gstin:{l:'GSTIN',p:'27AFFPA0469K1ZI'},
+  place:{l:'Place (of signing)',p:'Ichalkaranji'},
+  addressee1:{l:'Addressed to (authority)',p:'Commissioner (Appeals) CGST'},
+  addressee2:{l:'Authority place',p:'Thane'},
+  authority:{l:'BEFORE (authority + proceedings venue)',p:'The Superintendent of Central Taxes, Range III, Division II, CGST Kolhapur Commissionerate, Jaysingpur',t:1},
+  scnNo:{l:'SCN / Notice number',p:'CGST-KOL/Dn-II/R-III/GST-46/Supdt/24-25'},
+  scnDate:{l:'SCN / Notice date',p:'25/11/2024'},
+  officer:{l:'Issuing officer (ld. …)',p:'Superintendent of Central Taxes, Range III, Division II, Jaysingpur',t:1},
+  appAuthority:{l:'BEFORE (appellate authority)',p:'Maharashtra State Goods and Service Tax Appeals, Kolhapur',t:1},
+  orderNo:{l:'Order-in-Original number',p:'KOL-VAT-C-018/SCRUTINY/2022-23/B-563'},
+  orderDate:{l:'Order date',p:'23/12/2022'},
+  bank:{l:'Bank name',p:'Indian Overseas Bank'},
+  branch:{l:'Branch',p:'Ichalkaranji Branch'},
+  asOn:{l:'Net worth as on',p:'31.03.2025'},
+  amount:{l:'Net worth amount (Rs.)',p:'1,25,95,204.00'},
+  amountWords:{l:'Amount in words (optional)',p:'Rupees One Crore …'},
+  udin:{l:'UDIN',p:'25116591BMOHCU2471'},
+  purpose:{l:'Purpose',p:'Bank finance'},
+  noticeNo:{l:'Notice (number & date)',p:'DRC-01 dated …'},
+  matter:{l:'Matter / Client (for file)',p:'M/s …'},
+  work:{l:'Scope of work',p:'GSTR-9 and GSTR-9C'},
+  fy:{l:'Financial Year',p:'2024-2025'},
+  yearEnd:{l:'Previous year ended',p:'31st March 2025'},
+  remun:{l:'Remuneration (Rs.) — optional',p:'leave blank to keep dotted line'},
+  demand:{l:'Tax demand (Rs.) — for fee calc',p:'250000'},
+  quotedFee:{l:'Professional fee quoted (Rs.) — optional',p:'overrides the minimum'}
+};
+
+/* ---------- Shared data ---------- */
+var DATA=LS.get('psa_lastdata',{});
+var ACT_LABELS=[
+ "To furnish details of outward and inward supplies",
+ "To furnish monthly, quarterly, annual or final return",
+ "To make deposit for credit into the electronic cash ledger",
+ "To file an application for claim of refund",
+ "To file an application for amendment or cancellation of registration",
+ "To file Appeal, appear for personal hearing and submit documents and submissions relating to appeal"];
+
+var CLAUSES=''+
+'<li>To draft and settle pleadings in respect of or in response to, above proceedings and withdraw, modify or substitute reply(ies), objection(s) or seek clarification in respect of application, notice(s) or communication served in those proceedings including give clarification(s) or effect retraction in respect of statements made and relied upon;</li>'+
+'<li>To act, appear and plead in the above noted proceedings before the above authorities or any other authorities before whom the same may be posted or heard and to file and take back documents;</li>'+
+'<li>To sign, file, verify and present pleadings, applications, appeals, cross-objections, review, restoration, withdrawal, compromise, or other replies, objections or affidavits or other documents, as may be deemed necessary or proper for the above proceedings from time to time;</li>'+
+'<li>To appoint and instruct any other practitioner authorizing him to exercise the power and authority hereby conferred upon our authorized representative whenever he may think fit to do so and to sign the power of attorney or authorization on our behalf; and</li>'+
+'<li>To accept service of any application, notice(s), communication or other process that are lawfully permitted to such authorized representative.</li>';
+
+function num(x){var n=parseFloat(String(x==null?'':x).replace(/[^0-9.]/g,''));return isNaN(n)?0:n;}
+function inr(n){return n.toLocaleString('en-IN');}
+function gstatFee(demand){var d=num(demand);if(!d)return null;var f=Math.ceil(d/100000)*1000;return Math.max(5000,Math.min(25000,f));}
+
+function mrlBody(firm,work,yend){
+  var H='<p style="font-weight:700;margin-bottom:6px">';
+  return '<p>This letter is provided to you in connection with the conduct of the above subject by your firm under the GST Laws, and for the purpose of carrying out filing of '+work+'. We confirm, to the best of our knowledge and belief, that:</p>'+
+  H+'I. Place of Business</p>'+
+  '<p>a) We do not have any other place of business inside the State other than those stated in the Registration Certificate. We confirm that each place of business stated in the said Registration Certificate is duly registered under the GST Laws within the State.</p>'+
+  H+'II. Outward Supply</p>'+
+  '<p>a) We have not effected any supply of goods or services or both from places other than those declared in the certificate of registration and the returns filed from time to time. All kinds (inter-State and intra-State) of supplies / supply returns, including sale of assets if any, have been duly classified and properly accounted for in the Outward Supply Register or duly recorded in the appropriate books of accounts, and properly reflected in the returns filed under the GST laws.</p>'+
+  '<p>b) The classification of data in respect of B2B and B2C outward supplies has been correctly classified and accounted for in our returns.</p>'+
+  '<p>c) The deemed supply transactions, viz. supplies to related parties or supplies between distinct entities / distinct persons, are valued as per the Valuation Rules, if any.</p>'+
+  H+'III. Inward Supply</p>'+
+  '<p>a) We have not effected any intra-State, inter-State inward supplies or imports into the State other than those declared in GSTR-9 and GSTR-9C and the returns filed as prescribed. All inward supplies of goods and/or services / inward supply returns, including inward supplies of assets if any, have been duly classified and properly accounted in the relevant register(s) and properly reflected in the returns filed from time to time.</p>'+
+  H+'IV. Documentation</p>'+
+  '<p>a) We confirm that we have issued the E-way bill / Delivery note as per the provisions of the GST law.</p>'+
+  '<p>b) We confirm that we have obtained the statutory Forms / declarations like LUT, etc., from the GST Authority as per the provisions of the GST law, if any.</p>'+
+  '<p>c) We have prepared the monthly returns based on the books of accounts maintained. Copies of the returns filed with the authorities were submitted / furnished to you for the purpose of filing.</p>'+
+  '<p>d) The entries in the Electronic Liability Ledger, Electronic Credit Ledger and Electronic Cash Ledger for the financial year are reconciled with the transactions in the returns and the books of accounts.</p>'+
+  '<p>e) We have maintained relevant records in respect of goods sent to / received from job workers and correctly accounted for those transactions. We confirm that all goods sent to job workers have been received back within the timelines prescribed.</p>'+
+  '<p>f) Filing of ITC-04 is not feasible with one-to-one correlation of Delivery Challan as asked by the portal, considering the nature of the business of manufacturing of fabrics with yarn. Although the form was changed to accept without one-to-one correlation vide Notification No. 38/2018 dated 04/09/2018 (Eighth Amendment to Rules), the portal still does not allow the same. The registered persons’ business association has also made a representation to the Government to grant relaxation for filing of ITC-04 in textile cases.</p>'+
+  H+'V. Classification</p>'+
+  '<p>a) We have classified the goods / services supplied by our concern and charged the rate of tax in accordance with the applicable schedules and/or notifications / Advance Rulings, etc., under the GST Act, 2017.</p>'+
+  '<p>b) We confirm that we have correctly classified the activities as supply of goods and/or supply of services as per the Second Schedule of the GST law.</p>'+
+  '<p>c) The turnovers of inward and outward supplies relating to classification of goods and/or services based on HSN, as shown on the invoices, books and records and in the financial statements, are correct.</p>'+
+  H+'VI. Reconciliation</p>'+
+  '<p>a) We understand that the reconciliation of data provided to you, based on the books and records, returns and relevant registers, has been matched with the financials and relevant returns filed by us from time to time under the GST laws. We confirm that the inward and outward supplies, including non-GST transactions, deemed supplies (transactions without consideration) and such other transactions, have been duly consolidated and matched with the financials.</p>'+
+  H+'VII. Input Tax Credit</p>'+
+  '<p>a) We have paid CGST / SGST and IGST as per the GST laws.</p>'+
+  '<p>b) Regarding reversal of input tax credit on inward supplies where payment to the supplier was not made within 180 days under the proviso to Section 16(2) of the CGST Act, no system is presently available with us to work out the same; we will work it out in the next year, and payments to suppliers are being made at some point of time.</p>'+
+  '<p>c) None of the goods on which we have claimed input credit have subsequently been lost, destroyed or disposed of by way of gift, free samples, etc., requiring reversal of input credit, and we understand the responsibility of preservation of documents under the GST Act.</p>'+
+  '<p>d) We confirm that we have not taken any input tax credit in respect of goods / services restricted in terms of Section 17(5) of the CGST Act.</p>'+
+  '<p>e) We confirm that we have availed input tax credit in line with Section 49 of the CGST Act.</p>'+
+  '<p>f) In respect of inward supplies of goods and/or services, we confirm that we have not expensed the taxes and also claimed input tax credit on the same transactions.</p>'+
+  '<p>g) We have claimed input tax credit on fulfilment of the relevant conditions stipulated under the relevant provisions of the GST laws.</p>'+
+  '<p>h) We confirm that the input tax credit availed is in respect of use in the course or furtherance of business.</p>'+
+  '<p>i) We are in possession of all original tax invoices of inward / outward supplies and confirm having produced such original invoices for your verification.</p>'+
+  '<p>j) We have verified the calculations for reversal of credits as applicable under Rules 37, 42 and 43 as at the end of the year.</p>'+
+  H+'VIII. General</p>'+
+  '<p>a) The accounting policies adopted by us are set out in the Notes to Accounts attached to the financial statements.</p>'+
+  '<p>b) None of the business premises was the subject matter of inspection by GST Department Officers during the year.</p>'+
+  '<p>c) We confirm that we have adhered to the provisions relating to time of supply of goods and services in terms of Sections 12 and 13 of the GST Act, 2017.</p>'+
+  '<p>d) We confirm that our books and records are in compliance with the applicable statutes.</p>'+
+  '<p>e) In respect of certain transactions on which the Valuation Rules apply under the GST laws, we confirm that such transactions have been recorded appropriately in the books and records.</p>'+
+  '<p>f) We certify that the following statements, among others, submitted to you are true and correct: (i) statement of monthly summaries of outward and inward supplies (with tax analysis); (ii) statement of debit and credit notes and journal entries (with tax analysis); (iii) statement of goods received inside the State and sent outside the State; (iv) outward and inward supplies of fixed assets; (v) details of other / miscellaneous income; (vi) details of expenses on which input tax credit is claimed with tax analysis; (vii) reconciliation of outward and inward supply with the ledger.</p>'+
+  H+'IX. Engagement Certification</p>'+
+  '<p>a) We agree that the Management is responsible for compliance with the GST laws comprising the CGST / SGST Act, 2017 and the IGST Act, 2017 and the rules framed thereunder, and for the preparation of '+work+' in compliance with those laws.</p>'+
+  '<p>b) The responsibility of the Management also includes maintenance of adequate accounting records and internal controls for safeguarding the assets of the entity and for preventing and detecting fraud or other irregularities. We hereby certify that all transactions, whether supported with documentation or otherwise, are properly recorded in the books.</p>'+
+  '<p>We hope the above meets your requirements; we shall be pleased to furnish any additional details required by you.</p>';
+}
+
+function v(id,blank){var x=DATA[id];return (x&&String(x).trim())?esc(x):('<span class="ph">'+(blank||'__________')+'</span>');}
+
+/* ---------- Document registry ---------- */
+var DOCS={
+ poa_adj:{tab:'PoA – Adjudication',title:'Details — PoA Adjudication',
+   fields:['authority','scnNo','scnDate','officer','clientName','father','age','capacity','firm','address'],
+   render:function(){
+     return '<div class="page"><h3 class="c">AUTHORIZATION</h3>'+
+     '<p>BEFORE '+v('authority','____________________')+' proceedings arising out of notice under Central GST Act, 2017 made applicable to and State GST Act, 2017 or Integrated GST Act or GST (Compensation to States) Act, 2017 bearing No. <b>'+v('scnNo')+'</b> dated <b>'+v('scnDate','________')+'</b> issued by ld. '+v('officer','____________________')+'.</p>'+
+     '<p>I/We, <b>'+v('clientName')+'</b> S/o '+v('father')+' aged '+v('age','__')+' years, in my capacity as <b>'+v('capacity')+'</b> of <b>M/s '+v('firm')+'</b>, located at '+v('address','____________________')+' (&ldquo;Noticee&rdquo;), do hereby appoint Shri <b>'+esc(FIRM.name.replace(/^CA\s+/,'Shri '))+'</b> (Mem. No. '+esc(FIRM.mem)+'), Chartered Accountant, located at '+esc(FIRM.addr)+', as our authorized representative:</p>'+
+     '<ol class="clauses" type="a">'+CLAUSES+'</ol>'+
+     '<p>And I/We, the undersigned, do hereby agree to ratify and confirm acts done by our above duly authorized representative or his substitute in the matter as my/our acts, as if done by me/us to all intents and purposes.</p>'+
+     '<p>This authorization will remain in force till it is duly cancelled by me/us.</p>'+
+     '<div class="sig" style="text-align:right">For <b>'+v('clientName')+'</b> (&ldquo;Noticee&rdquo;)\n\n\n<b>'+v('clientName')+'</b>\nDate : __________</div>'+
+     '<p style="margin-top:22px">I/We, '+esc(FIRM.name)+' (Mem. No. '+esc(FIRM.mem)+'), located at '+esc(FIRM.addr)+', do hereby declare that being a Chartered Accountant I am duly qualified under Section 116 of the Central GST Act, 2017 and the Rules made thereunder to attend on behalf of the above named Noticee(s).</p>'+
+     '<div class="sig"><b>'+esc(FIRM.name.replace(/^CA\s+/,''))+'</b>\nEmail: '+esc(FIRM.email)+'\nMobile: '+esc(FIRM.mobile)+' (for VC hearing)\n\nDated : __________</div></div>';
+   }},
+
+ poa_app:{tab:'PoA – Appeals',title:'Details — PoA Appeals',
+   fields:['appAuthority','orderNo','orderDate','officer','clientName','father','age','capacity','firm','address'],
+   extras:'corep',
+   render:function(){
+     var two=DATA.corep;
+     var coName=DATA.coName||'', coMem=DATA.coMem||'', coEmail=DATA.coEmail||'', coAddr=DATA.coAddr||'';
+     var appointLine='Shri <b>'+esc(FIRM.name.replace(/^CA\s+/,''))+'</b> (Mem. No. '+esc(FIRM.mem)+'), located at '+esc(FIRM.addr);
+     if(two) appointLine+=' and Shri <b>'+esc(coName||'__________')+'</b> (Mem. No. '+esc(coMem||'______')+')';
+     appointLine+='), as our authorized representative:';
+     var decl='I/We, '+esc(FIRM.name)+' (Mem. No. '+esc(FIRM.mem)+')';
+     if(two) decl+=' / CA '+esc(coName||'__________');
+     decl+=', do hereby declare that being a Chartered Accountant I am duly qualified under Section 116 of the Central GST Act, 2017 and the Rules made thereunder to attend on behalf of the above named Appellant(s).';
+     var sig='<b>'+esc(FIRM.name.replace(/^CA\s+/,''))+'</b>\nEmail: '+esc(FIRM.email)+'\nMobile: '+esc(FIRM.mobile)+' (for VC hearing)';
+     if(two) sig+='\n\n<b>'+esc(coName||'__________')+'</b>\nEmail: '+esc(coEmail||'__________');
+     return '<div class="page"><h3 class="c">POWER OF ATTORNEY</h3>'+
+     '<p>BEFORE '+v('appAuthority','____________________')+' proceedings arising out of Order-in-Original under the Maharashtra State GST Act, 2017 made applicable to and Central GST Act, 2017 or Integrated GST Act or GST (Compensation to States) Act, 2017 bearing No. <b>'+v('orderNo')+'</b> issued on date <b>'+v('orderDate','________')+'</b> by ld. '+v('officer','____________________')+'.</p>'+
+     '<p>I, <b>'+v('clientName')+'</b> S/o '+v('father')+' aged '+v('age','__')+' years, in my capacity as <b>'+v('capacity')+'</b> of <b>M/s '+v('firm')+'</b>, located at '+v('address','____________________')+' (&ldquo;Appellant&rdquo;), do hereby appoint '+appointLine+'</p>'+
+     '<ol class="clauses" type="a">'+CLAUSES+'</ol>'+
+     '<p>And I/We, the undersigned, do hereby agree to ratify and confirm acts done by our above duly authorized representative or his substitute in the matter as my/our acts, as if done by me/us to all intents and purposes. The authorised representative will represent based on the information and documents given and shared by us to him.</p>'+
+     '<p>This authorization will remain in force till it is duly cancelled by me/us.</p>'+
+     '<div class="sig" style="text-align:right">For <b>'+v('clientName')+'</b> (&ldquo;Appellant&rdquo;)\n\n\n<b>'+v('clientName')+'</b>\n'+v('capacity')+'\nDate : __________</div>'+
+     '<p style="margin-top:22px">'+decl+'</p>'+
+     '<div class="sig">'+sig+'\n\nDated : __________</div></div>';
+   }},
+
+ pct05:{tab:'PCT-05 Authorisation',title:'Details — Form GST PCT-05',
+   fields:['addressee1','addressee2','clientName','capacity','firm','gstin','place'],
+   extras:'acts',
+   render:function(){
+     var rows='';ACT_LABELS.forEach(function(t,i){rows+='<tr><td class="sr">'+(i+1)+'.</td><td>'+t+'</td><td class="ck">'+(DATA['act'+i]?'Yes':'')+'</td></tr>';});
+     var g=DATA.gstin?esc(String(DATA.gstin).toUpperCase()):'<span class="ph">______________</span>';
+     return '<div class="page"><div style="text-align:center;font-weight:700;font-size:13pt">Form GST PCT-05</div>'+
+     '<div style="text-align:center;font-style:italic;margin:2px 0 14px">[See rule 83(6)]</div>'+
+     '<h3 class="c" style="text-decoration:none">Authorisation / withdrawal of authorisation for Goods and Services Tax Practitioner</h3>'+
+     '<p>To,<br>'+v('addressee1','____________________')+'<br>'+v('addressee2','____________')+'</p>'+
+     '<p style="text-align:center;font-weight:700">PART – A</p><p>Sir / Madam,</p>'+
+     '<p>1.&nbsp; I, <b>'+v('clientName')+'</b>, '+v('capacity')+' of <b>M/s '+v('firm')+'</b>, do hereby solemnly authorise <b>'+esc(FIRM.name)+'</b>, Membership No. <b>'+esc(FIRM.mem)+'</b>, for the purposes of Section 48 read with rule 83, to perform the following activities on behalf of <b>M/s '+v('firm')+', GSTIN : '+g+'</b> —</p>'+
+     '<table class="g"><thead><tr><th class="sr">Sr.</th><th>List of Activities</th><th class="ck">Check box</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+     '<p>2.&nbsp; The consent of the '+esc(FIRM.name)+' is attached herewith.</p>'+
+     '<div class="sig">Signature of the authorised signatory\n\n<b>'+v('clientName')+'</b>\nDesignation / Status : '+v('capacity')+'\nDate : __________\nPlace : '+v('place','________')+'</div>'+
+     '<p style="text-align:center;font-weight:700;margin-top:28px">PART – B</p>'+
+     '<p style="text-align:center;font-weight:700">Consent of the Goods and Services Tax Practitioner</p>'+
+     '<p>I, <b>'+esc(FIRM.name)+'</b>, Membership No. <b>'+esc(FIRM.mem)+'</b>, do hereby solemnly accord my consent to act as the Goods and Services Tax Practitioner on behalf of <b>M/s '+v('firm')+', GSTIN : '+g+'</b>, only in respect of the activities specified by <b>M/s '+v('firm')+', GSTIN : '+g+'</b>.</p>'+
+     '<div class="sig">Signature\n\n<b>'+esc(FIRM.name)+'</b>\nMembership No. '+esc(FIRM.mem)+'</div></div>';
+   }},
+
+ networth:{tab:'Net Worth certificate',title:'Details — Net Worth certificate',
+   fields:['bank','branch','asOn','clientName','pan','amount','amountWords','udin','purpose','firm','address'],
+   render:function(){
+     var words=DATA.amountWords&&DATA.amountWords.trim()?' ('+esc(DATA.amountWords)+')':'';
+     var cert='<div class="page"><p>To,<br>Chief Officer,<br><b>'+v('bank','____________________')+'</b>,<br>'+v('branch','____________')+'</p>'+
+       '<p><b>Subject :</b> Net Worth Statement as on '+v('asOn','________')+'</p>'+
+       '<p><b>Re :</b> '+v('clientName')+' — PAN : '+v('pan','__________')+'</p>'+
+       '<p>We certify and attach herewith as Annexure-1 to this Certificate the Net Worth statement (Book value) of <b>'+v('clientName')+'</b> as on '+v('asOn','________')+' which is <b>Rs. '+v('amount','__________')+'</b>'+words+'.</p>'+
+       '<p>The above certificate is given based on the documents produced before us. This certificate is issued on the request of the Proprietor of the firm for '+v('purpose','____________')+' with '+v('bank','____________')+', '+v('branch','________')+'.</p>'+
+       '<p>Date : __________<br>UDIN : '+v('udin','____________________')+'</p>'+
+       '<div class="sig">For <b>'+esc(FIRM.firm)+'</b>\n'+esc(FIRM.firmLine)+'\n\n\n<b>'+esc(FIRM.name.replace(/^CA\s+/,''))+'</b>\nMembership No. '+esc(FIRM.mem)+'</div></div>';
+     var appt='<div class="page pb"><p style="text-align:right">'+v('address','____________________')+'<br>Date : __________</p>'+
+       '<p>To,<br><b>'+esc(FIRM.firm)+'</b>,<br>'+esc(FIRM.firmLine)+'</p>'+
+       '<p><b>Subject :</b> Appointment to give Net Worth statement as on '+v('asOn','________')+'</p>'+
+       '<p>Respected Sir,</p>'+
+       '<p style="text-indent:28px">We hereby appoint you to give us the Net Worth statement as on '+v('asOn','________')+'.</p>'+
+       '<p>Thanking you,</p>'+
+       '<div class="sig">For <b>M/s '+v('firm')+'</b> (Prop. : '+v('clientName')+')\n\n\n(Proprietor)</div></div>';
+     return cert+appt;
+   }},
+
+ approach:{tab:'Approach Letter',title:'Details — Client Approach Letter',
+   fields:['clientName','noticeNo'],extras:'opt',
+   render:function(){
+     function mark(n){return DATA.approachOpt==String(n)?'<b>☑</b>':'☐';}
+     return '<div class="page"><h3 class="c" style="text-decoration:none">Instructions from Client</h3>'+
+     '<p style="text-align:center;margin-top:-8px">(to accompany every notice forwarded for response)</p>'+
+     '<p>All Notices issued are aimed at raising additional tax revenues. Taxpayers are averse to litigation due to (i) time required for resolution and (ii) pre-deposit of disputed tax demands. The approach to be followed entails options in the response, and clear instructions from the Client help in taking the right steps — from preliminary objections all the way to grounds to be taken in appeal — to improve the possibility of a favourable decision eventually.</p>'+
+     '<p>Section 160(2) of the Central GST Act bars belated objections on the validity of proceedings if replies on merits were filed prematurely. Rule 112 of the Central GST Rules prohibits raising new grounds that were not raised by way of preliminary objections when the earliest replies/responses were submitted.</p>'+
+     '<table class="g"><tr><th style="width:38%">Name of Registered Taxpayer</th><td>'+v('clientName')+'</td></tr>'+
+     '<tr><th>Notice (number and date)</th><td>'+v('noticeNo')+'</td></tr></table>'+
+     '<p style="font-weight:700;margin-top:12px">Instructions of Taxpayer (Client) to proceed in the matter : @</p>'+
+     '<table class="g"><tr><td class="ck">'+mark(1)+'</td><td>&lsquo;ACCEPT AND DISCHARGE&rsquo; liability and discharge demand with maximum relief allowable under s.73(8)/74(8) read with s.75(2) (details of these provisions to be explained to the Client).</td></tr>'+
+     '<tr><td class="ck">'+mark(2)+'</td><td>Contest demand but follow a &lsquo;SOFT AND TRADITIONAL&rsquo; approach in replying on merits and provide assistance to the department in completing any missing information or misinformation in the Notice.</td></tr>'+
+     '<tr><td class="ck">'+mark(3)+'</td><td>Protect the Taxpayer&rsquo;s interests and proceed to contest the demand in a &lsquo;FIRM AND JUDICIOUS&rsquo; manner even if adjudication results in adverse orders, relief to the Taxpayer (after proper appreciation of facts and law) being possible only in appeal.</td></tr></table>'+
+     '<p style="font-size:11pt">@ These are instructions for us to follow and we DO NOT make any recommendation about the option to avail, as this is the Client&rsquo;s prerogative.</p>'+
+     '<div class="sig">…………………………………….\nSigned by Authorized Person\n(for Registered Taxpayer)</div></div>';
+   }},
+
+ checklist:{tab:'Appeal Checklist',title:'File — Completion Checklist',
+   fields:['matter'],
+   render:function(){
+     var items=['DRC-07 order with certified copy from officer (if not signed digitally) + certified copy request letter to officer',
+       'Annexure to APL-01','Statement of Facts','Grounds of Appeal','Prayer',
+       'Appeal assignment letter from client','10% pre-deposit through cash / credit ledger',
+       'Power of Attorney on Rs. 100 stamp','Provisional acknowledgement of appeal','Form GST APL-01',
+       'Delay condonation affidavit, if any','Condonation request',
+       'Read whole SOF, GOA and Prayer twice','Whether AI used for completion of appeal work',
+       'Only papers signed by the applicant','Proper set prepared with punching',
+       'Appeal with DC or JC — please check now',
+       'All Statements of Fact relevant to Grounds of Appeal — no extra point stated'];
+     var rows='';items.forEach(function(t){rows+='<tr><td class="ck">☐</td><td>'+t+'</td></tr>';});
+     return '<div class="page"><h3 class="c">Checklist for Appeal Work</h3>'+
+     '<p><b>Matter :</b> '+v('matter','____________________')+'</p>'+
+     '<table class="g"><thead><tr><th class="ck">Done</th><th>Particular</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+     '<p style="font-size:11pt;margin-top:12px">Prepared by : __________&nbsp;&nbsp;&nbsp;Reviewed by : __________&nbsp;&nbsp;&nbsp;Date : __________</p></div>';
+   }},
+
+ gstat:{tab:'GSTAT Steps',title:'File — Steps in GSTAT Filing',
+   fields:['matter'],
+   render:function(){
+     var steps=[
+       'Rs. 500 stamp for Power of Attorney + Rs. 500 stamp for Affidavit (if required) + DSC token',
+       '10% pre-deposit paid against the demand raised — if paid through DRC-03, make DRC-03A on the portal',
+       'Appeal fees Rs. 1,000 per Rs. 1 lakh, subject to minimum Rs. 5,000 and maximum Rs. 25,000',
+       'Index to APL-05',
+       'As per the Index, save all PDFs in one folder and compile every document at a single place',
+       {t:'Prepare the following documents',sub:['Statement of Facts','Tables X, Y, Z','Annexure-C (case summary)','Grounds of Appeal','Prayer','APL-05','Power of Attorney','Affidavit','Synopsis']},
+       'After finalisation, do GSTAT pagination and Index first, then OCR',
+       'Send to client for signing the papers',
+       'Scan the manually signed papers and replace them in the set',
+       'Affix client DSC on the papers',
+       'Affix our DSC on SOF, GOA and APL-05',
+       'Start filing the appeal on the portal',
+       'Final upload with DSC to APL-05',
+       'Acknowledgement received'];
+     var rows='',n=0;
+     steps.forEach(function(s){
+       n++;
+       if(typeof s==='string'){rows+='<tr><td class="ck">☐</td><td class="sr">'+n+'</td><td>'+s+'</td></tr>';}
+       else{rows+='<tr><td class="ck">☐</td><td class="sr">'+n+'</td><td>'+s.t+':'+
+         '<table class="g" style="margin:6px 0 0"><tbody>';
+         s.sub.forEach(function(x){rows+='<tr><td class="ck">☐</td><td>'+x+'</td></tr>';});
+         rows+='</tbody></table></td></tr>';}
+     });
+     return '<div class="page"><h3 class="c">Steps in GSTAT (Second Appeal) Filing</h3>'+
+     '<p><b>Matter :</b> '+v('matter','____________________')+'</p>'+
+     '<table class="g"><thead><tr><th class="ck">Done</th><th class="sr">Step</th><th>Particular</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+     '<p style="font-size:11pt;margin-top:12px">Prepared by : __________&nbsp;&nbsp;&nbsp;Reviewed by : __________&nbsp;&nbsp;&nbsp;Date : __________</p></div>';
+   }},
+
+ apptmrl:{tab:'Appointment + MRL',title:'Details — Appointment + MRL',
+   fields:['firm','address','gstin','work','fy','yearEnd','remun','capacity'],
+   render:function(){
+     var work=(DATA.work&&DATA.work.trim())?esc(DATA.work):'GSTR-9 and GSTR-9C';
+     var ye=v('yearEnd','________');
+     var rem=(DATA.remun&&DATA.remun.trim())?('Rs. '+esc(DATA.remun)):'Rs. ........................';
+     var appt='<div class="page"><p><b>'+v('firm')+'</b><br>'+v('address','____________________')+'<br>Date : __________</p>'+
+       '<p>To,<br><b>'+esc(FIRM.firm)+'</b>,<br>'+esc(FIRM.firmLine)+'</p>'+
+       '<p><b>Subject :</b> Appointment for filing '+work+' for Financial Year '+v('fy','________')+'.</p>'+
+       '<p>Dear Sir,</p>'+
+       '<p style="text-indent:28px">We are pleased to inform you that you have been appointed for preparation and filing of '+work+', carrying on business under the name and style of <b>'+v('firm')+'</b>, GSTIN : <b>'+esc((DATA.gstin||'______________').toUpperCase())+'</b>, under the CGST/SGST Act for the previous year ending on '+ye+'.</p>'+
+       '<p>The remuneration for conducting the said work is fixed at '+rem+'. All applicable taxes and out-of-pocket expenses such as travelling, conveyance, etc., shall be extra, at actuals.</p>'+
+       '<p>Thanking you,</p>'+
+       '<div class="sig">For <b>'+v('firm')+'</b>\n\n\n('+v('capacity','Proprietor / Partner / Karta')+')</div></div>';
+     var mrl='<div class="page pb"><p><b>'+v('firm')+'</b><br>'+v('address','____________________')+'</p>'+
+       '<h3 class="c">Management Representation Letter</h3>'+
+       '<p>Date : __________</p>'+
+       '<p>To,<br>'+esc(FIRM.name)+'<br>M/s. '+esc(FIRM.firm)+'<br>'+esc(FIRM.firmLine)+'</p>'+
+       '<p><b>Subject :</b> '+work+' of <b>'+v('firm')+'</b> for the previous year ended '+ye+' — Management Representation Letter.</p>'+
+       '<p>Dear Sir,</p>'+
+       mrlBody(v('firm'),work,ye)+
+       '<p>Thanking you,</p>'+
+       '<div class="sig">For <b>'+v('firm')+'</b>\n\n\n('+v('capacity','Proprietor / Partner / Karta')+')</div></div>';
+     return appt+mrl;
+   }},
+
+ req_gstat:{tab:'Requirement – GSTAT',title:'Client sheet — GSTAT requirement',
+   fields:['matter','demand','quotedFee'],extras:'reqcalc',
+   render:function(){
+     var fee=gstatFee(DATA.demand);
+     var feeLine=fee!=null?(' In your case, on a demand of Rs. '+inr(num(DATA.demand))+', the appeal fee works out to <b>Rs. '+inr(fee)+'</b>.'):'';
+     var pf=(DATA.quotedFee&&DATA.quotedFee.trim())?('Rs. '+esc(DATA.quotedFee)+' (as quoted and approved)'):'minimum Rs. 50,000 or amount as quoted and approved';
+     var bank=esc(FIRM.firm)+', '+esc(FIRM.bank)+', A/c No. '+esc(FIRM.acc)+', IFSC '+esc(FIRM.ifsc);
+     return '<div class="page"><h3 class="c">Requirements from Client — GSTAT (Second Appeal)</h3>'+
+       '<p><b>Matter :</b> '+v('matter','____________________')+'</p>'+
+       '<p style="font-weight:700">A. Before appeal work is started</p>'+
+       '<ol class="clauses" type="1">'+
+       '<li>Rs. 500 stamp paper for Power of Attorney.</li>'+
+       '<li>Rs. 500 stamp paper for Affidavit.</li>'+
+       '<li>DSC token / signature is required.</li>'+
+       '<li>10% pre-deposit to be paid against the demand raised.</li>'+
+       '<li>Appeal fees: Rs. 1,000 per Rs. 1 lakh of tax demand, subject to a minimum of Rs. 5,000 and a maximum of Rs. 25,000.'+feeLine+'</li>'+
+       '<li>Professional fees: '+pf+', payable to '+bank+'.</li>'+
+       '</ol>'+
+       '<p style="font-weight:700">B. Documents to be signed by the client (after preparation is ready)</p>'+
+       '<table class="g"><tbody>'+
+       ['Statement of Facts','Tables X, Y, Z','Annexure-C (case summary)','Grounds of Appeal','Prayer','APL-05','Power of Attorney','Affidavit']
+         .map(function(x,i){return '<tr><td class="sr">'+(i+1)+'.</td><td>'+x+'</td></tr>';}).join('')+
+       '</tbody></table>'+
+       '<p style="font-weight:700">C. After appeal work is ready</p>'+
+       '<p>Signature of the Partner / Proprietor / Director is required on the last page. Print the last page where the signature is required and send the hard copy to the office, or send a scanned copy at 300 dpi.</p></div>';
+   }},
+
+ req_faa:{tab:'Requirement – FAA',title:'Client sheet — FAA requirement',
+   fields:['matter','demand','quotedFee'],extras:'reqcalc',
+   render:function(){
+     var pf=(DATA.quotedFee&&DATA.quotedFee.trim())?('Rs. '+esc(DATA.quotedFee)+' (as quoted and approved)'):'minimum Rs. 35,000 or amount as quoted and approved';
+     var dep=num(DATA.demand)?(' (10% on Rs. '+inr(num(DATA.demand))+' = <b>Rs. '+inr(Math.round(num(DATA.demand)*0.10))+'</b>)'):'';
+     var bank=esc(FIRM.firm)+', '+esc(FIRM.bank)+', A/c No. '+esc(FIRM.acc)+', IFSC '+esc(FIRM.ifsc);
+     return '<div class="page"><h3 class="c">Requirements from Client — First Appeal (FAA / APL-01)</h3>'+
+       '<p><b>Matter :</b> '+v('matter','____________________')+'</p>'+
+       '<p style="font-weight:700">A. Before appeal work is started</p>'+
+       '<ol class="clauses" type="1">'+
+       '<li>Rs. 500 stamp paper for Power of Attorney.</li>'+
+       '<li>DSC token / signature, if available, may be shared.</li>'+
+       '<li>10% pre-deposit to be paid against the demand raised'+dep+'.</li>'+
+       '<li>Professional fees: '+pf+', payable to '+bank+'.</li>'+
+       '</ol>'+
+       '<p style="font-weight:700">B. Documents to be signed by the client (after preparation is ready)</p>'+
+       '<table class="g"><tbody>'+
+       ['Statement of Facts','Tables X, Y, Z','Grounds of Appeal','Prayer','Annexure to APL-01','Power of Attorney']
+         .map(function(x,i){return '<tr><td class="sr">'+(i+1)+'.</td><td>'+x+'</td></tr>';}).join('')+
+       '</tbody></table>'+
+       '<p style="font-weight:700">C. After appeal work is ready</p>'+
+       '<p>Signature of the Partner / Proprietor / Director is required on the last page. Print the last page where the signature is required and send the hard copy to the office, or send a scanned copy at 300 dpi.</p></div>';
+   }}
+};
+
+/* ---------- UI build ---------- */
+var ORDER=['poa_adj','poa_app','pct05','networth','approach','apptmrl','checklist','gstat','req_gstat','req_faa'];
+var current='poa_adj';
+var dp=$('docpick');
+ORDER.forEach(function(k){
+  var b=document.createElement('button');b.textContent=DOCS[k].tab;b.dataset.k=k;
+  b.onclick=function(){current=k;buildFields();render();Array.prototype.forEach.call(dp.children,function(x){x.classList.toggle('on',x.dataset.k===current);});};
+  dp.appendChild(b);
+});
+
+function inputRow(id){
+  var f=FCAT[id];var el=f.t?'textarea':'input';
+  return '<label>'+f.l+'</label>'+(f.t?
+    '<textarea id="f_'+id+'" placeholder="'+esc(f.p)+'">'+esc(DATA[id]||'')+'</textarea>':
+    '<input type="text" id="f_'+id+'" placeholder="'+esc(f.p)+'" value="'+esc(DATA[id]||'')+'">');
+}
+function buildFields(){
+  var d=DOCS[current];$('fieldsTitle').textContent=d.title;
+  var html='';var fs=d.fields;
+  // group some rows side by side
+  var pairs={scnNo:'scnDate',orderNo:'orderDate',bank:'branch',amount:'amountWords',addressee1:'addressee2',fy:'yearEnd',demand:'quotedFee'};
+  var used={};
+  fs.forEach(function(id){
+    if(used[id])return;
+    if(pairs[id]&&fs.indexOf(pairs[id])>-1){used[pairs[id]]=1;
+      html+='<div class="row2"><div>'+inputRow(id)+'</div><div>'+inputRow(pairs[id])+'</div></div>';
+    } else if(id==='clientName'&&fs.indexOf('father')>-1){used.father=1;used.age=1;
+      html+=inputRow('clientName')+'<div class="row2"><div>'+inputRow('father')+'</div><div>'+inputRow('age')+'</div></div>';
+    } else html+=inputRow(id);
+  });
+  $('fields').innerHTML=html;
+  fs.forEach(function(id){var e=$('f_'+id);if(e)e.addEventListener('input',function(){DATA[id]=e.value;persist();render();});});
+  buildExtras(d.extras);
+}
+function buildExtras(kind){
+  var box=$('extras');box.innerHTML='';
+  if(kind==='acts'){
+    var h='<label style="margin-top:14px">Activities authorised (tick)</label>';
+    ACT_LABELS.forEach(function(t,i){h+='<label class="act"><input type="checkbox" id="x_act'+i+'" '+(DATA['act'+i]?'checked':'')+'><span>'+(i+1)+'. '+t+'</span></label>';});
+    box.innerHTML=h;
+    ACT_LABELS.forEach(function(t,i){$('x_act'+i).addEventListener('change',function(){DATA['act'+i]=this.checked;persist();render();});});
+  } else if(kind==='opt'){
+    var o='<label style="margin-top:14px">Client&rsquo;s chosen approach (tick one)</label>';
+    [['1','ACCEPT AND DISCHARGE'],['2','SOFT AND TRADITIONAL'],['3','FIRM AND JUDICIOUS']].forEach(function(p){
+      o+='<label class="opt"><input type="radio" name="apopt" value="'+p[0]+'" '+(DATA.approachOpt===p[0]?'checked':'')+'><span>'+p[1]+'</span></label>';});
+    box.innerHTML=o;
+    Array.prototype.forEach.call(document.getElementsByName('apopt'),function(r){r.addEventListener('change',function(){DATA.approachOpt=this.value;persist();render();});});
+  } else if(kind==='reqcalc'){
+    box.innerHTML='<div id="calcBox" style="margin-top:12px;padding:11px 12px;background:var(--chip);border-radius:7px;font-size:13px;color:var(--navy);line-height:1.5"></div>';
+    updateCalc();
+  } else if(kind==='corep'){
+    var c='<label class="act" style="margin-top:14px"><input type="checkbox" id="x_corep" '+(DATA.corep?'checked':'')+'><span>Add co-representative CA</span></label><div id="coBox"></div>';
+    box.innerHTML=c;
+    $('x_corep').addEventListener('change',function(){DATA.corep=this.checked;persist();coBox();render();});
+    coBox();
+  }
+}
+function coBox(){
+  var b=$('coBox');if(!b)return;
+  if(!DATA.corep){b.innerHTML='';return;}
+  b.innerHTML='<div class="row2"><div><label>Co-rep name</label><input type="text" id="f_coName" value="'+esc(DATA.coName||'')+'" placeholder="CA Kamlesh Gupta"></div><div><label>Mem. No.</label><input type="text" id="f_coMem" value="'+esc(DATA.coMem||'')+'"></div></div><label>Co-rep email</label><input type="text" id="f_coEmail" value="'+esc(DATA.coEmail||'')+'">';
+  ['coName','coMem','coEmail'].forEach(function(id){var e=$('f_'+id);e.addEventListener('input',function(){DATA[id]=e.value;persist();render();});});
+}
+
+function persist(){LS.set('psa_lastdata',DATA);}
+function updateCalc(){
+  var box=$('calcBox');if(!box)return;var d=num(DATA.demand);
+  if(current==='req_gstat'){
+    box.innerHTML=d?('<b>Appeal fee:</b> Rs. '+inr(gstatFee(DATA.demand))+' &nbsp;&nbsp;|&nbsp;&nbsp; <b>10% pre-deposit:</b> Rs. '+inr(Math.round(d*0.10)))
+      :'Type the tax demand above → appeal fee and 10% pre-deposit calculate automatically.';
+  } else {
+    box.innerHTML=d?('<b>10% pre-deposit:</b> Rs. '+inr(Math.round(d*0.10))):'Type the tax demand above → 10% pre-deposit calculates automatically.';
+  }
+}
+function render(){$('pages').innerHTML=DOCS[current].render();updateCalc();}
+
+/* ---------- Saved clients ---------- */
+var COMMON=['clientName','father','age','capacity','firm','address','pan','gstin','place'];
+function clients(){return LS.get('psa_clients',{});}
+function refreshPick(){var sel=$('clientPick'),c=clients(),cur=sel.value;sel.innerHTML='<option value="">— pick a saved client —</option>';
+  Object.keys(c).sort().forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=k;sel.appendChild(o);});sel.value=cur;}
+$('saveClient').onclick=function(){var key=(DATA.firm||DATA.clientName||'').trim();if(!key){flash($('saveClient'),'Enter name first');return;}
+  var c=clients(),rec={};COMMON.forEach(function(id){rec[id]=DATA[id]||'';});c[key]=rec;LS.set('psa_clients',c);refreshPick();$('clientPick').value=key;flash($('saveClient'),'Saved ✓');};
+$('clientPick').onchange=function(){var c=clients()[this.value];if(!c)return;COMMON.forEach(function(id){DATA[id]=c[id]||'';});persist();buildFields();render();};
+$('delClient').onclick=function(){var k=$('clientPick').value;if(!k)return;var c=clients();delete c[k];LS.set('psa_clients',c);refreshPick();flash($('delClient'),'Deleted');};
+$('clearForm').onclick=function(){DATA={};persist();buildFields();render();$('clientPick').value='';};
+
+/* ---------- Print / Word / copy ---------- */
+$('printBtn').onclick=function(){window.print();};
+
+var WORDCSS='@page{size:A4;margin:2cm 2.2cm}'+
+ "body{font-family:'Bookman Old Style','Times New Roman',serif;font-size:12pt;line-height:1.5;color:#000}"+
+ 'p{margin:0 0 10pt;text-align:justify}'+
+ 'h3.c{text-align:center;text-decoration:underline;font-size:13pt;margin:0 0 14pt}'+
+ 'ol.clauses{padding-left:22pt;margin:0 0 10pt}ol.clauses li{margin-bottom:8pt;text-align:justify}'+
+ 'table.g{border-collapse:collapse;width:100%;margin:8pt 0}'+
+ 'table.g th,table.g td{border:1px solid #000;padding:5pt 7pt;vertical-align:top;text-align:left}'+
+ 'table.g th{background:#eeeeee;font-weight:bold}'+
+ 'td.sr{text-align:center}td.ck{text-align:center;font-weight:bold}'+
+ '.sig{margin-top:18pt}b{font-weight:bold}u{text-decoration:underline}'+
+ '.pb{page-break-before:always}';
+
+function fname(){
+  var base=(DOCS[current].tab).replace(/[\/\\:*?"<>|]/g,'');
+  var who=(DATA.firm||DATA.clientName||DATA.matter||'').replace(/[\/\\:*?"<>|]/g,'').trim();
+  return base+(who?' - '+who:'');
+}
+$('wordBtn').onclick=function(){
+  var src=$('pages').cloneNode(true);
+  // signature blocks use real newlines → convert to <br> so Word keeps the layout
+  Array.prototype.forEach.call(src.querySelectorAll('.sig'),function(s){s.innerHTML=s.innerHTML.replace(/\n/g,'<br>');});
+  var html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" '+
+    'xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>'+esc(fname())+'</title>'+
+    '<style>'+WORDCSS+'</style></head><body>'+src.innerHTML+'</body></html>';
+  var blob=new Blob(['﻿'+html],{type:'application/msword'});
+  var url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=fname()+'.doc';document.body.appendChild(a);a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},120);
+  flash($('wordBtn'),'Downloaded ✓');
+};
+
+/* ---------- Save current form as its own standalone HTML (to send one form to a client) ---------- */
+var STANDALONE_CSS=
+ "*{box-sizing:border-box}"+
+ "body{margin:0;background:#eef1f4;font-family:'Bookman Old Style','Palatino Linotype',Georgia,serif;color:#000}"+
+ ".bar{position:sticky;top:0;z-index:5;background:#17365d;padding:10px 14px;display:flex;gap:8px;flex-wrap:wrap}"+
+ ".bar button{font:600 13px 'Segoe UI',Arial,sans-serif;border:0;border-radius:6px;padding:9px 13px;background:#fff;color:#17365d;cursor:pointer}"+
+ ".page{background:#fff;max-width:210mm;margin:16px auto;padding:20mm 18mm;font-size:12pt;line-height:1.55;box-shadow:0 1px 6px rgba(0,0,0,.12)}"+
+ "h3.c{text-align:center;text-decoration:underline;font-size:13pt;margin:0 0 16px}"+
+ "p{margin:0 0 11px;text-align:justify}"+
+ "ol.clauses{padding-left:22px;margin:0 0 11px}ol.clauses li{margin-bottom:9px;text-align:justify}"+
+ "table.g{border-collapse:collapse;width:100%;margin:10px 0;font-size:11pt}"+
+ "table.g th,table.g td{border:1px solid #000;padding:6px 8px;vertical-align:top;text-align:left}"+
+ "table.g th{background:#eee;font-weight:700}"+
+ "td.sr{width:30px;text-align:center}td.ck{width:70px;text-align:center;font-weight:700}"+
+ ".sig{margin-top:24px;line-height:1.7;white-space:pre-line}"+
+ "b{font-weight:700}u{text-decoration:underline}.pb{page-break-before:always}.ph{color:#000}"+
+ "@media print{.bar{display:none}body{background:#fff}.page{box-shadow:none;margin:0;max-width:none;padding:16mm 18mm}@page{size:A4;margin:0}}"+
+ "@media(max-width:900px){.page{padding:14mm 11mm;font-size:11pt}}";
+
+$('saveOneBtn').onclick=function(){
+  var title=fname();
+  var clone=$('pages').cloneNode(true);
+  var inlineJS=
+    "(function(){var P=document.getElementById('pages');"+
+    "document.getElementById('pbtn').onclick=function(){window.print();};"+
+    "document.getElementById('wbtn').onclick=function(){"+
+    "var s=P.cloneNode(true),g=s.querySelectorAll('.sig');for(var i=0;i<g.length;i++){g[i].innerHTML=g[i].innerHTML.replace(/\\n/g,'<br>');}"+
+    "var css="+JSON.stringify(WORDCSS)+";"+
+    "var h='<html xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:w=\"urn:schemas-microsoft-com:office:word\" xmlns=\"http://www.w3.org/TR/REC-html40\"><head><meta charset=\"utf-8\"><style>'+css+'</style></head><body>'+s.innerHTML+'</body></html>';"+
+    "var b=new Blob(['\\ufeff'+h],{type:'application/msword'}),u=URL.createObjectURL(b),a=document.createElement('a');"+
+    "a.href=u;a.download="+JSON.stringify(title)+"+'.doc';document.body.appendChild(a);a.click();setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(u);},120);};})();";
+  var out='<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'+
+    '<title>'+esc(title)+'</title><style>'+STANDALONE_CSS+'</style></head><body>'+
+    '<div class="bar"><button id="pbtn">\uD83D\uDDA8 Print / Save as PDF</button><button id="wbtn">\uD83D\uDCC4 Download Word</button></div>'+
+    '<div id="pages">'+clone.innerHTML+'</div>'+
+    '<script>'+inlineJS+'<\/script></body></html>';
+  var blob=new Blob([out],{type:'text/html'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=title+'.html';document.body.appendChild(a);a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},120);
+  flash($('saveOneBtn'),'Saved ✓');
+};
+
+$('copyBtn').onclick=function(){var t=$('pages').innerText.replace(/\n{3,}/g,'\n\n');
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){flash($('copyBtn'),'Copied ✓');},sel);}else sel();
+  function sel(){var r=document.createRange();r.selectNode($('pages'));var s=window.getSelection();s.removeAllRanges();s.addRange(r);flash($('copyBtn'),'Selected — Ctrl+C');}};
+function flash(btn,msg){var o=btn.textContent;btn.textContent=msg;setTimeout(function(){btn.textContent=o;},1400);}
+
+/* init */
+dp.children[0].classList.add('on');
+refreshPick();buildFields();render();
+})();
+</script>
+</body>
+</html>
