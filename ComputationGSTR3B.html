@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GSTR-3B Computation — Pawan Soni &amp; Associates</title>
+<style>
+  :root{
+    --navy:#1a2a52; --navy2:#26407a; --gold:#c8961a;
+    --violet:#6b3fa0; --teal:#0f8a8a; --coral:#e2574c; --green:#1f9d57; --amber:#e08a00;
+    --cream:#f3f5fb; --card:#ffffff; --line:#e4e7f2;
+    --ink:#20242e; --muted:#6b7280; --ok:#1f7a3d; --soft:#eef1fb;
+    --err:#b00020; --errbg:#fdecef; --errln:#f3c2cb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:
+      radial-gradient(1100px 380px at 100% -8%, #e9e4fb 0%, rgba(233,228,251,0) 60%),
+      radial-gradient(900px 340px at -5% 0%, #dcf0f0 0%, rgba(220,240,240,0) 55%),
+      var(--cream);
+    color:var(--ink);font-family:'Segoe UI',system-ui,Arial,sans-serif;font-size:15px;line-height:1.5}
+  .wrap{max-width:980px;margin:0 auto;padding:18px 16px 60px}
+
+  .hero{background:linear-gradient(135deg,#15224a 0%,#36277a 52%,#6b3fa0 100%);
+    color:#fff;border-radius:18px;padding:18px 22px;display:flex;align-items:center;gap:16px;
+    box-shadow:0 14px 34px rgba(54,39,122,.30);position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-40px;top:-60px;width:220px;height:220px;
+    background:radial-gradient(circle,rgba(200,150,26,.35),transparent 70%)}
+  .hero .logo{width:52px;height:52px;border-radius:14px;flex:none;
+    background:linear-gradient(135deg,#e7b43a,#c8961a);display:flex;align-items:center;justify-content:center;
+    font-family:Georgia,serif;font-weight:bold;font-size:22px;color:#2a2152;box-shadow:0 6px 14px rgba(0,0,0,.25)}
+  .hero h1{font-family:Georgia,'Bookman Old Style',serif;font-size:20px;margin:0;line-height:1.15}
+  .hero p{margin:3px 0 0;font-size:12.5px;opacity:.9}
+  .clockpanel{margin-left:auto;text-align:right;background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.18);padding:9px 15px;border-radius:13px;backdrop-filter:blur(4px);z-index:1}
+  .clockpanel .time{font-size:23px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.5px;line-height:1}
+  .clockpanel .date{font-size:11.5px;opacity:.92;margin-top:3px}
+
+  .duebar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .duecard{flex:1;min-width:150px;border-radius:14px;padding:11px 15px;color:#fff;position:relative;
+    box-shadow:0 6px 16px rgba(0,0,0,.12);overflow:hidden}
+  .duecard .lbl{font-size:12px;font-weight:700;opacity:.96}
+  .duecard .dt{font-size:16px;font-weight:800;margin-top:1px}
+  .duecard .left{font-size:11px;opacity:.95;margin-top:2px}
+  .duecard .pill{position:absolute;top:10px;right:12px;background:rgba(255,255,255,.22);
+    border-radius:20px;padding:2px 9px;font-size:11px;font-weight:800}
+  .due-red{background:linear-gradient(135deg,#e2574c,#b5302a)}
+  .due-amber{background:linear-gradient(135deg,#eca53e,#d2791a)}
+  .due-green{background:linear-gradient(135deg,#2bb673,#1c8b55)}
+
+  .steps{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 10px}
+  .chip{flex:1;min-width:88px;text-align:center;font-size:11px;padding:8px 5px;border-radius:11px;
+    background:#fff;color:var(--muted);border:1px solid var(--line);cursor:pointer;user-select:none;
+    transition:transform .08s, box-shadow .15s}
+  .chip:hover{transform:translateY(-1px);box-shadow:0 5px 12px rgba(40,30,90,.12)}
+  .chip .n{display:inline-flex;width:18px;height:18px;border-radius:50%;background:#c3c8da;color:#fff;
+    align-items:center;justify-content:center;font-size:11px;margin-right:4px;font-weight:700}
+  .chip.active{background:linear-gradient(135deg,#26407a,#6b3fa0);color:#fff;border-color:transparent;
+    box-shadow:0 7px 16px rgba(54,39,122,.3)}
+  .chip.active .n{background:var(--gold);color:#2a2152}
+  .chip.done{background:#e6f5ec;color:var(--ok);border-color:#bfe3cb}
+  .chip.done .n{background:var(--green)}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px;margin-top:14px;box-shadow:0 8px 24px rgba(40,40,90,.07)}
+  .card h2{font-family:Georgia,'Bookman Old Style',serif;color:var(--navy);
+    font-size:20px;margin:0 0 4px;padding:0 0 8px 12px;position:relative;
+    border-bottom:1px solid var(--line)}
+  .card h2::before{content:"";position:absolute;left:0;top:2px;bottom:10px;width:5px;border-radius:3px;
+    background:linear-gradient(180deg,var(--accent,var(--gold)),var(--violet))}
+  .pastebtn,.refbtn{background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 14px;
+    font-size:13px;font-weight:600;cursor:pointer}
+  .pastebtn{color:var(--green);border-color:#bfe3cb}
+  .refbtn{color:var(--coral);border-color:#f3c2cb}
+  .pastebtn:hover,.refbtn:hover{box-shadow:0 4px 10px rgba(0,0,0,.08)}
+  .cornernote{background:#fff7e6;border:1px solid #f0dca8;border-left:4px solid var(--amber);
+    border-radius:10px;padding:10px 14px;font-size:12.5px;color:#7a5c12;margin:0 0 12px}
+  .gtable tr.hlrow td{background:#f6f0ff}
+  .gtable tr.hlrow td:first-child{border-left:3px solid var(--violet);position:relative}
+  .gtable tr.hlrow td:first-child::after{content:"often missed";position:absolute;right:6px;top:50%;
+    transform:translateY(-50%);background:var(--violet);color:#fff;font-size:9px;font-weight:700;
+    padding:1px 6px;border-radius:10px}
+  .clearcell{text-align:center;width:40px}
+  .clrbtn{background:#fbeceb;border:1px solid #f3c2cb;border-radius:8px;cursor:pointer;font-size:13px;
+    padding:4px 6px;line-height:1}
+  .clrbtn:hover{background:#f7d9d6}
+  .hintrow td{border:none;padding:0}
+  .hintrow.show td{padding:4px 12px;color:#8a5a00;background:#fff7e6;font-size:11.5px;border-bottom:1px solid #f0dca8}
+  .reftabs{display:flex;gap:8px;margin-top:6px}
+  .reftabs button{flex:1;padding:8px;border-radius:8px;border:1px solid var(--line);background:#fff;
+    font-weight:600;cursor:pointer;font-size:13px;color:var(--muted)}
+  .reftabs button.on{background:linear-gradient(135deg,#e2574c,#b5302a);color:#fff;border-color:transparent}
+  .refrtab{width:100%;border-collapse:collapse;font-size:12px}
+  .refrtab th{background:#f0eef8;text-align:left;padding:6px 8px;position:sticky;top:0}
+  .refrtab td{border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
+  .refrtab td:first-child{font-weight:700;color:var(--navy2);white-space:nowrap}
+  .card .sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+
+  .fld{margin-bottom:14px}
+  .fld label{display:block;font-weight:600;margin-bottom:5px;color:var(--navy2)}
+  input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;
+    font-size:15px;background:#fff;color:var(--ink)}
+  input:focus,select:focus{outline:none;border-color:var(--navy2);box-shadow:0 0 0 3px rgba(38,64,122,.12)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  .gtable{width:100%;border-collapse:collapse;font-size:13.5px}
+  .gtable th{background:linear-gradient(135deg,#26407a,#4a357f);color:#fff;padding:9px 6px;font-weight:600;text-align:center;font-size:12px}
+  .gtable th:first-child{text-align:left;padding-left:12px;border-top-left-radius:8px}
+  .gtable th:last-child{border-top-right-radius:8px}
+  .gtable td{border-bottom:1px solid var(--line);padding:5px 5px;vertical-align:top}
+  .gtable td:first-child{font-weight:600;color:var(--navy2);padding-left:12px;min-width:150px;position:relative}
+  .gtable input{padding:7px 8px;text-align:right;font-size:13.5px}
+  .gtable input.rate{text-align:center;max-width:72px}
+  .gtable select.svc{width:100%;padding:7px 8px;border:1px solid var(--line);border-radius:9px;
+    font-size:12.5px;background:#fff;color:var(--navy2);font-weight:600}
+  .gtable .mir.rateout{text-align:center;color:var(--navy);font-weight:700;background:#eef2fa;border-style:solid}
+  .gtable .mir{background:#f1eee6;color:var(--muted);text-align:right;padding:7px 8px;border-radius:9px;
+    border:1px dashed var(--line);font-size:13px}
+  .gtable input.bad{border-color:var(--err);background:#fff5f6;box-shadow:0 0 0 2px rgba(176,0,32,.12)}
+  .errrow td{border:none;padding:0}
+  .errrow.show td{padding:5px 12px;color:var(--err);background:var(--errbg);font-size:12px;
+    border-bottom:1px solid var(--errln)}
+  .del{position:absolute;right:4px;top:6px;color:#c33;cursor:pointer;font-size:13px;
+    background:#fdecef;border-radius:50%;width:18px;height:18px;line-height:18px;text-align:center;display:none}
+  .exrow td:first-child .del{display:block}
+  .addbtn{margin-top:10px;background:#fff;border:1px dashed var(--navy2);color:var(--navy2);
+    padding:8px 14px;border-radius:9px;font-size:13px;cursor:pointer;font-weight:600}
+  .addbtn:hover{background:#eef2fa}
+
+  .note{background:#fff7e6;border:1px solid #f0dca8;border-radius:9px;padding:9px 12px;
+    font-size:12.5px;color:#7a5c12;margin:10px 0}
+  .warnbar{background:var(--errbg);border:1px solid var(--errln);color:var(--err);border-radius:9px;
+    padding:10px 14px;font-size:13px;margin:10px 0;font-weight:600}
+  .modal-overlay{position:fixed;inset:0;background:rgba(20,25,40,.55);display:flex;
+    align-items:center;justify-content:center;padding:18px;z-index:99}
+  .modal-box{background:#fff;border-radius:14px;padding:22px;max-width:460px;width:100%;
+    box-shadow:0 12px 40px rgba(0,0,0,.3);max-height:82vh;overflow:auto}
+  .modal-box h3{font-family:Georgia,serif;color:var(--err);margin:0 0 6px;font-size:18px}
+  .errlist{margin:6px 0 16px;padding-left:18px;font-size:12.5px;color:var(--ink)}
+  .errlist li{margin-bottom:6px}
+  .modal-nav{display:flex;gap:10px;justify-content:flex-end}
+  .modal-nav button{padding:10px 16px;font-size:14px}
+
+  .nav{display:flex;justify-content:space-between;gap:12px;margin-top:20px}
+  button{font-size:15px;padding:11px 22px;border-radius:10px;border:none;cursor:pointer;font-weight:600}
+  .btn-back{background:#fff;border:1px solid var(--line);color:var(--muted)}
+  .btn-next{background:var(--navy);color:#fff}
+  .btn-next:hover{background:var(--navy2)}
+  .btn-sub{background:var(--ok);color:#fff}
+
+  table.comp{width:100%;border-collapse:collapse;font-size:13.5px}
+  table.comp td{padding:7px 10px;border-bottom:1px solid var(--line)}
+  table.comp td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+  table.comp tr.comp-net{background:#eef2fa}
+  table.comp tr.comp-net td{color:var(--navy);font-weight:800;font-size:15px;border-top:2px solid var(--gold)}
+  table.comp tr.comp-warn td{color:var(--err);background:#fdecef}
+  .rev h3{color:var(--navy);font-family:Georgia,serif;font-size:15px;margin:16px 0 6px}
+  .rev table{width:100%;border-collapse:collapse;font-size:13px}
+  .rev td{padding:4px 8px;border-bottom:1px dotted var(--line)}
+  .rev td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+  .success{text-align:center;padding:30px 10px}
+  .success .big{font-size:52px}
+  footer{text-align:center;color:var(--muted);font-size:11.5px;margin-top:24px}
+  .gtable input.labin{text-align:left;font-weight:600;color:var(--navy2);width:100%}
+  .labwrap{display:flex;gap:4px;align-items:center}
+  .labwrap .labin{flex:1;min-width:60px}
+  .labwrap .labpick{flex:none;width:30px;padding:6px 2px;border:1px solid var(--line);border-radius:8px;
+    background:#eef2fa;color:var(--navy2);font-weight:700;cursor:pointer}
+  .gtable tr.totrow td{background:#e7edf7;font-weight:800;color:var(--navy);border-top:2px solid var(--navy2);
+    text-align:right;padding:7px 8px;font-size:13px}
+  .gtable tr.totrow td:first-child{text-align:left}
+  .intro{background:#fffdf8;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;
+    padding:14px 18px;margin-top:12px;font-size:13px;color:var(--ink)}
+  .intro b{color:var(--navy)} .intro a{color:var(--navy2);font-weight:600}
+  .intro summary{cursor:pointer;font-weight:700;color:var(--navy);font-family:Georgia,serif}
+  .gtable tr.headrow td{background:var(--navy);padding:4px 8px}
+  .gtable input.headin{width:100%;background:transparent;border:none;color:#fff;font-weight:700;font-size:13px;padding:4px}
+  .gtable tr.negrow td:first-child{border-left:3px solid var(--gold)}
+  .gtable tr.negrow input{background:#fff7e6}
+  .profbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#26407a;color:#fff;
+    border-radius:12px;padding:10px 14px;margin-top:12px;font-size:13px}
+  .profbar select{padding:7px 10px;border-radius:8px;border:none;min-width:150px}
+  .profbar button{padding:7px 12px;border-radius:8px;border:none;background:#b8860b;color:#fff;font-size:13px;font-weight:600}
+  .profbar button.ghost{background:#fff;color:#26407a}
+  @media(max-width:640px){.row2{grid-template-columns:1fr}.chip{min-width:60px;font-size:10px}
+    .gtable td:first-child{min-width:110px;font-size:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="logo">PS</div>
+    <div>
+      <h1>GSTR-3B vs Books — Computation Form</h1>
+      <p>Pawan Soni &amp; Associates, Chartered Accountants &nbsp;·&nbsp; Ichalkaranji &nbsp;·&nbsp; <a href="https://www.pawansoni.org" target="_blank" rel="noopener" style="color:#ffe08a;font-weight:700">www.pawansoni.org</a></p>
+    </div>
+    <div class="clockpanel">
+      <div class="time" id="clockTime">—</div>
+      <div class="date" id="clockDate">—</div>
+    </div>
+  </header>
+
+  <div class="duebar" id="duebar"></div>
+
+  <details class="intro" open>
+    <summary>Why fill this form instead of the Excel sheet?</summary>
+    <p style="margin:8px 0 0">Filling here lets us give you the <b>relevant GST update and the point you are filling</b>, and we can send you a <b>reminder</b> right at that step — something a plain Excel file cannot do. These prompts stay current and go away as we release Excel-version updates.</p>
+    <p style="margin:8px 0 0"><b>This is optional.</b> You may instead use the regular Excel sheet:
+      <a href="https://docs.google.com/spreadsheets/d/1NtsFzNui15obpGVIO2Ez97nK76X_5cO4/edit?gid=1020410558#gid=1020410558" target="_blank" rel="noopener">open the Excel (Google Sheets) version</a>.</p>
+    <p style="margin:8px 0 0;color:var(--muted)">— Pawan Soni &amp; Associates · <b>www.pawansoni.org</b></p>
+  </details>
+
+  <div class="profbar" id="profbar"></div>
+  <div class="steps" id="steps"></div>
+  <div id="stage"></div>
+
+  <footer>
+  📧 pawansonisinfo@gmail.com &nbsp;·&nbsp; capawansonis@gmail.com &nbsp;·&nbsp; 💬 WhatsApp 82753 05501<br>
+  More information is available at our website <a href="https://www.pawansoni.org" target="_blank" rel="noopener"><b>www.pawansoni.org</b></a> — please refer to the same.<br>
+  <span style="opacity:.7">Pawan Soni &amp; Associates, Chartered Accountants · Ichalkaranji</span></footer>
+</div>
+
+<script>
+/* ============================================================
+   FIELD → EXACT SHEET CELL MAP (tab: "Pawan Soni and Assoc 2422383")
+   B=Taxable Value(AV)  C=IGST  D=CGST  F=Cess
+   SGST(E) & Totals(G) are formulas — NOT collected.
+   Rate% = client cross-check only (sheet column H is a formula).
+   ============================================================ */
+/* Full RCM master list — exact strings from sheet B168:B194 (common ones first) */
+const RCM_LIST=[
+ 'Goods Transport Agency (GTA) services-5%',
+ 'Security services (by way of supply of security personnel) by other than company',
+ 'Service by way of renting of any property other than residential dwelling.',
+ 'Service by way of renting of residential dwelling to a registered person.If put expenses in Profit and loss',
+ 'Legal services from Advocate-18%',
+ 'Services supplied by a director of a company-18%',
+ 'Services provided by way of renting of any motor vehicle to body corporate',
+ 'Sponsorship services provided to any Body corporate or partnership firm-18%',
+ 'Renting of immovable property from CG,SG OR LA-18%',
+ 'Service from CG,SG OR LA',
+ 'Transfer of development rights or Floor Space Index (FSI)-18%',
+ 'Long Term Lease (30 years or more)-18%',
+ 'Services by an insurance agent to Insurance',
+ 'Copyright services by a music composer, photographer, artist or like relating to original dramatic, musical or artistic works to a music company, producer or the like',
+ 'Supply of services by an author by way of transfer or permitting the use or enjoyment of a copyright covered under the Copyright Act, 1957 relating to original literary works to a publisher',
+ 'Services provided by a business facilitator to a banking company',
+ 'Services provided by an agent of business correspondent (BC) to business correspondent (BC)',
+ 'Service recived from foreign-18%',
+ 'Cashew nuts (not shelled or peeled) from Agriculturist',
+ 'Bidi Wrapper Leaves (tendu), Tobacco Leaves frm Agriculturist',
+ 'oil Purchase of peppermint, Spearmint oil,Water mint-oil,Horsemint oil,Bergament oil',
+ 'Silk Yarn from mfg from raw silk',
+ 'Lottery from SG, LA',
+ 'Raw Cotton from Agriculturist',
+ 'Used vehicles, seized and confiscated goods, old and used goods, waste and scrap from CG, LA',
+ 'Purchase of priority sector lending certificate from RP',
+ 'Metal scrap(72, 73, 74, 75, 76, 77, 78, 79, 80 or 81)'
+];
+function selectHtml(id,list,sel,onch){
+  return `<select id="${id}" class="svc" onchange="${onch}">`
+    + list.map(o=>`<option value="${o.replace(/"/g,'&quot;')}" ${o===sel?'selected':''}>${o.length>46?o.slice(0,44)+'…':o}</option>`).join('')
+    + `</select>`;
+}
+
+const SALE_HEADS=['Cloth Sales','Yarn Sales','Finished Goods Sale','Marble & Granite Sales','Chemical Sales','Hardware Sale','Rent Income','Brokerage Income','Scrap Sales','Process Charges','Other Sales'];
+const ITC_HEADS=['Cloth Purchase','Yarn Purchase','Finished Goods Purchase','Job Work of Cloth','Insurance','Sizing & Warping','Weaving Charges','Process Charges','Medicine Purchases','Packing Material','Printing and Stationary','Freight','Audit & Legal Fees','Telephone','Electricity','Repairs & Maintenance','Standard Charges'];
+const BLOCKED_17_5=[
+ '17(5)(a) Motor vehicles for transport of persons (≤13 seats)',
+ '17(5)(aa) Vessels and aircraft',
+ '17(5)(ab) Insurance, servicing, repair & maintenance of above',
+ '17(5)(b)(i) Food, beverages, outdoor catering, health services etc.',
+ '17(5)(b)(ii) Club, health & fitness centre membership',
+ '17(5)(b)(iii) Rent-a-cab, life & health insurance',
+ '17(5)(b) Travel benefits to employees on vacation (LTC)',
+ '17(5)(c) Works contract services for immovable property',
+ '17(5)(d) Goods/services for construction on own account',
+ '17(5)(e) Tax paid under composition levy (Sec 10)',
+ '17(5)(f) Supplies to a non-resident taxable person',
+ '17(5)(fa) CSR activities (Sec 135 Companies Act 2013)',
+ '17(5)(g) Goods/services for personal consumption',
+ '17(5)(h) Goods lost, stolen, destroyed, written off, free samples/gifts',
+ '17(5)(i) Tax paid u/s 74 / 129 / 130'
+];
+
+/* per-section accent colours [light, dark] */
+const SEC_CLR={
+  firm:['#26407a','#1a2a52'], sales:['#0f8a8a','#0b6b6b'], export:['#2563eb','#1e40af'],
+  rcm:['#e2574c','#b5302a'], import:['#7c3aed','#5b21b6'], itcA:['#0891b2','#0e6f8a'],
+  itcBCDE:['#c2410c','#9a3412'], reversal:['#be123c','#8f0e2e'], opening:['#15803d','#0f5c2c'],
+  gstr2b:['#6b3fa0','#4c2a73'], closing:['#a16207','#7a4a05'], review:['#26407a','#1a2a52']
+};
+function secClr(id){ return SEC_CLR[id]||['#26407a','#1a2a52']; }
+
+/* RCM reference — Notification 13/2017 (services) & 04/2017 (goods) */
+const RCM_SERVICES=[
+ ['1','Goods Transport Agency (GTA) — road transport of goods','GTA','Factory / society / co-op / registered person / body corporate / firm / casual taxable person'],
+ ['2','Legal services by advocate / firm of advocates (incl. senior advocate)','Advocate / firm','Business entity'],
+ ['3','Services by an arbitral tribunal','Arbitral tribunal','Business entity'],
+ ['4','Sponsorship services','Any person (other than body corporate)','Body corporate / partnership firm'],
+ ['5','Services by Govt / local authority (excl. renting, post, aircraft/vessel, goods/passenger transport)','CG / SG / UT / Local authority','Business entity'],
+ ['5A','Renting of immovable property by Govt','CG / SG / UT / LA','Registered person'],
+ ['5AA','Renting of residential dwelling to a registered person','Any person','Registered person'],
+ ['5AB','Renting of immovable property (other than residential) by an unregistered person','Unregistered person','Registered person'],
+ ['5B','Transfer of development rights / FSI for a project','Any person','Promoter'],
+ ['5C','Long-term lease of land (30 years or more)','Any person','Promoter'],
+ ['6','Services by a director of a company / body corporate','Director','Company / body corporate'],
+ ['7','Services by an insurance agent','Insurance agent','Insurance company'],
+ ['8','Services by a recovery agent','Recovery agent','Bank / FI / NBFC'],
+ ['9','Copyright — music composer, photographer, artist etc.','Author / artist','Music company / producer'],
+ ['9A','Copyright — author of literary works','Author','Publisher'],
+ ['10','Services by members of Overseeing Committee','Members','Reserve Bank of India'],
+ ['11','Direct Selling Agents (DSA) services','DSA (non-body-corporate)','Bank / NBFC'],
+ ['12','Services by a business facilitator (BF)','Business facilitator','Banking company'],
+ ['13','Services by an agent of business correspondent (BC)','Agent of BC','Business correspondent'],
+ ['14','Security services (supply of security personnel)','Any person (other than body corporate)','Registered person'],
+ ['15','Renting of motor vehicle for passengers (fuel included), 5% not charged','Any person (non-body-corporate)','Body corporate'],
+ ['16','Lending of securities under SEBI Scheme','Lender','Borrower'],
+];
+const RCM_GOODS=[
+ ['1','Cashew nuts (not shelled or peeled)','Agriculturist','Registered person'],
+ ['2','Bidi wrapper leaves (tendu)','Agriculturist','Registered person'],
+ ['2A','Used cooking oil','Unregistered person','Registered person'],
+ ['3','Tobacco leaves','Agriculturist','Registered person'],
+ ['3A','Essential oils (peppermint, spearmint, water-mint, horsemint, bergamot, mentha arvensis)','Unregistered person','Registered person'],
+ ['3B','Waste & scrap of plastics','Unregistered person','Registered person'],
+ ['3C','Waste & scrap of tyres','Unregistered person','Registered person'],
+ ['4','Silk yarn','Silk yarn manufacturer','Registered person'],
+ ['4A','Raw cotton','Agriculturist','Registered person'],
+ ['5','Supply of lottery','SG / UT / Local authority','Lottery distributor / agent'],
+ ['6','Used vehicles, seized & confiscated goods, old & used goods, waste & scrap','CG / SG / UT / LA','Registered person'],
+ ['7','Priority Sector Lending Certificate','Any registered person','Registered person'],
+ ['8','Metal scrap (Chapters 72–81)','Unregistered person','Registered person'],
+ ['9','Electrical & electronic waste and scrap','Unregistered person','Registered person'],
+];
+
+/* 17(5) blocked-ITC keyword hints (macro-style auto-suggest) */
+const BLOCK_HINTS=[
+ [['car','motor vehicle','vehicle','bike','scooter','scooty','jeep','truck'],'17(5)(a) — motor vehicles ≤13 seats may be blocked'],
+ [['vessel','aircraft','boat','ship'],'17(5)(aa) — vessels / aircraft may be blocked'],
+ [['food','beverage','canteen','catering','restaurant','tea','snack'],'17(5)(b)(i) — food & beverages may be blocked'],
+ [['beauty','cosmetic','salon','spa','plastic surgery'],'17(5)(b)(i) — beauty / cosmetic may be blocked'],
+ [['health','medical','hospital','mediclaim'],'17(5)(b)(i) — health services may be blocked'],
+ [['life insurance','health insurance','mediclaim'],'17(5)(b)(i) — life/health insurance may be blocked'],
+ [['club','fitness','gym','health centre'],'17(5)(b)(ii) — club / fitness membership may be blocked'],
+ [['travel','ltc','vacation','leave travel','tour'],'17(5)(b)(iii) — employee travel benefits may be blocked'],
+ [['construction','civil work','building','works contract','renovation','repair of building','interior'],'17(5)(c)/(d) — construction of immovable property may be blocked'],
+ [['gift','free sample','donation','prize','diwali gift'],'17(5)(h) — gifts / free samples may be blocked'],
+ [['csr','corporate social'],'17(5)(fa) — CSR expenditure may be blocked'],
+ [['personal'],'17(5)(g) — personal consumption may be blocked'],
+];
+
+const SECTIONS = [
+  { id:'firm', title:'Firm & Period', icon:'1', type:'meta' },
+
+  { id:'sales', title:'Sales', icon:'2', type:'grid', addable:true, editLabel:true, heads:'saleheads', headsList:SALE_HEADS,
+    sub:'Outward supplies as per books. Particulars are editable — type any head.',
+    noteHtml:'📌 <b>Please note:</b> If your place of business is <b>shared with a sister concern</b>, rent must be shown <b>even if no rent is received</b> (deemed supply under <b>Schedule I to CGST Act</b>). If this applies to you, kindly <b>contact our team</b>.',
+    cols:['AV','IGST','CGST','Cess'],
+    rows:[
+      {labelCell:'A7',  default:'Cloth Sales',         c:{AV:'B7', IGST:'C7', CGST:'D7', Cess:'F7'}},
+      {labelCell:'A8',  default:'Yarn Sales',          c:{AV:'B8', IGST:'C8', CGST:'D8', Cess:'F8'}},
+      {labelCell:'A9',  default:'Finished Goods Sale', c:{AV:'B9', IGST:'C9', CGST:'D9', Cess:'F9'}},
+      {labelCell:'A10', default:'Other Sales',         c:{AV:'B10',IGST:'C10',CGST:'D10',Cess:'F10'}},
+      {labelCell:'A11', dyn:()=>'Supply of Previous Month', c:{AV:'B11',IGST:'C11',CGST:'D11',Cess:'F11'}},
+      {labelCell:'A12', dyn:()=>'Last Year Supply (FY '+prevFY(DATA.cells.G3)+')', c:{AV:'B12',IGST:'C12',CGST:'D12',Cess:'F12'}},
+    ]},
+
+  { id:'export', title:'Export', icon:'3', type:'grid',
+    sub:'Export sales. Leave blank if you have no exports.', addable:true,
+    cols:['AV','IGST','Cess'],
+    rows:[
+      {label:'Export Sales With Tax',   c:{AV:'B14',IGST:'C14',Cess:'F14'}},
+      {label:'Export Without Tax (LUT)',c:{AV:'B15'}},
+    ]},
+
+  { id:'rcm', title:'RCM', icon:'4', type:'grid',
+    sub:'Reverse Charge — pick the service from the list, then enter Value & tax.', addable:true,
+    pickList:RCM_LIST, cols:['AV','IGST','CGST'],
+    rows:[
+      {label:'RCM Service 1', labelCell:'A18', default:'Goods Transport Agency (GTA) services-5%',                         c:{AV:'B18',IGST:'C18',CGST:'D18'}},
+      {label:'RCM Service 2', labelCell:'A19', default:'Service by way of renting of any property other than residential dwelling.', c:{AV:'B19',IGST:'C19',CGST:'D19'}},
+    ]},
+
+  { id:'import', title:'Import', icon:'5', type:'grid',
+    sub:'Import of goods / services. Leave blank if none.', addable:true,
+    cols:['AV','IGST','CGST'],
+    rows:[
+      {label:'Import of Goods (IGST)', c:{AV:'B23',IGST:'C23'}},
+      {label:'Import of Services (machinery / maintenance / installation)', highlight:true, c:{AV:'B25',IGST:'C25'}},
+    ],
+    extra:[
+      {label:'Port Code', cell:'B24', ph:'e.g. INNSA1'},
+      {label:'Bill of Entry No.', cell:'D24', ph:'BoE number'},
+      {label:'Bill of Entry Date', cell:'G24', type:'date'},
+    ]},
+
+  { id:'itcA', title:'ITC (A)', icon:'6', type:'grid', addable:true, editLabel:true, heads:'itcheads', headsList:ITC_HEADS,
+    sub:'Section A — Tax Invoice & Debit Note ITC as per books. Particulars are editable — type any ledger head.',
+    cols:['AV','IGST','CGST','Cess'],
+    rows:[
+      {labelCell:'A29', default:'Cloth Purchase',          c:{AV:'B29',IGST:'C29',CGST:'D29',Cess:'F29'}},
+      {labelCell:'A30', default:'Yarn Purchase',           c:{AV:'B30',IGST:'C30',CGST:'D30',Cess:'F30'}},
+      {labelCell:'A31', default:'Finished Goods Purchase', c:{AV:'B31',IGST:'C31',CGST:'D31',Cess:'F31'}},
+      {labelCell:'A32', default:'Insurance',               c:{AV:'B32',IGST:'C32',CGST:'D32',Cess:'F32'}},
+      {labelCell:'A33', default:'Sizing & Warping',        c:{AV:'B33',IGST:'C33',CGST:'D33',Cess:'F33'}},
+      {labelCell:'A34', default:'Weaving Charges',         c:{AV:'B34',IGST:'C34',CGST:'D34',Cess:'F34'}},
+      {labelCell:'A35', default:'Medicine Purchases',      c:{AV:'B35',IGST:'C35',CGST:'D35',Cess:'F35'}},
+      {labelCell:'A36', default:'Job Work of Cloth',       c:{AV:'B36',IGST:'C36',CGST:'D36',Cess:'F36'}},
+      {labelCell:'A37', neg:true, default:'ITC NOT in 2B (negative) (1)', c:{AV:'B37',IGST:'C37',CGST:'D37',Cess:'F37'}},
+      {labelCell:'A38', neg:true, default:'ITC NOT in 2B (negative) (2)', c:{AV:'B38',IGST:'C38',CGST:'D38',Cess:'F38'}},
+      {labelCell:'A39', dyn:()=>'2B Adj ITC of prev month ('+(DATA.cells.G3||YEARS[0])+')',   c:{AV:'B39',IGST:'C39',CGST:'D39',Cess:'F39'}},
+      {labelCell:'A40', dyn:()=>'2B Adj ITC of prev month-2 ('+(DATA.cells.G3||YEARS[0])+')', c:{AV:'B40',IGST:'C40',CGST:'D40',Cess:'F40'}},
+      {labelCell:'A41', dyn:()=>'Last Year ITC (FY '+prevFY(DATA.cells.G3)+')', c:{AV:'B41',IGST:'C41',CGST:'D41',Cess:'F41'}},
+    ]},
+
+  { id:'itcBCDE', title:'ITC (B–E)', icon:'7', type:'grid', addable:true, editLabel:true, heads:'itcheads', headsList:ITC_HEADS,
+    sub:'Section B to E. Headings and particulars are editable.',
+    cols:['AV','IGST','CGST'],
+    rows:[
+      {head:true, labelCell:'A43', default:'(B) Tax Invoice of previous month — goods now received'},
+      {labelCell:'A44', grp:'(B)', default:'Goods received (1)', c:{AV:'B44',IGST:'C44',CGST:'D44'}},
+      {labelCell:'A45', grp:'(B)', default:'Goods received (2)', c:{AV:'B45',IGST:'C45',CGST:'D45'}},
+      {head:true, labelCell:'A47', default:'(C) Credit Note ITC — enter in MINUS (−) figure; it reduces ITC'},
+      {labelCell:'A48', grp:'(C)', expectNeg:true, default:'Credit Note (1)', c:{AV:'B48',IGST:'C48',CGST:'D48'}},
+      {labelCell:'A49', grp:'(C)', expectNeg:true, default:'Credit Note (2)', c:{AV:'B49',IGST:'C49',CGST:'D49'}},
+      {head:true, labelCell:'A51', default:'(D) Tax Invoice of current period — goods not yet received'},
+      {labelCell:'A52', grp:'(D)', default:'Prev-dated Invoice (1)', c:{AV:'B52',IGST:'C52',CGST:'D52'}},
+      {labelCell:'A53', grp:'(D)', default:'Prev-dated Invoice (2)', c:{AV:'B53',IGST:'C53',CGST:'D53'}},
+      {head:true, labelCell:'A55', default:'(E) BLOCKED ITC u/s 17(5)'},
+      {pick:true, labelCell:'A56', grp:'(E)', default:'17(5)(d) Goods/services for construction on own account', c:{AV:'B56',IGST:'C56',CGST:'D56'}},
+      {pick:true, labelCell:'A57', grp:'(E)', default:'17(5)(h) Goods lost, stolen, destroyed, written off, free samples/gifts', c:{AV:'B57',IGST:'C57',CGST:'D57'}},
+    ]},
+
+  { id:'reversal', title:'Reversals', icon:'8', type:'grid',
+    sub:'⚠ FOR PAWAN SONI & ASSOC TEAM — information only. The team will decide whether to reverse the ITC. (u/s 37, 39 and Rules 42/43)',
+    cols:['IGST','CGST'],
+    rows:[
+      {label:'Payment not made in 180 days', c:{IGST:'C60',CGST:'D60'}},
+      {label:'Reversal U/R 42 & 43',          c:{IGST:'C61',CGST:'D61'}},
+      {label:'Excess wrongly availed',        c:{IGST:'C62',CGST:'D62'}},
+    ]},
+
+  { id:'opening', title:'Opening Bal.', icon:'9', type:'grid',
+    sub:'Opening ITC carry-forward balance.',
+    cols:['IGST','CGST','SGSTin'],
+    rows:[
+      {label:'Opening Carry Forward', c:{IGST:'C70',CGST:'D70',SGSTin:'E70'}},
+    ]},
+
+  { id:'gstr2b', title:'GSTR-2B', icon:'10', type:'grid',
+    sub:'ITC as appearing in your GSTR-2B for the period.',
+    cols:['IGST','CGST','Cess'],
+    rows:[
+      {label:'Gross ITC as per GSTR-2B',   c:{IGST:'C77',CGST:'D77',Cess:'F77'}},
+      {label:'Credit Note ITC as per 2B',  c:{IGST:'C78',CGST:'D78'}},
+    ]},
+
+  { id:'closing', title:'Closing Bal.', icon:'11', type:'grid',
+    sub:'Total closing balance of ITC as per your books of account (single figure, used by the sheet to tally).',
+    cols:[], rows:[],
+    extra:[{label:'Closing ITC as per Books (total ₹)', cell:'G5', type:'number'}] },
+
+  { id:'review', title:'Review', icon:'✓', type:'review' },
+];
+
+const MONTHS=['April','May','June','July','August','September','October','November','December','January','February','March'];
+const MONTHS_Q=['June','September','December','March'];  // quarter-end months
+const YEARS=['2026-2027','2027-2028','2025-2026'];   // current FY first
+function prevFY(fy){ fy=fy||YEARS[0]; const p=fy.split('-').map(Number); return (p[0]-1)+'-'+(p[1]-1); }
+const RATES=['0','0.25','1.5','3','5','12','18','28'];
+
+const DATA={ cells:{}, rate:{}, extras:{}, rtype:'Monthly', remarks:'' };
+let cur=0;
+const stage=document.getElementById('stage');
+const stepsEl=document.getElementById('steps');
+
+function num(v){ v=parseFloat(v); return isNaN(v)?0:v; }
+function gv(id){ const e=document.getElementById(id); return e?e.value.trim():''; }
+function money(v){ if(v===''||v==null) return ''; return Number(v).toLocaleString('en-IN'); }
+function val(cell){ return DATA.cells[cell]!=null?DATA.cells[cell]:''; }
+
+function renderSteps(){
+  stepsEl.innerHTML='';
+  SECTIONS.forEach((s,i)=>{
+    const cl=secClr(s.id);
+    const d=document.createElement('div');
+    d.className='chip'+(i===cur?' active':'')+(i<cur?' done':'');
+    if(i===cur) d.style.background=`linear-gradient(135deg,${cl[0]},${cl[1]})`, d.style.borderColor='transparent';
+    const dot = (i<cur)?'':`style="background:${cl[0]}"`;
+    d.innerHTML='<span class="n" '+(i===cur?'style="background:#fff;color:'+cl[1]+'"':dot)+'>'+(i<cur?'✓':s.icon)+'</span>'+s.title;
+    d.onclick=()=>{ save(); cur=i; render(); window.scrollTo(0,0); };
+    stepsEl.appendChild(d);
+  });
+}
+
+function render(){
+  renderSteps();
+  const s=SECTIONS[cur];
+  if(s.type==='meta') return renderFirm(s);
+  if(s.type==='grid') return renderGrid(s);
+  if(s.type==='review') return renderReview(s);
+}
+
+function renderFirm(){
+  stage.innerHTML=`
+  <div class="card">
+    <h2>Firm &amp; Period</h2>
+    <p class="sub">Please start by confirming your firm and the return period.</p>
+    <div class="fld"><label>Name of Firm</label>
+      <input id="f_B3" value="${val('B3')}" placeholder="M/s ..."></div>
+    <div class="fld"><label>GSTIN</label>
+      <input id="f_B4" value="${val('B4')}" maxlength="15" placeholder="15-digit GSTIN" style="text-transform:uppercase"></div>
+    <div class="fld"><label>Return Type</label>
+      <select id="f_rtype" onchange="onRtype()">
+        <option ${DATA.rtype==='Monthly'?'selected':''}>Monthly</option>
+        <option ${DATA.rtype==='Quarterly'?'selected':''}>Quarterly</option>
+      </select></div>
+    <div class="row2">
+      <div class="fld"><label>Financial Year</label>
+        <select id="f_G3">${YEARS.map(y=>`<option ${val('G3')===y?'selected':''}>${y}</option>`).join('')}</select></div>
+      <div class="fld"><label>${DATA.rtype==='Quarterly'?'Quarter ending':'Month'}</label>
+        <select id="f_G4">${monthList().map(m=>`<option ${val('G4')===m?'selected':''}>${m}</option>`).join('')}</select></div>
+    </div>
+    <div class="note">💡 Fill only IGST &amp; CGST — SGST auto-equals CGST. The <b>GST Rate %</b> fills automatically (total tax ÷ taxable value); if it does not land on a standard slab, a red warning appears instantly.</div>
+    <div class="nav"><span></span><button class="btn-next" onclick="next()">Start &rarr;</button></div>
+  </div>`;
+}
+function monthList(){ return DATA.rtype==='Quarterly' ? MONTHS_Q : MONTHS; }
+function onRtype(){ DATA.rtype=document.getElementById('f_rtype').value;
+  // if current month not valid for the type, reset
+  if(!monthList().includes(DATA.cells.G4)) DATA.cells.G4=monthList()[0];
+  // preserve firm/gstin/year typed so far
+  DATA.cells.B3=gv('f_B3')||DATA.cells.B3; DATA.cells.B4=gv('f_B4')||DATA.cells.B4;
+  DATA.cells.G3=gv('f_G3')||DATA.cells.G3;
+  renderFirm();
+}
+
+function hasAV(s){ return (s.cols||[]).includes('AV'); }
+function showMir(s){ return (s.cols||[]).includes('CGST') && !(s.cols||[]).includes('SGSTin'); }
+
+/* canonical display column order: Taxable Value, IGST, CGST, SGST, Cess, Rate */
+function dispCols(s){
+  const has=c=>(s.cols||[]).includes(c); const out=[];
+  ['AV','IGST','CGST'].forEach(c=>{ if(has(c)) out.push(c); });
+  if(has('SGSTin')) out.push('SGSTin');
+  if(showMir(s)) out.push('SGSTmir');
+  if(has('Cess')) out.push('Cess');
+  if(hasAV(s)) out.push('RATE');
+  return out;
+}
+function colLabel(c){ return {AV:'Taxable Value',IGST:'IGST',CGST:'CGST',SGSTin:'SGST',SGSTmir:'SGST (auto)',Cess:'Cess',
+  RATE:'GST Rate %<br><span style="font-weight:400;font-size:10px">(auto)</span>'}[c]||c; }
+
+function header(s){
+  const cl=secClr(s.id); const bg=`style="background:linear-gradient(135deg,${cl[0]},${cl[1]})"`;
+  let h=`<tr><th ${bg}>Particulars</th>`;
+  dispCols(s).forEach(c=> h+=`<th ${bg}>${colLabel(c)}</th>`);
+  h+=`<th ${bg} style="width:40px">Clear</th>`;
+  return h+'</tr>';
+}
+
+function labelDefault(s,r){
+  if(r.labelCell && DATA.cells[r.labelCell]!=null && DATA.cells[r.labelCell]!=='') return DATA.cells[r.labelCell];
+  if(r.dyn) return r.dyn();
+  return r.default||r.label||'';
+}
+function esc(v){ return String(v==null?'':v).replace(/"/g,'&quot;'); }
+
+function cellsFor(s,r,ri,idp){   // idp: 'in_'+cell for fixed, or extra prefix handled separately
+  let tds='';
+  dispCols(s).forEach(c=>{
+    if(c==='SGSTmir'){ tds+=`<td><div class="mir" id="mir_${s.id}_${ri}">${(r.c&&r.c.CGST)?money(val(r.c.CGST)):''}</div></td>`; return; }
+    if(c==='RATE'){ tds+=`<td><div class="mir rateout" id="rate_${s.id}_${ri}"></div></td>`; return; }
+    const cell=r.c?r.c[c]:null;
+    if(!cell){ tds+='<td></td>'; return; }
+    tds+=`<td><input type="number" inputmode="decimal" id="in_${cell}" value="${val(cell)}" oninput="onFix('${s.id}',${ri})"></td>`;
+  });
+  return tds;
+}
+
+function headSelect(id,list){
+  return `<select class="labpick" title="Pick a standard head" onchange="pickHead(this,'${id}')"><option value="">▾</option>`
+    + list.map(h=>`<option>${esc(h)}</option>`).join('') + `</select>`;
+}
+function pickHead(sel,id){ if(!sel.value) return; const inp=document.getElementById(id); if(inp) inp.value=sel.value; sel.value='';
+  const m=id.match(/^lab_(.+)_(\d+)$/); if(m) checkBlocked(m[1],+m[2]); }
+function firstCellFixed(s,r,ri){
+  const onin="onFix('"+s.id+"',"+ri+")"; const id='lab_'+s.id+'_'+ri;
+  if(s.pickList && r.labelCell)
+    return `<td>${selectHtml(id, s.pickList, (DATA.cells[r.labelCell]!=null?DATA.cells[r.labelCell]:r.default), onin)}</td>`;
+  if(r.pick)
+    return `<td><div class="labwrap"><input class="labin" id="${id}" value="${esc(labelDefault(s,r))}" oninput="checkBlocked('${s.id}',${ri})">${headSelect(id,BLOCKED_17_5)}</div></td>`;
+  if(s.editLabel && r.labelCell)
+    return `<td><div class="labwrap"><input class="labin" id="${id}" value="${esc(labelDefault(s,r))}" oninput="checkBlocked('${s.id}',${ri})">${headSelect(id,s.headsList||[])}</div></td>`;
+  return `<td>${r.label||''}</td>`;
+}
+
+function fixedRow(s,r,ri){
+  const span=dispCols(s).length+2;
+  if(r.head)
+    return `<tr class="headrow"><td colspan="${span}"><input class="headin" id="head_${s.id}_${ri}" value="${esc(labelDefault(s,r))}"></td></tr>`;
+  const cls=r.neg?' class="negrow"':(r.highlight?' class="hlrow"':'');
+  const clr=`<td class="clearcell"><button class="clrbtn" title="Clear this row" onclick="clearRow('${s.id}',${ri})">🧹</button></td>`;
+  return `<tr${cls}>${firstCellFixed(s,r,ri)}${cellsFor(s,r,ri)}${clr}</tr>`
+       + `<tr class="hintrow" id="hint_${s.id}_${ri}"><td colspan="20"></td></tr>`
+       + `<tr class="errrow" id="err_${s.id}_${ri}"><td colspan="20"></td></tr>`;
+}
+
+function extraRow(s,xi){
+  const ex=DATA.extras[s.id][xi];
+  let tds='';
+  dispCols(s).forEach(c=>{
+    if(c==='SGSTmir'){ tds+=`<td><div class="mir" id="exmir_${s.id}_${xi}">${ex.CGST?money(ex.CGST):''}</div></td>`; return; }
+    if(c==='RATE'){ tds+=`<td><div class="mir rateout" id="exrate_${s.id}_${xi}"></div></td>`; return; }
+    tds+=`<td><input type="number" id="ex_${s.id}_${xi}_${c}" value="${ex[c]||''}" oninput="onExtra('${s.id}',${xi})"></td>`;
+  });
+  const first = s.pickList
+    ? selectHtml('ex_'+s.id+'_'+xi+'_svc', s.pickList, ex.service||s.pickList[0], "onExtra('"+s.id+"',"+xi+")")
+    : `<input ${s.heads?`list="${s.heads}"`:''} id="ex_${s.id}_${xi}_label" value="${esc(ex.label)}" placeholder="Describe item" style="text-align:left;font-weight:600">`;
+  const clr=`<td class="clearcell"><button class="clrbtn" title="Clear this row" onclick="clearExtra('${s.id}',${xi})">🧹</button></td>`;
+  return `<tr class="exrow"><td>${first}<span class="del" title="Remove" onclick="delExtra('${s.id}',${xi})">✕</span></td>${tds}${clr}</tr>`
+       + `<tr class="errrow" id="exerr_${s.id}_${xi}"><td colspan="20"></td></tr>`;
+}
+
+function totalRow(s,grp){
+  const label = grp==='_' ? 'TOTAL' : 'Sub Total '+grp;
+  let tds='';
+  dispCols(s).forEach(c=>{
+    if(c==='RATE'){ tds+='<td></td>'; return; }
+    tds+=`<td class="totcell" id="tot_${s.id}_${grp}_${c}"></td>`;
+  });
+  return `<tr class="totrow"><td>${label}</td>${tds}<td></td></tr>`;
+}
+function recomputeTotals(sid){
+  const s=SECTIONS.find(x=>x.id===sid); if(!s||s.type!=='grid') return;
+  const groups={}; const add=(g,col,v)=>{ (groups[g]=groups[g]||{})[col]=(groups[g][col]||0)+v; };
+  s.rows.forEach(r=>{ if(r.head||!r.c) return; const g=r.grp||'_'; const sign=r.neg?-1:1;
+    ['AV','IGST','CGST','Cess','SGSTin'].forEach(col=>{ if(r.c[col]) add(g,col,sign*num(gv('in_'+r.c[col]))); }); });
+  (DATA.extras[sid]||[]).forEach((ex,xi)=>{ ['AV','IGST','CGST','Cess'].forEach(col=>{ add('_',col,num(gv('ex_'+sid+'_'+xi+'_'+col))); }); });
+  Object.keys(groups).forEach(g=>{ const G=groups[g];
+    const put=(c,v)=>{ const el=document.getElementById('tot_'+sid+'_'+g+'_'+c); if(el) el.textContent=v?money(Math.round(v)):''; };
+    put('AV',G.AV); put('IGST',G.IGST); put('CGST',G.CGST); put('Cess',G.Cess); put('SGSTmir',G.CGST); put('SGSTin',G.SGSTin);
+  });
+}
+function renderGrid(s){
+  if(!DATA.extras[s.id]) DATA.extras[s.id]=[];
+  const grouped = s.rows.some(r=>r.grp);
+  let body='', curGrp=null;
+  s.rows.forEach((r,ri)=>{
+    if(r.head){ if(curGrp){ body+=totalRow(s,curGrp); curGrp=null; } body+=fixedRow(s,r,ri); return; }
+    body+=fixedRow(s,r,ri); if(r.grp) curGrp=r.grp;
+  });
+  if(curGrp) body+=totalRow(s,curGrp);
+  DATA.extras[s.id].forEach((ex,xi)=> body+=extraRow(s,xi));
+  if(!grouped && dispCols(s).some(c=>['AV','IGST','CGST','Cess','SGSTin'].includes(c))) body+=totalRow(s,'_');
+
+  let extra='';
+  if(s.extra){
+    extra='<div class="row2" style="margin-top:14px">';
+    s.extra.forEach(e=>{ extra+=`<div class="fld"><label>${e.label}</label>
+      <input id="in_${e.cell}" type="${e.type||'text'}" value="${val(e.cell)}" placeholder="${e.ph||''}" style="text-align:left"></div>`; });
+    extra+='</div>';
+  }
+
+  const cl=secClr(s.id);
+  const btns=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+    ${s.addable?`<button class="addbtn" onclick="addExtra('${s.id}')">+ Add extra row</button>`:''}
+    ${(hasAV(s)||s.pickList)?`<button class="pastebtn" onclick="openPaste('${s.id}')">📋 Paste from Excel</button>`:''}
+    ${s.id==='rcm'?`<button class="refbtn" onclick="openRcmRef()">📖 RCM List (13/2017 &amp; 04/2017)</button>`:''}
+  </div>`;
+  stage.innerHTML=`
+  <datalist id="saleheads">${SALE_HEADS.map(x=>`<option value="${esc(x)}">`).join('')}</datalist>
+  <datalist id="itcheads">${ITC_HEADS.map(x=>`<option value="${esc(x)}">`).join('')}</datalist>
+  <datalist id="blocked17">${BLOCKED_17_5.map(x=>`<option value="${esc(x)}">`).join('')}</datalist>
+  <div class="card">
+    <h2 style="--accent:${cl[0]}">${s.title}</h2>
+    <p class="sub">${s.sub||''}</p>
+    ${s.noteHtml?`<div class="cornernote">${s.noteHtml}</div>`:''}
+    <div style="overflow-x:auto">
+      <table class="gtable"><thead>${header(s)}</thead><tbody id="tbody_${s.id}">${body}</tbody></table>
+    </div>
+    ${btns}
+    ${extra}
+    ${showMir(s)?'<div class="note">SGST (grey) = CGST, auto. The GST Rate % fills automatically (total tax ÷ taxable value); if off a standard slab, the row turns red.</div>':''}
+    <div class="nav">
+      <button class="btn-back" onclick="prev()">&larr; Back</button>
+      <button class="btn-next" onclick="next()">Next &rarr;</button>
+    </div>
+  </div>`;
+  s.rows.forEach((r,ri)=>validateFix(s,ri));
+  DATA.extras[s.id].forEach((ex,xi)=>validateExtra(s,xi));
+  recomputeTotals(s.id);
+}
+
+/* ---- auto rate = total tax / taxable value ; error if not a standard slab ---- */
+const STD_RATES=[0.1,0.25,1,1.5,3,5,6,12,18,28];
+function effRate(av,igst,cgst){ if(!av) return null; const t=num(igst)+2*num(cgst); return t>0? t/av*100 : 0; }
+function checkRound(av,igst,cgst){
+  const r=effRate(av,igst,cgst);
+  if(r==null||r===0) return '';
+  const near=STD_RATES.reduce((a,b)=>Math.abs(b-r)<Math.abs(a-r)?b:a);
+  if(Math.abs(r-near)>0.25)
+    return `⚠ Effective rate ${r.toFixed(2)}% is not a standard GST slab (nearest ${near}%). Please check Value / Tax.`;
+  return '';
+}
+function paintErr(errId,inputIds,msg){
+  const er=document.getElementById(errId);
+  if(er){ er.classList.toggle('show',!!msg); er.firstElementChild.textContent=msg||''; }
+  inputIds.forEach(id=>{ const e=document.getElementById(id); if(e) e.classList.toggle('bad',!!msg); });
+}
+
+function onFix(sid,ri){ const s=SECTIONS.find(x=>x.id===sid); const r=s.rows[ri]; if(!r.c) return; updMir('mir_'+sid+'_'+ri, r.c.CGST?gv('in_'+r.c.CGST):''); validateFix(s,ri); }
+function validateFix(s,ri){
+  const r=s.rows[ri], sid=s.id;
+  if(!hasAV(s)||!r.c) return;
+  const av=r.c.AV?num(gv('in_'+r.c.AV)):0;
+  const ig=r.c.IGST?num(gv('in_'+r.c.IGST)):0;
+  const cg=r.c.CGST?num(gv('in_'+r.c.CGST)):0;
+  const rd=document.getElementById('rate_'+sid+'_'+ri);
+  const ids=[r.c.IGST?'in_'+r.c.IGST:'', r.c.CGST?'in_'+r.c.CGST:''].filter(Boolean);
+  if(r.expectNeg){
+    if(ig>0||cg>0){                               // wrongly entered positive
+      if(rd) rd.textContent='';
+      paintErr('err_'+sid+'_'+ri, ids, '⚠ Credit note reduces ITC — please enter in NEGATIVE (minus) figure.');
+      if(!DATA._cnWarned){ DATA._cnWarned=true; showCreditNotePopup(); }
+      recomputeTotals(sid); return;
+    }
+    const er=effRate(Math.abs(av),Math.abs(ig),Math.abs(cg));
+    if(rd) rd.textContent=(av&&er)? er.toFixed(2)+'%':'';
+    paintErr('err_'+sid+'_'+ri, ids, checkRound(Math.abs(av),Math.abs(ig),Math.abs(cg)));
+    recomputeTotals(sid); return;
+  }
+  const er=effRate(av,ig,cg);
+  if(rd) rd.textContent=(av&&er)? er.toFixed(2)+'%':'';
+  paintErr('err_'+sid+'_'+ri, ids, checkRound(av,ig,cg));
+  recomputeTotals(sid);
+}
+function showCreditNotePopup(){
+  const d=document.createElement('div'); d.className='modal-overlay'; d.id='cnmodal';
+  d.innerHTML=`<div class="modal-box">
+    <h3 style="color:#b8860b">➖ Credit Note reduces ITC</h3>
+    <p style="font-size:13.5px">A credit note <b>reduces</b> your input tax credit, so it must be entered as a <b>negative (minus)</b> figure — e.g. type <b>-250</b>, not 250.</p>
+    <div class="modal-nav"><button class="btn-sub" onclick="document.getElementById('cnmodal').remove()">Got it</button></div>
+  </div>`;
+  document.body.appendChild(d);
+}
+
+/* ---- 17(5) blocked-ITC auto suggest ---- */
+function checkBlocked(sid,ri){
+  const el=document.getElementById('lab_'+sid+'_'+ri), hint=document.getElementById('hint_'+sid+'_'+ri);
+  if(!el||!hint) return;
+  const v=(el.value||'').toLowerCase(); let msg='';
+  if(v.trim() && (sid==='itcA'||sid==='itcBCDE')){
+    for(const [keys,m] of BLOCK_HINTS){ if(keys.some(k=>v.includes(k))){ msg=m; break; } }
+  }
+  hint.classList.toggle('show',!!msg);
+  if(hint.firstElementChild) hint.firstElementChild.innerHTML = msg? ('⚠ '+msg+' — please verify.') : '';
+}
+
+/* ---- RCM reference (13/2017 services, 04/2017 goods) ---- */
+function rcmTable(rows){ return '<table class="refrtab"><tr><th>#</th><th>Supply</th><th>Supplier</th><th>Recipient (pays RCM)</th></tr>'+
+  rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')+'</table>'; }
+function openRcmRef(tab){
+  tab=tab||'services';
+  let d=document.getElementById('refmodal'); if(!d){ d=document.createElement('div'); d.className='modal-overlay'; d.id='refmodal'; document.body.appendChild(d); }
+  d.innerHTML=`<div class="modal-box" style="max-width:800px">
+    <h3 style="color:#e2574c">📖 RCM Reference</h3>
+    <div class="reftabs">
+      <button class="${tab==='services'?'on':''}" onclick="openRcmRef('services')">Services — Notfn 13/2017</button>
+      <button class="${tab==='goods'?'on':''}" onclick="openRcmRef('goods')">Goods — Notfn 04/2017</button>
+    </div>
+    <div style="max-height:54vh;overflow:auto;margin-top:8px">${tab==='services'?rcmTable(RCM_SERVICES):rcmTable(RCM_GOODS)}</div>
+    <p style="font-size:11px;color:var(--muted);margin:8px 0 0">Source: CBIC Notification ${tab==='services'?'13/2017':'04/2017'}-Central Tax (Rate), as amended. Reference only — verify before relying.</p>
+    <div class="modal-nav"><button class="btn-sub" onclick="document.getElementById('refmodal').remove()">Close</button></div>
+  </div>`;
+}
+
+/* ---- Paste from Excel ---- */
+function pnum(x){ if(x==null) return ''; return String(x).replace(/[,₹\s]/g,'').trim(); }
+function openPaste(sid){
+  const s=SECTIONS.find(x=>x.id===sid);
+  const d=document.createElement('div'); d.className='modal-overlay'; d.id='pastemodal';
+  d.innerHTML=`<div class="modal-box" style="max-width:640px">
+    <h3 style="color:#15803d">📋 Paste from Excel — ${s.title}</h3>
+    <p style="font-size:12.5px">Copy rows from your Excel/software with columns in this order: <b>Particulars, Taxable Value, IGST, CGST</b> (SGST not needed), then paste below and press <b>Fill</b>.</p>
+    <textarea id="pasteBox" rows="8" style="width:100%;font-family:Consolas,monospace;font-size:12px;padding:8px;border:1px solid var(--line);border-radius:8px" placeholder="Cloth Sales   1000000   0   25000&#10;Yarn Sales   500000   0   12500"></textarea>
+    <div class="modal-nav">
+      <button class="btn-back" onclick="document.getElementById('pastemodal').remove()">Cancel</button>
+      <button class="btn-sub" onclick="pasteFill('${sid}')">Fill ${s.title}</button>
+    </div></div>`;
+  document.body.appendChild(d);
+  setTimeout(()=>{const t=document.getElementById('pasteBox'); if(t) t.focus();},60);
+}
+function pasteFill(sid){
+  const s=SECTIONS.find(x=>x.id===sid), box=document.getElementById('pasteBox'); if(!box) return;
+  save();
+  const lines=box.value.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  const dataRows=s.rows.map((r,ri)=>({r,ri})).filter(o=>!o.r.head);
+  let di=0;
+  lines.forEach(line=>{
+    // Excel copies tab-separated; fall back to 2+ spaces. NEVER split on comma (commas are inside numbers).
+    const cols=(line.indexOf('\t')>=0 ? line.split('\t') : line.split(/\s{2,}/)).map(c=>c.trim());
+    const name=cols[0]||'', av=pnum(cols[1]), ig=pnum(cols[2]), cg=pnum(cols[3]);
+    if(di<dataRows.length){
+      const r=dataRows[di++].r;
+      if(r.labelCell && name) DATA.cells[r.labelCell]=name;
+      if(r.c){ if(r.c.AV&&av!=='')DATA.cells[r.c.AV]=av; if(r.c.IGST&&ig!=='')DATA.cells[r.c.IGST]=ig; if(r.c.CGST&&cg!=='')DATA.cells[r.c.CGST]=cg; }
+    } else {
+      DATA.extras[sid]=DATA.extras[sid]||[];
+      DATA.extras[sid].push({label:name, service:s.pickList?name:undefined, AV:av, IGST:ig, CGST:cg});
+    }
+  });
+  const m=document.getElementById('pastemodal'); if(m) m.remove();
+  render();
+}
+function onExtra(sid,xi){ const s=SECTIONS.find(x=>x.id===sid); if(s.cols.includes('CGST')&&!s.cols.includes('SGSTin')) updMir('exmir_'+sid+'_'+xi, gv('ex_'+sid+'_'+xi+'_CGST')); validateExtra(s,xi); }
+function validateExtra(s,xi){
+  const sid=s.id;
+  if(!hasAV(s)) return;
+  const av=num(gv('ex_'+sid+'_'+xi+'_AV'));
+  const ig=num(gv('ex_'+sid+'_'+xi+'_IGST'));
+  const cg=num(gv('ex_'+sid+'_'+xi+'_CGST'));
+  const er=effRate(av,ig,cg);
+  const rd=document.getElementById('exrate_'+sid+'_'+xi); if(rd) rd.textContent=(av&&er)? er.toFixed(2)+'%':'';
+  const ids=['ex_'+sid+'_'+xi+'_IGST','ex_'+sid+'_'+xi+'_CGST'];
+  paintErr('exerr_'+sid+'_'+xi, ids, checkRound(av,ig,cg));
+  recomputeTotals(sid);
+}
+function updMir(id,cg){ const m=document.getElementById(id); if(m) m.textContent= cg?money(cg):''; }
+
+/* ---- add / remove / clear rows ---- */
+function addExtra(sid){ save(); if(!DATA.extras[sid]) DATA.extras[sid]=[]; DATA.extras[sid].push({}); render(); }
+function delExtra(sid,xi){ save(); DATA.extras[sid].splice(xi,1); render(); }
+function clearRow(sid,ri){
+  const s=SECTIONS.find(x=>x.id===sid), r=s.rows[ri]; if(!r||!r.c) return;
+  Object.values(r.c).forEach(cell=>{ const el=document.getElementById('in_'+cell); if(el) el.value=''; delete DATA.cells[cell]; });
+  validateFix(s,ri); recomputeTotals(sid);
+}
+function clearExtra(sid,xi){
+  const ex=DATA.extras[sid][xi]; if(!ex) return;
+  ['AV','IGST','CGST','Cess','SGSTin'].forEach(c=>{ const el=document.getElementById('ex_'+sid+'_'+xi+'_'+c); if(el) el.value=''; delete ex[c]; });
+  validateExtra(SECTIONS.find(x=>x.id===sid),xi); recomputeTotals(sid);
+}
+
+/* ---- save current step ---- */
+function save(){
+  const s=SECTIONS[cur];
+  if(s.type==='meta'){
+    ['B3','B4','G3','G4'].forEach(id=>{ const el=document.getElementById('f_'+id); if(el) DATA.cells[id]=el.value.trim(); });
+    const rt=document.getElementById('f_rtype'); if(rt) DATA.rtype=rt.value;
+  } else if(s.type==='grid'){
+    // fixed cells
+    document.querySelectorAll('[id^="in_"]').forEach(el=>{
+      const cell=el.id.slice(3), v=el.value.trim();
+      if(v==='') delete DATA.cells[cell]; else DATA.cells[cell]=v;
+    });
+    // particulars: RCM dropdown, heading rows, editable ledger heads, blocked picks
+    s.rows.forEach((r,ri)=>{
+      if(r.head){ const el=document.getElementById('head_'+s.id+'_'+ri); if(el&&r.labelCell) DATA.cells[r.labelCell]=el.value.trim(); return; }
+      if(s.pickList && r.labelCell){ const sel=document.getElementById('lab_'+s.id+'_'+ri); if(sel) DATA.cells[r.labelCell]=sel.value; }
+      else if(r.labelCell && (r.pick || s.editLabel)){ const el=document.getElementById('lab_'+s.id+'_'+ri); if(el) DATA.cells[r.labelCell]=el.value.trim(); }
+    });
+    // extras
+    if(DATA.extras[s.id]){
+      DATA.extras[s.id].forEach((ex,xi)=>{
+        if(s.pickList){ const sv=document.getElementById('ex_'+s.id+'_'+xi+'_svc'); if(sv) ex.service=sv.value; }
+        else ex.label=gv('ex_'+s.id+'_'+xi+'_label');
+        s.cols.forEach(c=>{ const v=gv('ex_'+s.id+'_'+xi+'_'+c); if(v) ex[c]=v; else delete ex[c]; });
+      });
+    }
+  }
+}
+function next(){ const sid=SECTIONS[cur].id; save(); if(cur<SECTIONS.length-1){cur++;render();window.scrollTo(0,0);} if(sid==='sales') rule86bCheck(); }
+function prev(){ save(); if(cur>0){cur--;render();window.scrollTo(0,0);} }
+
+/* ---- review ---- */
+function allErrors(){
+  let n=0;
+  SECTIONS.filter(s=>s.type==='grid'&&hasAV(s)).forEach(s=>{
+    s.rows.forEach(r=>{ const rk=s.rows.indexOf(r);
+      // rebuild from DATA since DOM may not be rendered
+    });
+  });
+  // simpler: recompute from stored data
+  n=0;
+  SECTIONS.filter(s=>hasAV(s)).forEach(s=>{
+    s.rows.forEach((r)=>{
+      if(r.head||!r.c) return;
+      const av=r.c.AV?num(DATA.cells[r.c.AV]):0, ig=r.c.IGST?num(DATA.cells[r.c.IGST]):0,
+            cg=r.c.CGST?num(DATA.cells[r.c.CGST]):0;
+      if(checkRound(av,ig,cg)) n++;
+    });
+    (DATA.extras[s.id]||[]).forEach(ex=>{ if(checkRound(num(ex.AV),num(ex.IGST),num(ex.CGST))) n++; });
+  });
+  return n;
+}
+
+function tot(ig,cg){ return ig+2*cg; }
+function rowsTot(sid,filter){
+  const s=SECTIONS.find(x=>x.id===sid); let ig=0,cg=0;
+  s.rows.forEach(r=>{ if(r.head||!r.c) return; if(filter && !filter(r)) return; const sign=r.neg?-1:1;
+    if(r.c.IGST) ig+=sign*num(DATA.cells[r.c.IGST]); if(r.c.CGST) cg+=sign*num(DATA.cells[r.c.CGST]); });
+  if(!filter) (DATA.extras[sid]||[]).forEach(e=>{ ig+=num(e.IGST); cg+=num(e.CGST); });
+  return {ig,cg};
+}
+function computeSummary(){
+  const c=DATA.cells;
+  const sales=rowsTot('sales'), exp=rowsTot('export'), rcm=rowsTot('rcm');
+  const A=rowsTot('itcA');
+  const B=rowsTot('itcBCDE',r=>r.grp==='(B)');
+  const C=rowsTot('itcBCDE',r=>r.grp==='(C)');
+  const D=rowsTot('itcBCDE',r=>r.grp==='(D)');
+  const E=rowsTot('itcBCDE',r=>r.grp==='(E)');
+  const rev=rowsTot('reversal');
+  // Tax on outward supply = sales + export (RCM is NOT output here — it is a separate deduction line)
+  const outputTax=tot(sales.ig+exp.ig, sales.cg+exp.cg);
+  // ITC as per books = A + B + C + D − E − reversals  (RCM and Opening are shown on their own lines)
+  const itcBooks=tot(A.ig+B.ig+C.ig+D.ig-E.ig-rev.ig, A.cg+B.cg+C.cg+D.cg-E.cg-rev.cg);
+  const rcmCredit=tot(rcm.ig,rcm.cg);
+  const opening=num(c.C70)+num(c.D70)+num(c.E70);
+  const net=outputTax-itcBooks-rcmCredit-opening;
+  const b2Gross=tot(num(c.C77),num(c.D77))+num(c.F77||0);
+  const booksGross=tot(A.ig+B.ig+D.ig, A.cg+B.cg+D.cg);
+  const b2CN=tot(num(c.C78),num(c.D78)), booksCN=tot(-C.ig,-C.cg);  // C is negative (credit note) → magnitude for comparison
+  return {outputTax, itcBooks, rcmCredit, opening, net,
+    b2Gross, booksGross, diffGross:b2Gross-booksGross,
+    b2CN, booksCN, diffCN:b2CN-booksCN, closing:num(c.G5)};
+}
+function compCard(){
+  const S=computeSummary(); const f=v=>'₹'+money(Math.round(v));
+  const netLbl=S.net>=0?'Net Tax Payable in Cash':'Net ITC Carried Forward';
+  return `<div class="card"><h2>Computation Summary</h2>
+    <p class="sub">Indicative — the exact computation is auto-calculated in the Excel sheet on import.</p>
+    <table class="comp">
+      <tr><td>Tax on Outward Supply</td><td>${f(S.outputTax)}</td></tr>
+      <tr><td>Less: ITC (as per Books)</td><td>${f(S.itcBooks)}</td></tr>
+      <tr><td>Less: RCM Credit</td><td>${f(S.rcmCredit)}</td></tr>
+      <tr><td>Less: Opening Balance</td><td>${f(S.opening)}</td></tr>
+      <tr class="comp-net"><td>${netLbl}</td><td>${f(Math.abs(S.net))}</td></tr>
+    </table>
+    <h3 style="color:#1a2a52;font-family:Georgia,serif;font-size:15px;margin:16px 0 6px">GSTR-2B Cross-check</h3>
+    <table class="comp">
+      <tr><td>Gross ITC — Books (A+B+D)</td><td>${f(S.booksGross)}</td></tr>
+      <tr><td>Gross ITC — GSTR-2B</td><td>${f(S.b2Gross)}</td></tr>
+      <tr class="${Math.abs(S.diffGross)>1?'comp-warn':''}"><td><b>Short/(Excess) Gross ITC</b></td><td>${f(S.diffGross)}</td></tr>
+      <tr><td>Credit Note — Books (C)</td><td>${f(S.booksCN)}</td></tr>
+      <tr><td>Credit Note — GSTR-2B</td><td>${f(S.b2CN)}</td></tr>
+      <tr class="${Math.abs(S.diffCN)>1?'comp-warn':''}"><td><b>Short/(Excess) Credit Note ITC</b></td><td>${f(S.diffCN)}</td></tr>
+    </table>
+    <table class="comp" style="margin-top:8px"><tr><td>Closing ITC as per Books</td><td>${f(S.closing)}</td></tr></table>
+  </div>`;
+}
+
+function renderReview(){
+  save();
+  const c=DATA.cells; const errs=allErrors();
+  let html=compCard()+`<div class="card rev"><h2>Review &amp; Submit</h2>
+    <p class="sub">Check the figures, then submit. The office imports this into the computation sheet.</p>`;
+  if(errs>0) html+=`<div class="warnbar">⚠ ${errs} row(s) show an effective rate off the standard GST slabs. Please go back and check Value / Tax, or submit anyway if intentional.</div>`;
+  html+=`<h3>Firm &amp; Period</h3><table>
+    <tr><td>Firm</td><td>${c.B3||'—'}</td></tr>
+    <tr><td>GSTIN</td><td>${c.B4||'—'}</td></tr>
+    <tr><td>Year / Month</td><td>${(c.G3||'—')} / ${(c.G4||'—')}</td></tr></table>`;
+
+  SECTIONS.filter(s=>s.type==='grid').forEach(s=>{
+    let rows='';
+    s.rows.forEach(r=>{
+      if(r.head||!r.c) return;
+      const parts=[];
+      Object.entries(r.c).forEach(([k,cell])=>{ if(c[cell]!=null&&c[cell]!==''){ let kk=k==='AV'?'AV':(k==='SGSTin'?'SGST':k); parts.push(kk+': '+money(c[cell])); }});
+      const name=r.labelCell?(c[r.labelCell]||labelDefault(s,r)):r.label;
+      if(parts.length) rows+=`<tr${r.neg?' style="color:#b8860b"':''}><td>${name}${r.neg?' (−, not in 2B)':''}</td><td>${parts.join(' &nbsp;|&nbsp; ')}</td></tr>`;
+    });
+    (DATA.extras[s.id]||[]).forEach(ex=>{
+      const parts=[]; ['AV','IGST','CGST','Cess'].forEach(k=>{ if(ex[k]) parts.push(k+': '+money(ex[k])); });
+      const nm=ex.service||ex.label;
+      if(nm||parts.length) rows+=`<tr><td>➕ ${nm||'Extra'}</td><td>${parts.join(' &nbsp;|&nbsp; ')}</td></tr>`;
+    });
+    if(s.extra) s.extra.forEach(e=>{ if(c[e.cell]) rows+=`<tr><td>${e.label}</td><td>${c[e.cell]}</td></tr>`; });
+    if(rows) html+=`<h3>${s.title}</h3><table>${rows}</table>`;
+  });
+
+  html+=`<div class="fld" style="margin-top:14px"><label>Remarks / pending notes (saved with this client, shown next time)</label>
+    <textarea id="f_remarks" rows="2" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;font-family:inherit"
+      placeholder="e.g. ITC of this month pending — not yet in 2B">${esc(DATA.remarks)}</textarea></div>`;
+  html+=`<div class="note" style="margin-top:12px">On submit, a small <b>.json</b> file is saved to your device.
+    Please send it to Pawan Soni &amp; Associates (WhatsApp / email) — the office does the rest.</div>
+    <div class="nav">
+      <button class="btn-back" onclick="prev()">&larr; Back</button>
+      <button class="btn-sub" onclick="submitForm()">✓ Submit &amp; Download</button>
+    </div></div>`;
+  stage.innerHTML=html;
+}
+
+function collectErrors(){
+  const out=[]; const c=DATA.cells;
+  SECTIONS.filter(s=>hasAV(s)).forEach(s=>{
+    s.rows.forEach(r=>{
+      if(r.head||!r.c) return;
+      const m=checkRound(r.c.AV?num(c[r.c.AV]):0, r.c.IGST?num(c[r.c.IGST]):0, r.c.CGST?num(c[r.c.CGST]):0);
+      if(m){ const nm=r.labelCell?(c[r.labelCell]||labelDefault(s,r)):r.label; out.push(s.title+' — '+nm+': '+m.replace('⚠ ','')); }
+    });
+    (DATA.extras[s.id]||[]).forEach(ex=>{ const m=checkRound(num(ex.AV),num(ex.IGST),num(ex.CGST)); if(m) out.push(s.title+' — '+(ex.service||ex.label||'Extra')+': '+m.replace('⚠ ','')); });
+  });
+  return out;
+}
+function showErrModal(errs){
+  const list=errs.map(e=>`<li>${e}</li>`).join('');
+  const d=document.createElement('div'); d.className='modal-overlay'; d.id='errmodal';
+  d.innerHTML=`<div class="modal-box">
+    <h3>⚠ ${errs.length} rate warning${errs.length>1?'s':''}</h3>
+    <p class="sub" style="margin:0 0 10px">The rows below are off the standard GST slab. Your details are still saved — the office will review. You may fix them or save anyway.</p>
+    <ul class="errlist">${list}</ul>
+    <div class="modal-nav">
+      <button class="btn-back" onclick="closeModal(false)">Go back &amp; fix</button>
+      <button class="btn-sub" onclick="closeModal(true)">Save &amp; download anyway</button>
+    </div></div>`;
+  document.body.appendChild(d);
+}
+function closeModal(proceed){ const m=document.getElementById('errmodal'); if(m) m.remove(); if(proceed) doSave(); }
+
+/* ---- Rule 86B information popup (only when taxable sales > Rs.50 lakh) ---- */
+function salesTaxableTotal(){
+  let t=0; ['B7','B8','B9','B10','B11','B12'].forEach(c=>t+=num(DATA.cells[c]));
+  (DATA.extras['sales']||[]).forEach(e=>t+=num(e.AV));
+  return t;
+}
+function rule86bCheck(){
+  if(DATA._r86shown) return;
+  if(salesTaxableTotal()>5000000){ DATA._r86shown=true; showInfoModal(); }
+}
+function showInfoModal(){
+  const d=document.createElement('div'); d.className='modal-overlay'; d.id='infomodal';
+  d.innerHTML=`<div class="modal-box">
+    <h3 style="color:#b8860b">ℹ Rule 86B — ITC utilisation restriction</h3>
+    <p class="sub" style="margin:0 0 10px">Your taxable supplies this period exceed <b>₹50 lakh</b>, so Rule 86B may apply.</p>
+    <p style="font-size:13px;margin:0 0 8px"><b>Rule:</b> At least <b>1% of the output tax liability must be paid in cash</b> (electronic cash ledger); ITC cannot be used to discharge more than 99%.</p>
+    <p style="font-size:12.5px;margin:0 0 4px"><b>Exceptions (Rule 86B does not apply) if any one holds:</b></p>
+    <ul style="font-size:12.5px;margin:0 0 12px;padding-left:18px">
+      <li>Proprietor / Karta / MD / any partner / whole-time director has paid income tax &gt; ₹1 lakh in each of the last two financial years; or</li>
+      <li>The person received a refund &gt; ₹1 lakh of unutilised ITC (zero-rated exports without tax, or inverted duty structure); or</li>
+      <li>Output tax already paid through cash ledger exceeds 1% cumulatively in the current financial year up to this month; or</li>
+      <li>The person is a Government department, PSU, local authority or statutory body.</li>
+    </ul>
+    <div class="modal-nav">
+      <button class="btn-sub" onclick="document.getElementById('infomodal').remove()">OK, understood</button>
+    </div></div>`;
+  document.body.appendChild(d);
+}
+
+async function submitForm(){
+  save();
+  const errs=collectErrors();
+  if(errs.length){ showErrModal(errs); return; }
+  await doSave();
+}
+
+async function doSave(){
+  const c=DATA.cells;
+  // output cells: negate the ITC-not-in-2B rows so they subtract in the sheet
+  const outCells=Object.assign({},c);
+  SECTIONS.forEach(s=>(s.rows||[]).forEach(r=>{ if(r.neg&&r.c) Object.values(r.c).forEach(cell=>{ if(outCells[cell]!=null&&outCells[cell]!=='') outCells[cell]=String(-Math.abs(num(outCells[cell]))); }); }));
+  const rate_by_cell={};
+  SECTIONS.filter(s=>hasAV(s)).forEach(s=>s.rows.forEach((r)=>{ if(r.c&&r.c.AV){ const er=effRate(num(c[r.c.AV]), r.c.IGST?num(c[r.c.IGST]):0, r.c.CGST?num(c[r.c.CGST]):0); if(er) rate_by_cell[r.c.AV]=+er.toFixed(2); } }));
+  const extras={}; Object.keys(DATA.extras).forEach(k=>{ const list=(DATA.extras[k]||[]).filter(e=>e.service||e.label||e.AV||e.IGST||e.CGST||e.Cess); if(list.length) extras[k]=list; });
+
+  const payload={
+    _meta:{ tool:'PSA GSTR-3B Computation Form', version:'VS 30.0',
+      sheet_tab:'Pawan Soni and Assoc 2422383',
+      firm:c.B3||'', gstin:c.B4||'', year:c.G3||'', month:c.G4||'', return_type:DATA.rtype||'Monthly',
+      remarks:DATA.remarks||'', generated:new Date().toISOString() },
+    cells:outCells, rate_by_cell, extra_rows:extras
+  };
+  const name=(c.B3||'Client').replace(/[^A-Za-z0-9]+/g,'_').slice(0,24)+'_'+(c.G4||'')+'_'+(c.G3||'');
+  const filename='PSA_'+name+'.json', json=JSON.stringify(payload,null,2);
+  let saved=false;
+  try{ if(window.claude&&window.claude.use){ const dl=await window.claude.use('downloads'); if(dl){ await dl.save({filename,data:json}); saved=true; } } }catch(e){}
+  if(!saved){ const b=new Blob([json],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=filename; a.click(); }
+
+  stage.innerHTML=`<div class="card"><div class="success">
+    <div class="big">🙏</div>
+    <h2 style="border:none;justify-content:center">Thank you!</h2>
+    <p class="sub">Your computation details are saved as a file on your device.</p>
+    <p><b>${filename}</b></p>
+    <p style="color:var(--muted);font-size:13px;max-width:480px;margin:12px auto">
+    Kindly send this file to <b>Pawan Soni &amp; Associates</b>:<br>
+    💬 WhatsApp <b>82753 05501</b> &nbsp;·&nbsp; 📧 <b>pawansonisinfo@gmail.com</b> / <b>capawansonis@gmail.com</b><br>
+    We will import it into the GSTR-3B computation sheet.<br>
+    <span style="font-size:12px">More information at <a href="https://www.pawansoni.org" target="_blank" rel="noopener">www.pawansoni.org</a></span></p>
+    <button class="btn-next" onclick="location.reload()">Start a new entry</button>
+  </div></div>`;
+  renderSteps();
+}
+
+/* ---- client Save/Load profiles (browser storage) ---- */
+const PKEY='psa_v30_profiles';
+function getProfiles(){ try{return JSON.parse(localStorage.getItem(PKEY)||'{}');}catch(e){return {};} }
+function setProfiles(p){ try{localStorage.setItem(PKEY,JSON.stringify(p));return true;}catch(e){return false;} }
+function renderProfbar(){
+  const bar=document.getElementById('profbar'); if(!bar) return;
+  const names=Object.keys(getProfiles());
+  bar.innerHTML=`<span style="font-weight:700">👤 Client:</span>
+    <select id="profSel">${['— new entry —'].concat(names).map(n=>`<option>${n}</option>`).join('')}</select>
+    <button class="ghost" onclick="loadProfile()">Load</button>
+    <button onclick="saveProfile()">Save</button>
+    <button class="ghost" onclick="deleteProfile()">Delete</button>
+    <span style="font-size:11px;opacity:.8">Saved in this browser only</span>`;
+}
+function captureRemarks(){ const r=document.getElementById('f_remarks'); if(r) DATA.remarks=r.value; }
+function saveProfile(){
+  save(); captureRemarks();
+  let name=prompt('Save as client name:', DATA.cells.B3||''); if(!name) return;
+  const p=getProfiles(); p[name]={cells:DATA.cells, extras:DATA.extras, rtype:DATA.rtype, remarks:DATA.remarks||''};
+  if(setProfiles(p)){ renderProfbar(); const s=document.getElementById('profSel'); if(s) s.value=name; alert('Saved: '+name); }
+  else alert('Could not save in this browser (storage blocked).');
+}
+function loadProfile(){
+  const sel=document.getElementById('profSel'); if(!sel) return; const name=sel.value;
+  if(name==='— new entry —'){ DATA.cells={}; DATA.extras={}; DATA.rtype='Monthly'; DATA.remarks=''; DATA._r86shown=false; cur=0; render(); return; }
+  const p=getProfiles()[name]; if(!p) return;
+  DATA.cells=Object.assign({},p.cells); DATA.extras=JSON.parse(JSON.stringify(p.extras||{}));
+  DATA.rtype=p.rtype||'Monthly'; DATA.remarks=p.remarks||''; DATA._r86shown=false; cur=0; render();
+  if(DATA.remarks) showRemarkModal(name, DATA.remarks);
+}
+function deleteProfile(){
+  const sel=document.getElementById('profSel'); if(!sel) return; const name=sel.value;
+  if(name==='— new entry —') return;
+  if(!confirm('Delete saved client "'+name+'"?')) return;
+  const p=getProfiles(); delete p[name]; setProfiles(p); renderProfbar();
+}
+function showRemarkModal(name,txt){
+  const d=document.createElement('div'); d.className='modal-overlay'; d.id='remarkmodal';
+  d.innerHTML=`<div class="modal-box">
+    <h3 style="color:#b8860b">📌 Pending note for ${esc(name)}</h3>
+    <p style="font-size:13.5px;white-space:pre-wrap">${esc(txt)}</p>
+    <div class="modal-nav"><button class="btn-sub" onclick="document.getElementById('remarkmodal').remove()">OK</button></div>
+  </div>`;
+  document.body.appendChild(d);
+}
+
+/* ---- live clock ---- */
+function tickClock(){
+  const t=document.getElementById('clockTime'), d=document.getElementById('clockDate');
+  if(!t||!d) return;
+  const now=new Date();
+  t.textContent=now.toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true});
+  d.textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+/* ---- GST due-date ticker (edit DUE_DATES as the calendar changes) ---- */
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DUE_DATES=[
+  {day:11, label:'GSTR-1 (Monthly)', note:'Outward supplies'},
+  {day:13, label:'IFF (QRMP)',       note:'Invoice Furnishing'},
+  {day:20, label:'GSTR-3B (Monthly)',note:'Summary return'},
+];
+function nextOccur(day){
+  const t=new Date(); t.setHours(0,0,0,0);
+  let dt=new Date(t.getFullYear(), t.getMonth(), day);
+  if(dt < t) dt=new Date(t.getFullYear(), t.getMonth()+1, day);
+  return dt;
+}
+function renderDueDates(){
+  const bar=document.getElementById('duebar'); if(!bar) return;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const items=DUE_DATES.map(d=>{ const dt=nextOccur(d.day); const left=Math.round((dt-today)/86400000);
+    return {...d, dt, left}; }).sort((a,b)=>a.dt-b.dt).slice(0,4);
+  bar.innerHTML=items.map(it=>{
+    const cls=it.left<=2?'due-red':it.left<=5?'due-amber':'due-green';
+    const leftTxt=it.left===0?'Due today':it.left===1?'1 day left':it.left+' days left';
+    const prevM=MON[(it.dt.getMonth()+11)%12];
+    return `<div class="duecard ${cls}">
+      <div class="pill">${leftTxt}</div>
+      <div class="lbl">${it.label}</div>
+      <div class="dt">${it.dt.getDate()} ${MON[it.dt.getMonth()]}</div>
+      <div class="left">${it.note} · ${prevM} period</div>
+    </div>`;
+  }).join('');
+}
+
+tickClock(); setInterval(tickClock,1000);
+renderDueDates(); setInterval(renderDueDates, 3600000);
+renderProfbar();
+render();
+</script>
+</body>
+</html>
