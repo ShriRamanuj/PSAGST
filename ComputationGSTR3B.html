@@ -72,8 +72,15 @@
   .pastebtn{color:var(--green);border-color:#bfe3cb}
   .refbtn{color:var(--coral);border-color:#f3c2cb}
   .pastebtn:hover,.refbtn:hover{box-shadow:0 4px 10px rgba(0,0,0,.08)}
-  .cornernote{background:#fff7e6;border:1px solid #f0dca8;border-left:4px solid var(--amber);
-    border-radius:10px;padding:10px 14px;font-size:12.5px;color:#7a5c12;margin:0 0 12px}
+  .cornernote{background:linear-gradient(135deg,#fff3e0,#ffe6ea);border:1.5px solid #f0b99f;
+    border-left:6px solid var(--coral);border-radius:12px;padding:13px 16px;font-size:13px;color:#5a3320;
+    margin:0 0 14px;box-shadow:0 5px 16px rgba(226,87,76,.14);position:relative;overflow:hidden;
+    animation:bnpulse 2.4s ease-in-out infinite}
+  @keyframes bnpulse{0%,100%{box-shadow:0 5px 16px rgba(226,87,76,.14)}50%{box-shadow:0 5px 22px rgba(226,87,76,.30)}}
+  .cornernote .bn-head{font-family:Georgia,serif;font-weight:800;font-size:14.5px;color:var(--coral);
+    letter-spacing:.2px}
+  .cornernote .bn-cta{margin-top:7px;background:#fff;border:1px dashed var(--coral);border-radius:9px;
+    padding:7px 11px;font-weight:600;color:#9a3412}
   .gtable tr.hlrow td{background:#f6f0ff}
   .gtable tr.hlrow td:first-child{border-left:3px solid var(--violet);position:relative}
   .gtable tr.hlrow td:first-child::after{content:"often missed";position:absolute;right:6px;top:50%;
@@ -354,7 +361,9 @@ const SECTIONS = [
 
   { id:'sales', title:'Sales', icon:'2', type:'grid', addable:true, editLabel:true, heads:'saleheads', headsList:SALE_HEADS,
     sub:'Outward supplies as per books. Particulars are editable — type any head.',
-    noteHtml:'📌 <b>Please note:</b> If your place of business is <b>shared with a sister concern</b>, rent must be shown <b>even if no rent is received</b> (deemed supply under <b>Schedule I to CGST Act</b>). If this applies to you, kindly <b>contact our team</b>.',
+    noteHtml:'<div class="bn-head">⚠ Important — Deemed Supply under Schedule I</div>'
+      +'<div style="margin-top:4px">If your <b>place of business is shared with a sister / associate concern</b>, GST law requires rent to be charged <b>even if NO rent is actually received</b> — it is treated as a <b>deemed supply under Schedule I to the CGST Act</b>. Overlooking this is a frequent cause of demand in departmental audits.</div>'
+      +'<div class="bn-cta">👉 If this situation applies to you, please <b>contact our team</b> — we will guide you.</div>',
     cols:['AV','IGST','CGST','Cess'],
     rows:[
       {labelCell:'A7',  default:'Cloth Sales',         c:{AV:'B7', IGST:'C7', CGST:'D7', Cess:'F7'}},
@@ -1098,18 +1107,44 @@ function getProfiles(){ try{return JSON.parse(localStorage.getItem(PKEY)||'{}');
 function setProfiles(p){ try{localStorage.setItem(PKEY,JSON.stringify(p));return true;}catch(e){return false;} }
 function renderProfbar(){
   const bar=document.getElementById('profbar'); if(!bar) return;
-  const names=Object.keys(getProfiles());
-  bar.innerHTML=`<span style="font-weight:700">👤 Client:</span>
-    <select id="profSel">${['— new entry —'].concat(names).map(n=>`<option>${n}</option>`).join('')}</select>
+  const names=Object.keys(getProfiles()).sort();
+  bar.innerHTML=`<span style="font-weight:700">👤 Client / Period:</span>
+    <select id="profSel">${['— new entry —'].concat(names).map(n=>`<option>${esc(n)}</option>`).join('')}</select>
     <button class="ghost" onclick="loadProfile()">Load</button>
     <button onclick="saveProfile()">Save</button>
     <button class="ghost" onclick="deleteProfile()">Delete</button>
-    <span style="font-size:11px;opacity:.8">Saved in this browser only</span>`;
+    <button class="ghost" onclick="loadFromJsonFile()" title="Load from a previously saved JSON file">📂 Load JSON file</button>`;
+}
+function profName(){
+  const c=DATA.cells; const firm=(c.B3||'Client').trim();
+  const per=((c.G4||'')+' '+(c.G3||'')).trim();
+  return per? (firm+' — '+per) : firm;
+}
+/* Load a previously saved JSON (cache-proof — e.g. reuse last month's file) */
+function loadFromJsonFile(){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='.json,application/json';
+  inp.onchange=e=>{ const f=e.target.files&&e.target.files[0]; if(!f) return;
+    const rd=new FileReader();
+    rd.onload=()=>{ try{ applyPayload(JSON.parse(rd.result)); }catch(err){ alert('Could not read this JSON file: '+err.message); } };
+    rd.readAsText(f); };
+  inp.click();
+}
+function applyPayload(p){
+  const cells=Object.assign({}, p.cells||{});
+  // the saved JSON stores ITC-not-in-2B as negative; flip back to positive for on-screen display
+  SECTIONS.forEach(s=>(s.rows||[]).forEach(r=>{ if(r.neg&&r.c) Object.values(r.c).forEach(cell=>{
+    if(cells[cell]!=null&&cells[cell]!=='') cells[cell]=String(Math.abs(num(cells[cell]))); }); }));
+  DATA.cells=cells;
+  DATA.extras=JSON.parse(JSON.stringify(p.extra_rows||{}));
+  const meta=p._meta||{};
+  DATA.rtype=meta.return_type||'Monthly'; DATA.remarks=meta.remarks||''; DATA._r86shown=false;
+  cur=0; render();
+  if(DATA.remarks) showRemarkModal(meta.firm||'Client', DATA.remarks);
 }
 function captureRemarks(){ const r=document.getElementById('f_remarks'); if(r) DATA.remarks=r.value; }
 function saveProfile(){
   save(); captureRemarks();
-  let name=prompt('Save as client name:', DATA.cells.B3||''); if(!name) return;
+  let name=prompt('Save this entry as (Firm — Month/Quarter):', profName()); if(!name) return;
   const p=getProfiles(); p[name]={cells:DATA.cells, extras:DATA.extras, rtype:DATA.rtype, remarks:DATA.remarks||''};
   if(setProfiles(p)){ renderProfbar(); const s=document.getElementById('profSel'); if(s) s.value=name; alert('Saved: '+name); }
   else alert('Could not save in this browser (storage blocked).');
