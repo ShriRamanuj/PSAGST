@@ -172,15 +172,32 @@
   .labwrap .labin{flex:1;min-width:60px}
   .labwrap .labpick{flex:none;width:30px;padding:6px 2px;border:1px solid var(--line);border-radius:8px;
     background:#eef2fa;color:var(--navy2);font-weight:700;cursor:pointer}
-  .gtable tr.totrow td{background:#e7edf7;font-weight:800;color:var(--navy);border-top:2px solid var(--navy2);
-    text-align:right;padding:7px 8px;font-size:13px}
-  .gtable tr.totrow td:first-child{text-align:left}
+  .gtable tr.totrow td{background:linear-gradient(135deg,#fdf6e7,#eef2fb);font-weight:800;color:var(--navy);
+    border-top:2.5px solid var(--gold);border-bottom:2px solid #c9d4ec;
+    text-align:right;padding:10px 8px;font-size:13px}
+  .gtable tr.totrow td:first-child{text-align:left;border-radius:0 0 0 10px;letter-spacing:.3px}
+  .gtable tr.totrow td:last-child{border-radius:0 0 10px 0}
+  .gtable td.totcell{background:#fff;border:1px solid #cdd7ee;border-radius:7px;
+    font-variant-numeric:tabular-nums;min-height:20px}
+  .gtable tr.grpspacer td{background:transparent !important;border:none !important;padding:0;height:18px}
   .intro{background:#fffdf8;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;
     padding:14px 18px;margin-top:12px;font-size:13px;color:var(--ink)}
   .intro b{color:var(--navy)} .intro a{color:var(--navy2);font-weight:600}
   .intro summary{cursor:pointer;font-weight:700;color:var(--navy);font-family:Georgia,serif}
-  .gtable tr.headrow td{background:var(--navy);padding:4px 8px}
-  .gtable input.headin{width:100%;background:transparent;border:none;color:#fff;font-weight:700;font-size:13px;padding:4px}
+  .gtable tr.headrow td{background:linear-gradient(135deg,#1a2a52,#26407a);padding:9px 10px;
+    border-radius:10px 10px 0 0}
+  .gtable input.headin{width:100%;background:transparent;border:none;color:#fff;font-weight:700;
+    font-size:13.5px;padding:5px;text-align:center;letter-spacing:.2px}
+  .headhi{text-align:center;color:rgba(255,255,255,.95);font-size:12px;font-weight:600;
+    margin-top:3px;letter-spacing:.2px}
+  .gtable tr.headrow.tone-good td{background:linear-gradient(135deg,#0f6b3a,#1f9d57)}
+  .gtable tr.headrow.tone-warn td{background:linear-gradient(135deg,#8f0e2e,#be123c)}
+  .gtable tr.headrow.tone-wait td{background:linear-gradient(135deg,#9a5a00,#e08a00)}
+  .gtable tr.headrow.tone-block td{background:linear-gradient(135deg,#3a3f4a,#5b6270)}
+  .gtable tr.grp-good  td:first-child{border-left:4px solid #1f9d57}
+  .gtable tr.grp-warn  td:first-child{border-left:4px solid #be123c}
+  .gtable tr.grp-wait  td:first-child{border-left:4px solid #e08a00}
+  .gtable tr.grp-block td:first-child{border-left:4px solid #5b6270}
   .gtable tr.negrow td:first-child{border-left:3px solid var(--gold)}
   .gtable tr.negrow input{background:#fff7e6}
   .profbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#26407a;color:#fff;
@@ -265,12 +282,13 @@ const RCM_LIST=[
 ];
 function selectHtml(id,list,sel,onch){
   return `<select id="${id}" class="svc" onchange="${onch}">`
+    + `<option value="" ${!sel?'selected':''}>— select RCM service ▾ —</option>`
     + list.map(o=>`<option value="${o.replace(/"/g,'&quot;')}" ${o===sel?'selected':''}>${o.length>46?o.slice(0,44)+'…':o}</option>`).join('')
     + `</select>`;
 }
 
-const SALE_HEADS=['Cloth Sales','Yarn Sales','Finished Goods Sale','Marble & Granite Sales','Chemical Sales','Hardware Sale','Rent Income','Brokerage Income','Scrap Sales','Process Charges','Other Sales'];
-const ITC_HEADS=['Cloth Purchase','Yarn Purchase','Finished Goods Purchase','Job Work of Cloth','Insurance','Sizing & Warping','Weaving Charges','Process Charges','Medicine Purchases','Packing Material','Printing and Stationary','Freight','Audit & Legal Fees','Telephone','Electricity','Repairs & Maintenance','Standard Charges'];
+const SALE_HEADS=['Cloth Sales','Yarn Sales','Finished Goods Sale','Marble & Granite Sales','Chemical Sales','Hardware Sale','Rent Income','Brokerage Income','Scrap Sales','Process Charges','Late Payment Charges Debit Note','Other Sales'];
+const ITC_HEADS=['Cloth Purchase','Yarn Purchase','Finished Goods Purchase','Job Work of Cloth','Insurance','Sizing & Warping','Weaving Charges','Process Charges','Medicine Purchases','Packing Material','Printing and Stationary','Freight','Audit & Legal Fees','Telephone','Electricity','Repairs & Maintenance','Late Payment Charges Debit Note','Standard Charges'];
 const BLOCKED_17_5=[
  '17(5)(a) Motor vehicles for transport of persons (≤13 seats)',
  '17(5)(aa) Vessels and aircraft',
@@ -366,10 +384,11 @@ const SECTIONS = [
       +'<div class="bn-cta">👉 If this situation applies to you, please <b>contact our team</b> — we will guide you.</div>',
     cols:['AV','IGST','CGST','Cess'],
     rows:[
-      {labelCell:'A7',  default:'Cloth Sales',         c:{AV:'B7', IGST:'C7', CGST:'D7', Cess:'F7'}},
-      {labelCell:'A8',  default:'Yarn Sales',          c:{AV:'B8', IGST:'C8', CGST:'D8', Cess:'F8'}},
-      {labelCell:'A9',  default:'Finished Goods Sale', c:{AV:'B9', IGST:'C9', CGST:'D9', Cess:'F9'}},
-      {labelCell:'A10', default:'Other Sales',         c:{AV:'B10',IGST:'C10',CGST:'D10',Cess:'F10'}},
+      {labelCell:'A7',  default:'', c:{AV:'B7', IGST:'C7', CGST:'D7', Cess:'F7'}},
+      {labelCell:'A8',  default:'', c:{AV:'B8', IGST:'C8', CGST:'D8', Cess:'F8'}},
+      {labelCell:'A9',  default:'', c:{AV:'B9', IGST:'C9', CGST:'D9', Cess:'F9'}},
+      {labelCell:'A10', default:'', c:{AV:'B10',IGST:'C10',CGST:'D10',Cess:'F10'}},
+      {labelCell:'A13', default:'', c:{AV:'B13',IGST:'C13',CGST:'D13',Cess:'F13'}},
       {labelCell:'A11', dyn:()=>'Supply of Previous Month', c:{AV:'B11',IGST:'C11',CGST:'D11',Cess:'F11'}},
       {labelCell:'A12', dyn:()=>'Last Year Supply (FY '+prevFY(DATA.cells.G3)+')', c:{AV:'B12',IGST:'C12',CGST:'D12',Cess:'F12'}},
     ]},
@@ -386,8 +405,8 @@ const SECTIONS = [
     sub:'Reverse Charge — pick the service from the list, then enter Value & tax.', addable:true,
     pickList:RCM_LIST, cols:['AV','IGST','CGST'],
     rows:[
-      {label:'RCM Service 1', labelCell:'A18', default:'Goods Transport Agency (GTA) services-5%',                         c:{AV:'B18',IGST:'C18',CGST:'D18'}},
-      {label:'RCM Service 2', labelCell:'A19', default:'Service by way of renting of any property other than residential dwelling.', c:{AV:'B19',IGST:'C19',CGST:'D19'}},
+      {label:'RCM Service 1', labelCell:'A18', default:'', c:{AV:'B18',IGST:'C18',CGST:'D18'}},
+      {label:'RCM Service 2', labelCell:'A19', default:'', c:{AV:'B19',IGST:'C19',CGST:'D19'}},
     ]},
 
   { id:'import', title:'Import', icon:'5', type:'grid',
@@ -407,14 +426,14 @@ const SECTIONS = [
     sub:'Section A — Tax Invoice & Debit Note ITC as per books. Particulars are editable — type any ledger head.',
     cols:['AV','IGST','CGST','Cess'],
     rows:[
-      {labelCell:'A29', default:'Cloth Purchase',          c:{AV:'B29',IGST:'C29',CGST:'D29',Cess:'F29'}},
-      {labelCell:'A30', default:'Yarn Purchase',           c:{AV:'B30',IGST:'C30',CGST:'D30',Cess:'F30'}},
-      {labelCell:'A31', default:'Finished Goods Purchase', c:{AV:'B31',IGST:'C31',CGST:'D31',Cess:'F31'}},
-      {labelCell:'A32', default:'Insurance',               c:{AV:'B32',IGST:'C32',CGST:'D32',Cess:'F32'}},
-      {labelCell:'A33', default:'Sizing & Warping',        c:{AV:'B33',IGST:'C33',CGST:'D33',Cess:'F33'}},
-      {labelCell:'A34', default:'Weaving Charges',         c:{AV:'B34',IGST:'C34',CGST:'D34',Cess:'F34'}},
-      {labelCell:'A35', default:'Medicine Purchases',      c:{AV:'B35',IGST:'C35',CGST:'D35',Cess:'F35'}},
-      {labelCell:'A36', default:'Job Work of Cloth',       c:{AV:'B36',IGST:'C36',CGST:'D36',Cess:'F36'}},
+      {labelCell:'A29', default:'', c:{AV:'B29',IGST:'C29',CGST:'D29',Cess:'F29'}},
+      {labelCell:'A30', default:'', c:{AV:'B30',IGST:'C30',CGST:'D30',Cess:'F30'}},
+      {labelCell:'A31', default:'', c:{AV:'B31',IGST:'C31',CGST:'D31',Cess:'F31'}},
+      {labelCell:'A32', default:'', c:{AV:'B32',IGST:'C32',CGST:'D32',Cess:'F32'}},
+      {labelCell:'A33', default:'', c:{AV:'B33',IGST:'C33',CGST:'D33',Cess:'F33'}},
+      {labelCell:'A34', default:'', c:{AV:'B34',IGST:'C34',CGST:'D34',Cess:'F34'}},
+      {labelCell:'A35', default:'', c:{AV:'B35',IGST:'C35',CGST:'D35',Cess:'F35'}},
+      {labelCell:'A36', default:'', c:{AV:'B36',IGST:'C36',CGST:'D36',Cess:'F36'}},
       {labelCell:'A37', neg:true, default:'ITC NOT in 2B (negative) (1)', c:{AV:'B37',IGST:'C37',CGST:'D37',Cess:'F37'}},
       {labelCell:'A38', neg:true, default:'ITC NOT in 2B (negative) (2)', c:{AV:'B38',IGST:'C38',CGST:'D38',Cess:'F38'}},
       {labelCell:'A39', dyn:()=>'2B Adj ITC of prev month ('+(DATA.cells.G3||YEARS[0])+')',   c:{AV:'B39',IGST:'C39',CGST:'D39',Cess:'F39'}},
@@ -426,16 +445,16 @@ const SECTIONS = [
     sub:'Section B to E. Headings and particulars are editable.',
     cols:['AV','IGST','CGST'],
     rows:[
-      {head:true, labelCell:'A43', default:'(B) Tax Invoice of previous month — goods now received'},
+      {head:true, tone:'good', hi:'पिछले माह का बिल — माल अब प्राप्त ✓ (ITC अभी लें)', labelCell:'A43', default:'(B) Tax Invoice of previous month — goods now received'},
       {labelCell:'A44', grp:'(B)', default:'Goods received (1)', c:{AV:'B44',IGST:'C44',CGST:'D44'}},
       {labelCell:'A45', grp:'(B)', default:'Goods received (2)', c:{AV:'B45',IGST:'C45',CGST:'D45'}},
-      {head:true, labelCell:'A47', default:'(C) Credit Note ITC — enter in MINUS (−) figure; it reduces ITC'},
+      {head:true, tone:'warn', hi:'क्रेडिट नोट — माइनस (−) में भरें (ITC घटता है)', labelCell:'A47', default:'(C) Credit Note ITC — enter in MINUS (−) figure; it reduces ITC'},
       {labelCell:'A48', grp:'(C)', expectNeg:true, default:'Credit Note (1)', c:{AV:'B48',IGST:'C48',CGST:'D48'}},
       {labelCell:'A49', grp:'(C)', expectNeg:true, default:'Credit Note (2)', c:{AV:'B49',IGST:'C49',CGST:'D49'}},
-      {head:true, labelCell:'A51', default:'(D) Tax Invoice of current period — goods not yet received'},
+      {head:true, tone:'wait', hi:'चालू माह का बिल — माल अभी नहीं मिला ⏳ (ITC अभी नहीं)', labelCell:'A51', default:'(D) Tax Invoice of current period — goods not yet received'},
       {labelCell:'A52', grp:'(D)', default:'Prev-dated Invoice (1)', c:{AV:'B52',IGST:'C52',CGST:'D52'}},
       {labelCell:'A53', grp:'(D)', default:'Prev-dated Invoice (2)', c:{AV:'B53',IGST:'C53',CGST:'D53'}},
-      {head:true, labelCell:'A55', default:'(E) BLOCKED ITC u/s 17(5)'},
+      {head:true, tone:'block', hi:'रोका गया ITC — धारा 17(5)', labelCell:'A55', default:'(E) BLOCKED ITC u/s 17(5)'},
       {pick:true, labelCell:'A56', grp:'(E)', default:'17(5)(d) Goods/services for construction on own account', c:{AV:'B56',IGST:'C56',CGST:'D56'}},
       {pick:true, labelCell:'A57', grp:'(E)', default:'17(5)(h) Goods lost, stolen, destroyed, written off, free samples/gifts', c:{AV:'B57',IGST:'C57',CGST:'D57'}},
     ]},
@@ -600,15 +619,21 @@ function firstCellFixed(s,r,ri){
   if(r.pick)
     return `<td><div class="labwrap"><input class="labin" id="${id}" value="${esc(labelDefault(s,r))}" oninput="checkBlocked('${s.id}',${ri})">${headSelect(id,BLOCKED_17_5)}</div></td>`;
   if(s.editLabel && r.labelCell)
-    return `<td><div class="labwrap"><input class="labin" id="${id}" value="${esc(labelDefault(s,r))}" oninput="checkBlocked('${s.id}',${ri})">${headSelect(id,s.headsList||[])}</div></td>`;
+    return `<td><div class="labwrap"><input class="labin" id="${id}" value="${esc(labelDefault(s,r))}" placeholder="Type particular / pick ▾" oninput="checkBlocked('${s.id}',${ri})">${headSelect(id,s.headsList||[])}</div></td>`;
   return `<td>${r.label||''}</td>`;
 }
 
 function fixedRow(s,r,ri){
   const span=dispCols(s).length+2;
-  if(r.head)
-    return `<tr class="headrow"><td colspan="${span}"><input class="headin" id="head_${s.id}_${ri}" value="${esc(labelDefault(s,r))}"></td></tr>`;
-  const cls=r.neg?' class="negrow"':(r.highlight?' class="hlrow"':'');
+  if(r.head){
+    const tone=r.tone?(' tone-'+r.tone):'';
+    const hi=r.hi?`<div class="headhi">${r.hi}</div>`:'';
+    return `<tr class="headrow${tone}"><td colspan="${span}"><input class="headin" id="head_${s.id}_${ri}" value="${esc(labelDefault(s,r))}">${hi}</td></tr>`;
+  }
+  const gmap={'(B)':'good','(C)':'warn','(D)':'wait','(E)':'block'};
+  const gt=gmap[r.grp]||'';
+  const cn=[r.neg?'negrow':'', r.highlight?'hlrow':'', gt?('grp-'+gt):''].filter(Boolean).join(' ');
+  const cls=cn?` class="${cn}"`:'';
   const clr=`<td class="clearcell"><button class="clrbtn" title="Clear this row" onclick="clearRow('${s.id}',${ri})">🧹</button></td>`;
   return `<tr${cls}>${firstCellFixed(s,r,ri)}${cellsFor(s,r,ri)}${clr}</tr>`
        + `<tr class="hintrow" id="hint_${s.id}_${ri}"><td colspan="20"></td></tr>`
@@ -624,7 +649,7 @@ function extraRow(s,xi){
     tds+=`<td><input type="number" id="ex_${s.id}_${xi}_${c}" value="${ex[c]||''}" oninput="onExtra('${s.id}',${xi})"></td>`;
   });
   const first = s.pickList
-    ? selectHtml('ex_'+s.id+'_'+xi+'_svc', s.pickList, ex.service||s.pickList[0], "onExtra('"+s.id+"',"+xi+")")
+    ? selectHtml('ex_'+s.id+'_'+xi+'_svc', s.pickList, ex.service||'', "onExtra('"+s.id+"',"+xi+")")
     : `<input ${s.heads?`list="${s.heads}"`:''} id="ex_${s.id}_${xi}_label" value="${esc(ex.label)}" placeholder="Describe item" style="text-align:left;font-weight:600">`;
   const clr=`<td class="clearcell"><button class="clrbtn" title="Clear this row" onclick="clearExtra('${s.id}',${xi})">🧹</button></td>`;
   return `<tr class="exrow"><td>${first}<span class="del" title="Remove" onclick="delExtra('${s.id}',${xi})">✕</span></td>${tds}${clr}</tr>`
@@ -632,7 +657,7 @@ function extraRow(s,xi){
 }
 
 function totalRow(s,grp){
-  const label = grp==='_' ? 'TOTAL' : 'Sub Total '+grp;
+  const label = grp==='_' ? 'TOTAL' : 'Sub Total '+grp+' →';
   let tds='';
   dispCols(s).forEach(c=>{
     if(c==='RATE'){ tds+='<td></td>'; return; }
@@ -656,7 +681,9 @@ function renderGrid(s){
   const grouped = s.rows.some(r=>r.grp);
   let body='', curGrp=null;
   s.rows.forEach((r,ri)=>{
-    if(r.head){ if(curGrp){ body+=totalRow(s,curGrp); curGrp=null; } body+=fixedRow(s,r,ri); return; }
+    if(r.head){ if(curGrp){ body+=totalRow(s,curGrp); curGrp=null; }
+      if(body) body+=`<tr class="grpspacer"><td colspan="${dispCols(s).length+2}"></td></tr>`;
+      body+=fixedRow(s,r,ri); return; }
     body+=fixedRow(s,r,ri); if(r.grp) curGrp=r.grp;
   });
   if(curGrp) body+=totalRow(s,curGrp);
