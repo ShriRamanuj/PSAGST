@@ -77,6 +77,21 @@
     margin:0 0 14px;box-shadow:0 5px 16px rgba(226,87,76,.14);position:relative;overflow:hidden;
     animation:bnpulse 2.4s ease-in-out infinite}
   @keyframes bnpulse{0%,100%{box-shadow:0 5px 16px rgba(226,87,76,.14)}50%{box-shadow:0 5px 22px rgba(226,87,76,.30)}}
+  /* ⭐ attention star-banner: shimmer sweep + float + glow; pauses & settles on hover */
+  .starnote{border:2px solid var(--gold);border-left:6px solid var(--gold);
+    background:linear-gradient(135deg,#fff7e0,#ffe9ec);
+    animation:starglow 2.2s ease-in-out infinite, starbob 3.4s ease-in-out infinite}
+  .starnote::before{content:"";position:absolute;top:0;left:-65%;width:55%;height:100%;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,.75),transparent);
+    transform:skewX(-20deg);animation:starshine 3s ease-in-out infinite;pointer-events:none}
+  @keyframes starglow{0%,100%{box-shadow:0 5px 18px rgba(200,150,26,.28),0 0 0 1px rgba(200,150,26,.30)}
+    50%{box-shadow:0 9px 32px rgba(226,160,20,.60),0 0 0 4px rgba(226,160,20,.38)}}
+  @keyframes starbob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.006)}}
+  @keyframes starshine{0%{left:-65%}50%{left:125%}100%{left:125%}}
+  .starnote:hover{animation:none;transform:translateY(-2px);
+    box-shadow:0 10px 30px rgba(200,150,26,.42);border-color:#b8860b}
+  .starnote:hover::before{animation:none;opacity:0}
+  @media(prefers-reduced-motion:reduce){.starnote,.starnote::before{animation:none}}
   .cornernote .bn-head{font-family:Georgia,serif;font-weight:800;font-size:14.5px;color:var(--coral);
     letter-spacing:.2px}
   .cornernote .bn-cta{margin-top:7px;background:#fff;border:1px dashed var(--coral);border-radius:9px;
@@ -147,6 +162,14 @@
   .modal-nav{display:flex;gap:10px;justify-content:flex-end}
   .modal-nav button{padding:10px 16px;font-size:14px}
 
+  .rev table.rtot{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px}
+  .rev table.rtot th{background:linear-gradient(135deg,#26407a,#4a357f);color:#fff;font-weight:600;
+    font-size:11.5px;padding:7px 8px;text-align:right}
+  .rev table.rtot th:first-child{text-align:left;border-top-left-radius:8px}
+  .rev table.rtot th:last-child{border-top-right-radius:8px}
+  .rev table.rtot td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;
+    font-variant-numeric:tabular-nums;color:var(--ink)}
+  .rev table.rtot td:first-child{text-align:left;font-weight:600;color:var(--navy2)}
   .nav{display:flex;justify-content:space-between;gap:12px;margin-top:20px}
   button{font-size:15px;padding:11px 22px;border-radius:10px;border:none;cursor:pointer;font-weight:600}
   .btn-back{background:#fff;border:1px solid var(--line);color:var(--muted)}
@@ -382,6 +405,7 @@ const SECTIONS = [
     noteHtml:'<div class="bn-head">⚠ Important — Deemed Supply under Schedule I</div>'
       +'<div style="margin-top:4px">If your <b>place of business is shared with a sister / associate concern</b>, GST law requires rent to be charged <b>even if NO rent is actually received</b> — it is treated as a <b>deemed supply under Schedule I to the CGST Act</b>. Overlooking this is a frequent cause of demand in departmental audits.</div>'
       +'<div class="bn-cta">👉 If this situation applies to you, please <b>contact our team</b> — we will guide you.</div>',
+    noteClass:'starnote',
     cols:['AV','IGST','CGST','Cess'],
     rows:[
       {labelCell:'A7',  default:'', c:{AV:'B7', IGST:'C7', CGST:'D7', Cess:'F7'}},
@@ -443,6 +467,12 @@ const SECTIONS = [
 
   { id:'itcBCDE', title:'ITC (B–E)', icon:'7', type:'grid', addable:true, editLabel:true, heads:'itcheads', headsList:ITC_HEADS,
     sub:'Section B to E. Headings and particulars are editable.',
+    noteHtml:'<div class="bn-head">⭐ Do NOT repeat Table A (ITC-A) figures here</div>'
+      +'<div style="margin-top:4px">The amounts in <b>(B), (C) and (D)</b> are <b>exclusive</b> — enter <b>only the portion NOT already shown in Table A</b>. The same figure must never be counted twice.</div>'
+      +'<div style="margin-top:6px;color:#7a3b12"><b>Example:</b> Total purchase ₹100 — ₹80 (invoice &amp; goods both received same month) → <b>Table A</b>; ₹20 (goods not yet received) → <b>Table D only</b>.</div>'
+      +'<div style="margin-top:3px;color:#7a3b12"><b>उदाहरण:</b> कुल खरीद ₹100 — ₹80 (बिल व माल एक ही माह मिला) → <b>Table A</b>; ₹20 (माल अभी नहीं मिला) → <b>केवल Table D</b>.</div>'
+      +'<div class="bn-cta">⭐ Rule: Table A + (B) + (C) + (D) = total ITC, with no amount entered in two places.</div>',
+    noteClass:'starnote',
     cols:['AV','IGST','CGST'],
     rows:[
       {head:true, tone:'good', hi:'पिछले माह का बिल — माल अब प्राप्त ✓ (ITC अभी लें)', labelCell:'A43', default:'(B) Tax Invoice of previous month — goods now received'},
@@ -485,8 +515,12 @@ const SECTIONS = [
 
   { id:'closing', title:'Closing Bal.', icon:'11', type:'grid',
     sub:'Total closing balance of ITC as per your books of account (single figure, used by the sheet to tally).',
+    noteHtml:'<div class="bn-head">ℹ Sign of this balance</div>'
+      +'<div style="margin-top:4px">Enter as a <b>POSITIVE</b> figure if there is an <b>ITC balance</b>; enter as a <b>NEGATIVE</b> figure if it is <b>GST payable</b>.</div>'
+      +'<div style="margin-top:4px">Do <b>NOT</b> include the <b>current-month RCM liability</b> here — RCM is payable separately in cash and its credit is already taken above.</div>',
+    noteClass:'starnote',
     cols:[], rows:[],
-    extra:[{label:'Closing ITC as per Books (total ₹)', cell:'G5', type:'number'}] },
+    extra:[{label:'Closing ITC as per Books (total ₹) — (+) ITC / (−) payable', cell:'G5', type:'number'}] },
 
   { id:'review', title:'Review', icon:'✓', type:'review' },
 ];
@@ -675,6 +709,21 @@ function recomputeTotals(sid){
     const put=(c,v)=>{ const el=document.getElementById('tot_'+sid+'_'+g+'_'+c); if(el) el.textContent=v?money(Math.round(v)):''; };
     put('AV',G.AV); put('IGST',G.IGST); put('CGST',G.CGST); put('Cess',G.Cess); put('SGSTmir',G.CGST); put('SGSTin',G.SGSTin);
   });
+  if(sid==='itcBCDE' && groups['(B)']){
+    const g=groups['(B)']; const t=Math.abs(g.AV||0)+Math.abs(g.IGST||0)+Math.abs(g.CGST||0);
+    if(t && !DATA._bWarned){ DATA._bWarned=true; showTableBPopup(); }
+  }
+}
+function showTableBPopup(){
+  const d=document.createElement('div'); d.className='modal-overlay'; d.id='bmodal';
+  d.innerHTML=`<div class="modal-box">
+    <h3 style="color:#b8860b">📌 Table (B) ↔ Table (D) cross-check</h3>
+    <p style="font-size:13.5px">In <b>Table (B)</b> you are entering ITC on a <b>previous-month invoice whose goods are received now</b>.</p>
+    <p style="font-size:13.5px">The <b>same figure should already have been shown in Table (D) of the PREVIOUS month's GSTR-3B</b> working (there it was: invoice received, goods not yet received). Please tally the two so the credit is counted <b>once, in the correct period</b> — not missed and not double-claimed.</p>
+    <p style="font-size:12.5px;color:#7a3b12"><b>सूचना:</b> यही राशि पिछले माह की 3B के <b>Table (D)</b> में दिखनी चाहिए थी — कृपया मिलान करें।</p>
+    <div class="modal-nav"><button class="btn-sub" onclick="document.getElementById('bmodal').remove()">Got it</button></div>
+  </div>`;
+  document.body.appendChild(d);
 }
 function renderGrid(s){
   if(!DATA.extras[s.id]) DATA.extras[s.id]=[];
@@ -711,7 +760,7 @@ function renderGrid(s){
   <div class="card">
     <h2 style="--accent:${cl[0]}">${s.title}</h2>
     <p class="sub">${s.sub||''}</p>
-    ${s.noteHtml?`<div class="cornernote">${s.noteHtml}</div>`:''}
+    ${s.noteHtml?`<div class="cornernote ${s.noteClass||''}">${s.noteHtml}</div>`:''}
     <div style="overflow-x:auto">
       <table class="gtable"><thead>${header(s)}</thead><tbody id="tbody_${s.id}">${body}</tbody></table>
     </div>
@@ -950,40 +999,54 @@ function computeSummary(){
   const rev=rowsTot('reversal');
   // Tax on outward supply = sales + export (RCM is NOT output here — it is a separate deduction line)
   const outputTax=tot(sales.ig+exp.ig, sales.cg+exp.cg);
-  // ITC as per books = A + B + C + D − E − reversals  (RCM and Opening are shown on their own lines)
-  const itcBooks=tot(A.ig+B.ig+C.ig+D.ig-E.ig-rev.ig, A.cg+B.cg+C.cg+D.cg-E.cg-rev.cg);
+  // ITC as per books = A + B + C(credit note, −). D EXCLUDED (goods not received → not in books); E EXCLUDED (blocked ITC is never taken in books, only shown-and-reversed in 3B); reversals are informational only.
+  const itcBooks=tot(A.ig+B.ig+C.ig, A.cg+B.cg+C.cg);
+  const itcA_t=tot(A.ig,A.cg), itcB_t=tot(B.ig,B.cg), itcC_t=tot(C.ig,C.cg);  // breakup: A + B − credit note(C)
   const rcmCredit=tot(rcm.ig,rcm.cg);
   const opening=num(c.C70)+num(c.D70)+num(c.E70);
   const net=outputTax-itcBooks-rcmCredit-opening;
   const b2Gross=tot(num(c.C77),num(c.D77))+num(c.F77||0);
-  const booksGross=tot(A.ig+B.ig+D.ig, A.cg+B.cg+D.cg);
+  const booksGross=tot(A.ig+D.ig, A.cg+D.cg);  // A+D vs current 2B; B is previous-month ITC (in previous 2B)
   const b2CN=tot(num(c.C78),num(c.D78)), booksCN=tot(-C.ig,-C.cg);  // C is negative (credit note) → magnitude for comparison
+  // Closing as computed: + = ITC carried forward, − = GST payable. RCM liability of current month is NOT subtracted (paid separately in cash; its credit is already added).
+  const computedClosing=-net; const booksClosing=num(c.G5);
   return {outputTax, itcBooks, rcmCredit, opening, net,
     b2Gross, booksGross, diffGross:b2Gross-booksGross,
-    b2CN, booksCN, diffCN:b2CN-booksCN, closing:num(c.G5)};
+    b2CN, booksCN, diffCN:b2CN-booksCN,
+    itcA_t, itcB_t, itcC_t,
+    closing:booksClosing, computedClosing, booksClosing, closingDiff:computedClosing-booksClosing};
 }
 function compCard(){
   const S=computeSummary(); const f=v=>'₹'+money(Math.round(v));
-  const netLbl=S.net>=0?'Net Tax Payable in Cash':'Net ITC Carried Forward';
+  const fs=v=>{ v=Math.round(v); return (v<0?'−₹':'₹')+money(Math.abs(v)); };   // signed: − shows for payable
+  const closeLbl=S.computedClosing>=0?'Net ITC Carried Forward':'Net GST Payable (in cash)';
   return `<div class="card"><h2>Computation Summary</h2>
     <p class="sub">Indicative — the exact computation is auto-calculated in the Excel sheet on import.</p>
     <table class="comp">
       <tr><td>Tax on Outward Supply</td><td>${f(S.outputTax)}</td></tr>
-      <tr><td>Less: ITC (as per Books)</td><td>${f(S.itcBooks)}</td></tr>
+      <tr><td>Less: ITC as per Books <span style="color:#6b7280;font-weight:400">(A + B − Credit Note)</span></td><td>${f(S.itcBooks)}</td></tr>
+      <tr><td style="padding-left:22px;color:#6b7280;font-size:12px;font-weight:400;border-bottom:none">= A ${f(S.itcA_t)} &nbsp;+&nbsp; B ${f(S.itcB_t)} &nbsp;−&nbsp; Credit Note ${f(Math.abs(S.itcC_t))}</td><td></td></tr>
       <tr><td>Less: RCM Credit</td><td>${f(S.rcmCredit)}</td></tr>
       <tr><td>Less: Opening Balance</td><td>${f(S.opening)}</td></tr>
-      <tr class="comp-net"><td>${netLbl}</td><td>${f(Math.abs(S.net))}</td></tr>
+      <tr class="comp-net"><td>${closeLbl}</td><td>${fs(S.computedClosing)}</td></tr>
     </table>
+    <p class="sub" style="margin:6px 0 0;font-size:12px">(+) = ITC carried forward &nbsp;·&nbsp; (−) = GST payable in cash. Current-month RCM liability is paid separately and is not included here.</p>
     <h3 style="color:#1a2a52;font-family:Georgia,serif;font-size:15px;margin:16px 0 6px">GSTR-2B Cross-check</h3>
     <table class="comp">
-      <tr><td>Gross ITC — Books (A+B+D)</td><td>${f(S.booksGross)}</td></tr>
+      <tr><td>Gross ITC — Books (A+D)</td><td>${f(S.booksGross)}</td></tr>
       <tr><td>Gross ITC — GSTR-2B</td><td>${f(S.b2Gross)}</td></tr>
       <tr class="${Math.abs(S.diffGross)>1?'comp-warn':''}"><td><b>Short/(Excess) Gross ITC</b></td><td>${f(S.diffGross)}</td></tr>
       <tr><td>Credit Note — Books (C)</td><td>${f(S.booksCN)}</td></tr>
       <tr><td>Credit Note — GSTR-2B</td><td>${f(S.b2CN)}</td></tr>
       <tr class="${Math.abs(S.diffCN)>1?'comp-warn':''}"><td><b>Short/(Excess) Credit Note ITC</b></td><td>${f(S.diffCN)}</td></tr>
     </table>
-    <table class="comp" style="margin-top:8px"><tr><td>Closing ITC as per Books</td><td>${f(S.closing)}</td></tr></table>
+    <h3 style="color:#1a2a52;font-family:Georgia,serif;font-size:15px;margin:16px 0 6px">Closing Balance Reconciliation (Books)</h3>
+    <table class="comp">
+      <tr><td>Net ITC c/f as computed &nbsp;<span style="color:#6b7280">(+ ITC / − payable)</span></td><td>${fs(S.computedClosing)}</td></tr>
+      <tr><td>Closing ITC as per Books &nbsp;<span style="color:#6b7280">(+ ITC / − payable)</span></td><td>${fs(S.booksClosing)}</td></tr>
+      <tr class="${Math.abs(S.closingDiff)>1?'comp-warn':''}"><td><b>Difference — to be rectified in Books</b></td><td>${fs(S.closingDiff)}</td></tr>
+    </table>
+    ${Math.abs(S.closingDiff)>1?`<div class="note" style="margin-top:8px">⚠ Computed balance and Books differ by <b>${fs(S.closingDiff)}</b>. Please rectify the books ITC ledger (or re-check the figures) so both tally.</div>`:''}
   </div>`;
 }
 
@@ -998,23 +1061,37 @@ function renderReview(){
     <tr><td>GSTIN</td><td>${c.B4||'—'}</td></tr>
     <tr><td>Year / Month</td><td>${(c.G3||'—')} / ${(c.G4||'—')}</td></tr></table>`;
 
+  // ---- Review: section-wise sum totals in a columnar table (Taxable Value | IGST | CGST | SGST | Cess) ----
+  const sumCols=(s,filter)=>{ const t={AV:0,IGST:0,CGST:0,Cess:0,SGSTin:0}; let any=false;
+    s.rows.forEach(r=>{ if(r.head||!r.c) return; if(filter&&!filter(r)) return; const sign=r.neg?-1:1;
+      ['AV','IGST','CGST','Cess','SGSTin'].forEach(k=>{ const cell=r.c[k];
+        if(cell&&c[cell]!=null&&c[cell]!==''){ t[k]+=sign*num(c[cell]); any=true; } }); });
+    if(!filter)(DATA.extras[s.id]||[]).forEach(ex=>{ ['AV','IGST','CGST','Cess'].forEach(k=>{ if(ex[k]){ t[k]+=num(ex[k]); any=true; } }); });
+    return {t,any}; };
+  const ITC_GRP=[['(B)','ITC (B) — prev-month invoice, goods now received'],
+                 ['(C)','ITC (C) — credit note (−)'],
+                 ['(D)','ITC (D) — current invoice, goods not received'],
+                 ['(E)','ITC (E) — blocked u/s 17(5)']];
+  const mc=v=>Math.round(v||0)!==0?money(Math.round(v)):'';
+  const sgstOf=t=>Math.round(t.SGSTin||0)!==0?t.SGSTin:t.CGST;   // SGST = SGSTin if entered, else auto = CGST
+  const trow=(lbl,t)=>`<tr><td>${lbl}</td><td>${mc(t.AV)}</td><td>${mc(t.IGST)}</td><td>${mc(t.CGST)}</td><td>${mc(sgstOf(t))}</td><td>${mc(t.Cess)}</td></tr>`;
+
+  let trows='';
   SECTIONS.filter(s=>s.type==='grid').forEach(s=>{
-    let rows='';
-    s.rows.forEach(r=>{
-      if(r.head||!r.c) return;
-      const parts=[];
-      Object.entries(r.c).forEach(([k,cell])=>{ if(c[cell]!=null&&c[cell]!==''){ let kk=k==='AV'?'AV':(k==='SGSTin'?'SGST':k); parts.push(kk+': '+money(c[cell])); }});
-      const name=r.labelCell?(c[r.labelCell]||labelDefault(s,r)):r.label;
-      if(parts.length) rows+=`<tr${r.neg?' style="color:#b8860b"':''}><td>${name}${r.neg?' (−, not in 2B)':''}</td><td>${parts.join(' &nbsp;|&nbsp; ')}</td></tr>`;
-    });
-    (DATA.extras[s.id]||[]).forEach(ex=>{
-      const parts=[]; ['AV','IGST','CGST','Cess'].forEach(k=>{ if(ex[k]) parts.push(k+': '+money(ex[k])); });
-      const nm=ex.service||ex.label;
-      if(nm||parts.length) rows+=`<tr><td>➕ ${nm||'Extra'}</td><td>${parts.join(' &nbsp;|&nbsp; ')}</td></tr>`;
-    });
-    if(s.extra) s.extra.forEach(e=>{ if(c[e.cell]) rows+=`<tr><td>${e.label}</td><td>${c[e.cell]}</td></tr>`; });
-    if(rows) html+=`<h3>${s.title}</h3><table>${rows}</table>`;
+    if(s.id==='itcBCDE'){
+      ITC_GRP.forEach(([g,lbl])=>{ const {t,any}=sumCols(s,r=>r.grp===g); if(any) trows+=trow(lbl,t); });
+    } else {
+      const {t,any}=sumCols(s); if(any) trows+=trow(s.title,t);
+    }
   });
+  if(trows) html+=`<h3>Section Totals</h3>
+    <table class="rtot"><thead><tr><th>Particulars</th><th>Taxable Value</th><th>IGST</th><th>CGST</th><th>SGST</th><th>Cess</th></tr></thead><tbody>${trows}</tbody></table>`;
+
+  // non-columnar items: Closing figure, Import Port/BoE references
+  let xlines='';
+  SECTIONS.filter(s=>s.type==='grid'&&s.extra).forEach(s=>s.extra.forEach(e=>{ if(c[e.cell]!=null&&c[e.cell]!==''){
+    const v=e.type==='number'?('₹'+money(c[e.cell])):c[e.cell]; xlines+=`<tr><td>${e.label}</td><td>${v}</td></tr>`; } }));
+  if(xlines) html+=`<h3>Closing / Other</h3><table>${xlines}</table>`;
 
   html+=`<div class="fld" style="margin-top:14px"><label>Remarks / pending notes (saved with this client, shown next time)</label>
     <textarea id="f_remarks" rows="2" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;font-family:inherit"
@@ -1164,7 +1241,7 @@ function applyPayload(p){
   DATA.cells=cells;
   DATA.extras=JSON.parse(JSON.stringify(p.extra_rows||{}));
   const meta=p._meta||{};
-  DATA.rtype=meta.return_type||'Monthly'; DATA.remarks=meta.remarks||''; DATA._r86shown=false;
+  DATA.rtype=meta.return_type||'Monthly'; DATA.remarks=meta.remarks||''; DATA._r86shown=false; DATA._bWarned=false;
   cur=0; render();
   if(DATA.remarks) showRemarkModal(meta.firm||'Client', DATA.remarks);
 }
@@ -1178,10 +1255,10 @@ function saveProfile(){
 }
 function loadProfile(){
   const sel=document.getElementById('profSel'); if(!sel) return; const name=sel.value;
-  if(name==='— new entry —'){ DATA.cells={}; DATA.extras={}; DATA.rtype='Monthly'; DATA.remarks=''; DATA._r86shown=false; cur=0; render(); return; }
+  if(name==='— new entry —'){ DATA.cells={}; DATA.extras={}; DATA.rtype='Monthly'; DATA.remarks=''; DATA._r86shown=false; DATA._bWarned=false; cur=0; render(); return; }
   const p=getProfiles()[name]; if(!p) return;
   DATA.cells=Object.assign({},p.cells); DATA.extras=JSON.parse(JSON.stringify(p.extras||{}));
-  DATA.rtype=p.rtype||'Monthly'; DATA.remarks=p.remarks||''; DATA._r86shown=false; cur=0; render();
+  DATA.rtype=p.rtype||'Monthly'; DATA.remarks=p.remarks||''; DATA._r86shown=false; DATA._bWarned=false; cur=0; render();
   if(DATA.remarks) showRemarkModal(name, DATA.remarks);
 }
 function deleteProfile(){
